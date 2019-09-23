@@ -6,6 +6,7 @@ import org.apache.http.entity.StringEntity;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -318,7 +319,7 @@ public class ShoppingBll {
                             }
                         }
                         if(skuItem.sku.contains("颜色") && skuColorKeyWords != null && !skuColorKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> skuItem.sku.contains(keyword));
+                            isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemMatch(skuItem.sku, keyword));
                         }
                         if(skuItem.sku.contains("尺码") && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
                             if(skuItem.skuList != null){
@@ -329,10 +330,10 @@ public class ShoppingBll {
                             }
                         }
                         if(skuItem.sku.contains("款式") && skuStyleKeyWords != null && !skuStyleKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuStyleKeyWords.stream().anyMatch(keyword -> skuItem.sku.contains(keyword));
+                            isMatchSku = isMatchSku && skuStyleKeyWords.stream().anyMatch(keyword -> isSkuItemMatch(skuItem.sku, keyword));
                         }
                         if(skuItem.sku.contains("规格") && skuSpecKeyWords != null && !skuSpecKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuSpecKeyWords.stream().anyMatch(keyword -> skuItem.sku.contains(keyword));
+                            isMatchSku = isMatchSku && skuSpecKeyWords.stream().anyMatch(keyword -> isSkuItemMatch(skuItem.sku, keyword));
                         }
                         if(skuItem.stockNum > 0 && isMatchSku){
                             ToBuyGoodSkuInfo toBuyGoodSkuInfo = toBuyGoodInfo.toBuyGoodSkuInfos.stream().filter(info -> info.skuId.equals(skuItem.id)).findFirst().orElse(null);
@@ -348,6 +349,31 @@ public class ShoppingBll {
                 }
             }
         }
+    }
+
+    private static boolean isSkuItemMatch(String skuItem, String keyword) {
+        if (skuItem.contains(keyword)) {
+            return true;
+        }
+        if (keyword != null && keyword.contains("+")) {
+            List<String> keywordList = Arrays.asList(keyword.split("\\+"));
+            if(keyword.replaceAll("\\+"," ").equalsIgnoreCase(skuItem)){
+                return true;
+            }
+            if (keywordList.stream().allMatch(key -> skuItem.contains(key.trim()))) {
+                return true;
+            }
+        }
+        if (keyword != null && keyword.contains("|")) {
+            List<String> keywordList = Arrays.asList(keyword.split("\\|"));
+            if(keyword.replaceAll("\\|"," ").equalsIgnoreCase(skuItem)){
+                return true;
+            }
+            if (keywordList.stream().allMatch(key -> skuItem.contains(key.trim()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
