@@ -1,7 +1,8 @@
 package com.myqq.service.youza.bll;
 
 public class ConstInfo {
-    static String contentType = "application/json; charset=UTF-8";
+    static String contentTypeJson = "application/json; charset=UTF-8";
+    static String contentTypeUrl = "application/x-www-form-urlencoded; charset=UTF-8";
     static String userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36 MicroMessenger/6.5.2.501 NetType/WIFI WindowsWechat QBCore/3.43.1021.400 QQBrowser/9.0.2524.400";
 
     /*static String cookieFormat = "KDTSESSIONID={0}; nobody_sign={0}; yz_log_ftime=1558612331736; yz_log_uuid=dbbd2da3-6a7e-42b2-71c8-a64988aba939; trace_sdk_context_dc_ps=294989; trace_sdk_context_dc_ps_utime=1558613955; trace_sdk_context_is_share=1; _kdt_id_=41763685; trace_sdk_context_banner_id=f.74895446~goods.2~17~qqpXNhTj; yz_log_seqb=1558612332141; yz_log_seqn=22; Hm_lvt_679ede9eb28bacfc763976b10973577b=1558613970; Hm_lpvt_679ede9eb28bacfc763976b10973577b=1558613970";*/

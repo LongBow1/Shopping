@@ -32,7 +32,7 @@ public class RequestBll {
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         HttpGet httpGet = new HttpGet(goodsUrl);
 
-        httpGet.addHeader("contentType",contentType);
+        httpGet.addHeader("contentType", contentTypeJson);
         httpGet.addHeader("User-Agent",userAgent);
         httpGet.addHeader("Cookie",MessageFormat.format(cookieFormat,kdtSession,kdtId));
         String res = null;
@@ -52,7 +52,7 @@ public class RequestBll {
     public static String doPost(String postUrl, StringEntity stringEntity, String kdtSession, String kdtId){
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost(postUrl);
-        httpPost.addHeader("Content-type",contentType);
+        httpPost.addHeader("Content-type", contentTypeJson);
         httpPost.addHeader("User-Agent",userAgent);
         httpPost.addHeader("Cookie", MessageFormat.format(cookieFormat,kdtSession,kdtId));
 
@@ -80,7 +80,7 @@ public class RequestBll {
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost(postUrl);
 
-        httpPost.addHeader("contentType",contentType);
+        httpPost.addHeader("contentType", contentTypeJson);
         httpPost.addHeader("User-Agent",userAgent);
         httpPost.addHeader("Cookie",MessageFormat.format(cookieFormat,kdtSession,kdtId));
         //pairList.add(new BasicNameValuePair("",""));
