@@ -33,9 +33,96 @@ public class ShopInfoDTO {
         public GoodStockSKUInfo sku;
     }
 
+    static class GoodStockDataV2{
+        public  GoodStockDataV2Data goodsData;
+    }
+
+    static class GoodStockDataV2Data{
+        public GoodStockBasicInfo goods;
+        public GoodStockSKUInfoV2 skuInfo;
+    }
+
     static class GoodStockBasicInfo{
         public String content;
         public String title;
+    }
+    static class GoodStockSKUInfoV2{
+        public boolean hideStock;
+        public List<SKUInfoPropDTO> props;
+        public List<SKUStockKVDTO> skuStocks;
+        public List<SKURelationDTO> skus;
+    }
+
+    /**
+     * 属性和库存关系
+     */
+    static class SKURelationDTO{
+        public String s1;
+        public String s2;
+        public String s3;
+        public String s4;
+        public String s5;
+        public int skuId;
+
+        @Override
+        public String toString() {
+            return "SKURelationDTO{" +
+                    "s1='" + s1 + '\'' +
+                    ", s2='" + s2 + '\'' +
+                    ", s3='" + s3 + '\'' +
+                    ", s4='" + s4 + '\'' +
+                    ", s5='" + s5 + '\'' +
+                    ", skuId=" + skuId +
+                    '}';
+        }
+    }
+    static class SKUInfoStockDTO{
+        public List<SKUStockKVDTO> skuStocks;
+    }
+    static class SKUInfoPropDTO{
+        public int count;
+        //属性 ： 颜色：尺码
+        public String k;
+        public String kId;
+        public String k_s;
+        public List<IdNameKVDTO> v;
+
+        @Override
+        public String toString() {
+            return "SKUInfoPropDTO{" +
+                    "count=" + count +
+                    ", k='" + k + '\'' +
+                    ", kId='" + kId + '\'' +
+                    ", k_s='" + k_s + '\'' +
+                    ", v=" + v +
+                    '}';
+        }
+    }
+    static class IdNameKVDTO{
+        public int id;
+        public String name;
+
+        @Override
+        public String toString() {
+            return "IdNameKVDTO{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+    }
+    static class SKUStockKVDTO{
+        public int skuId;
+        public int stockNum;
+        public List<KV> skuPropList;
+
+        @Override
+        public String toString() {
+            return "SKUStockKVDTO{" +
+                    "skuId=" + skuId +
+                    ", stockNum=" + stockNum +
+                    ", skuPropList=" + skuPropList +
+                    '}';
+        }
     }
     static class GoodStockSKUInfo{
         public List<GoodStockSKUListInfo> list;
@@ -88,6 +175,11 @@ public class ShopInfoDTO {
     static class KV{
         private String k;
         private String v;
+
+        public KV(String k, String v) {
+            this.k = k;
+            this.v = v;
+        }
 
         public String getK() {
             return k;

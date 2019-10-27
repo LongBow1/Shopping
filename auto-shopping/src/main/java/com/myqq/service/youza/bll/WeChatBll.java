@@ -72,6 +72,7 @@ public class WeChatBll {
         HttpPost httpPost = new HttpPost(postUrl);
         StringEntity stringEntity = new StringEntity(jsonString, "UTF-8");
         httpPost.setEntity(stringEntity);
+        httpPost.addHeader("contentType", contentTypeUrl);
         String res = "";
         try {
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);

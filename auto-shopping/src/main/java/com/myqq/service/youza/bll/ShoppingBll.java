@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static com.myqq.service.youza.bll.ConstInfo.*;
 import static com.myqq.service.youza.bll.ShopInfoDTO.*;
 
@@ -287,8 +289,13 @@ public class ShoppingBll {
      */
     public static void getToBuyGoodSkuInfoDetail(GoodInfo item, ToBuyGoodInfo toBuyGoodInfo, List<String> skuColorKeyWords, List<String> skuSizeKeyWords, List<String> skuStyleKeyWords, List<String> skuSpecKeyWords, String kdtSession, int toBuyNum, String kdtId, String shopId) {
         String goodData = RequestBll.doGet(MessageFormat.format(getGoodDataUrl,shopId,item.alias),kdtSession,kdtId);
+        if(goodData == null || goodData.isEmpty()){
+            return;
+        }
         //System.out.println("stockData:"+ item.alias +":"+goodData);
-        if(goodData != null && goodData.indexOf("goods_data") > 0 && goodData.indexOf("if (_global.url") > 0){
+        boolean hasStockData = false;
+        if(goodData.indexOf("goods_data") > 0 && goodData.indexOf("if (_global.url") > 0){
+            hasStockData = true;
             String stockData = EscapeUnicode.unescape(goodData.substring(goodData.indexOf("goods_data")+12,goodData.indexOf("if (_global.url")-8));
             //System.out.println("stockData:"+stockData);
             GoodStockData goodStockData = JSONObject.parseObject(stockData,GoodStockData.class);
@@ -349,7 +356,98 @@ public class ShoppingBll {
                 }
             }
         }
+        //第二种获取方式
+        if(!hasStockData && goodData.indexOf("\"buyer_id\"") > 0 && goodData.indexOf("if (_global.url") > 0){
+            String stockData = goodData.substring(goodData.indexOf("\"buyer_id\"")-1,goodData.indexOf("if (_global.url")-7);
+            GoodStockDataV2 goodStockDataV2 = JSONObject.parseObject(stockData,GoodStockDataV2.class);
+            if(goodStockDataV2 == null){
+                return;
+            }
+            GoodStockDataV2Data  goodStockData = goodStockDataV2.goodsData;
+            if(goodStockData != null && goodStockData.goods != null && goodStockData.skuInfo != null && !goodStockData.skuInfo.hideStock && goodStockData.skuInfo.skuStocks != null){
+                goodStockData.skuInfo.skuStocks.stream().filter(stock -> stock.stockNum > 0).forEach(stockItem -> {
+                    boolean isMatchSku = true;
+                    if(resetStockItem(stockItem,goodStockData.skuInfo)){
+                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("颜色")) && skuColorKeyWords != null && !skuColorKeyWords.isEmpty()){
+                            isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("颜色")), keyword, false));
+                        }
+                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("尺码")) && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
+                            isMatchSku = isMatchSku && skuSizeKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("尺码")), keyword, true));
+                        }
+                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("款式")) && skuStyleKeyWords != null && !skuStyleKeyWords.isEmpty()){
+                            isMatchSku = isMatchSku && skuStyleKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("款式")), keyword, false));
+                        }
+                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("规格")) && skuSpecKeyWords != null && !skuSpecKeyWords.isEmpty()){
+                            isMatchSku = isMatchSku && skuSpecKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("规格")), keyword, false));
+                        }
+                        if(isMatchSku){
+                            ToBuyGoodSkuInfo toBuyGoodSkuInfo = toBuyGoodInfo.toBuyGoodSkuInfos.stream().filter(info -> info.skuId.equals(stockItem.skuId)).findFirst().orElse(null);
+                            if(toBuyGoodSkuInfo == null){
+                                System.out.println("toBuyNew");
+                                toBuyGoodInfo.toBuyGoodSkuInfos.add(new ToBuyGoodSkuInfo(stockItem.skuId,stockItem.stockNum < toBuyNum ? stockItem.stockNum:toBuyNum , stockItem.toString()));
+                            }else {
+                                System.out.println("toBuyUpdate");
+                                toBuyGoodSkuInfo.num = stockItem.stockNum < toBuyNum ? stockItem.stockNum:toBuyNum;
+                            }
+                        }
+                    }
+                });
+            }
+        }
     }
+
+    private static boolean isSkuItemListMatch(Stream<KV> propList, String keyword, boolean strictEqual) {
+        return propList.allMatch(item -> isSkuItemMatch(item,keyword,strictEqual));
+    }
+
+    private static boolean isSkuItemMatch(KV item, String keyword, boolean strictEqual) {
+        if(strictEqual){
+            return keyword.equalsIgnoreCase(item.getV());
+        }
+        return isSkuItemMatch(item.getV(),keyword);
+    }
+
+    private static boolean resetStockItem(SKUStockKVDTO stockItem, GoodStockSKUInfoV2 skuInfo) {
+        if(skuInfo.skus == null || skuInfo.props == null){
+            return false;
+        }
+        SKURelationDTO skuRelation = skuInfo.skus.stream().filter(item -> item.skuId == stockItem.skuId).findFirst().orElse(null);
+        if(skuRelation == null){
+            return false;
+        }
+        resetSKUProperty(stockItem,skuRelation,skuInfo.props);
+        return true;
+    }
+
+    private static void resetSKUProperty(SKUStockKVDTO stockItem, SKURelationDTO skuRelation, List<SKUInfoPropDTO> props) {
+        stockItem.skuPropList = new ArrayList<>();
+        if(Integer.valueOf(skuRelation.s1) > 0){
+            resetSKUPropertyDetail(stockItem,"s1",skuRelation.s1,props);
+        }
+        if(Integer.valueOf(skuRelation.s2) > 0){
+            resetSKUPropertyDetail(stockItem,"s2",skuRelation.s2,props);
+        }
+        if(Integer.valueOf(skuRelation.s3) > 0){
+            resetSKUPropertyDetail(stockItem,"s3",skuRelation.s3,props);
+        }
+        if(Integer.valueOf(skuRelation.s4) > 0){
+            resetSKUPropertyDetail(stockItem,"s4",skuRelation.s4,props);
+        }
+        if(Integer.valueOf(skuRelation.s5) > 0){
+            resetSKUPropertyDetail(stockItem,"s5",skuRelation.s5,props);
+        }
+    }
+
+    private static void resetSKUPropertyDetail(SKUStockKVDTO stockItem, String propertyName,String propertyValue, List<SKUInfoPropDTO> props) {
+        SKUInfoPropDTO skuInfoProp = props.stream().filter(item -> item.k_s.equalsIgnoreCase(propertyName)).findFirst().orElse(null);
+        if(skuInfoProp != null && skuInfoProp.v != null){
+            IdNameKVDTO idNameKV = skuInfoProp.v.stream().filter(item -> Integer.valueOf(propertyValue) == item.id).findFirst().orElse(null);
+            if(idNameKV != null){
+                stockItem.skuPropList.add(new KV(skuInfoProp.k,idNameKV.name));
+            }
+        }
+    }
+
 
     private static boolean isSkuItemMatch(String skuItem, String keyword) {
         if (skuItem.contains(keyword)) {
