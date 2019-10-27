@@ -1,6 +1,7 @@
 package com.myqq.service.controller;
 
 
+import com.myqq.service.youza.bll.WeChatBll;
 import com.myqq.service.youza.util.CheckUntil;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
@@ -13,13 +14,18 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @EnableAutoConfiguration
-@RequestMapping("/wechat")
 public class WeChatController {
 
     @ResponseBody
     @RequestMapping("/home")
     String home(){
         return "weChat Success!";
+    }
+
+    @ResponseBody
+    @RequestMapping("/test")
+    public String testMessage(){
+        return WeChatBll.sendMessageTest();
     }
 
 

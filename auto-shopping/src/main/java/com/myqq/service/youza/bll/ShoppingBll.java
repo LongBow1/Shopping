@@ -287,10 +287,10 @@ public class ShoppingBll {
      */
     public static void getToBuyGoodSkuInfoDetail(GoodInfo item, ToBuyGoodInfo toBuyGoodInfo, List<String> skuColorKeyWords, List<String> skuSizeKeyWords, List<String> skuStyleKeyWords, List<String> skuSpecKeyWords, String kdtSession, int toBuyNum, String kdtId, String shopId) {
         String goodData = RequestBll.doGet(MessageFormat.format(getGoodDataUrl,shopId,item.alias),kdtSession,kdtId);
-        //System.out.println(item.alias +":"+goodData);
+        //System.out.println("stockData:"+ item.alias +":"+goodData);
         if(goodData != null && goodData.indexOf("goods_data") > 0 && goodData.indexOf("if (_global.url") > 0){
             String stockData = EscapeUnicode.unescape(goodData.substring(goodData.indexOf("goods_data")+12,goodData.indexOf("if (_global.url")-8));
-            //System.out.println(stockData);
+            //System.out.println("stockData:"+stockData);
             GoodStockData goodStockData = JSONObject.parseObject(stockData,GoodStockData.class);
             if(goodStockData != null && goodStockData.goods != null && goodStockData.sku != null){
                 StringBuilder goodInfoSB = new StringBuilder("goodsId:"+item.id + "|goodsName:"+goodStockData.goods.title);// + "|"+goodStockData.goods.content);

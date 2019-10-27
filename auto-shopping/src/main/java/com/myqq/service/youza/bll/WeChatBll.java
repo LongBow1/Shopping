@@ -32,6 +32,16 @@ public class WeChatBll {
 
     }
 
+    public static String sendMessageTest(){
+        String accessTokenJson =getAccessToken(appId, appSecret);
+        JSONObject jsonObject = JSONObject.parseObject(accessTokenJson);
+        System.out.println(jsonObject);
+        String accessToken = jsonObject.get("access_token").toString();
+        System.out.println("accessToken:"+accessToken);
+        String res = sendMessage("test from local", accessToken);
+        return "accessTokenJson:"+accessTokenJson + "\r\nres:"+res;
+    }
+
     /**
      * get access_token from weChat server
      *
@@ -56,20 +66,22 @@ public class WeChatBll {
         return accessToken;
     }
 
-    public static void sendMessage(String jsonString, String accessToken) {
+    public static String sendMessage(String jsonString, String accessToken) {
         String postUrl = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + accessToken;
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost(postUrl);
         StringEntity stringEntity = new StringEntity(jsonString, "UTF-8");
         httpPost.setEntity(stringEntity);
-
+        String res = "";
         try {
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
-            String res = EntityUtils.toString(httpResponse.getEntity());
+            res = EntityUtils.toString(httpResponse.getEntity());
             System.out.println("sendWeChatMessage:" + res);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            res += ex.getMessage();
         }
+        return res;
 
     }
 }
