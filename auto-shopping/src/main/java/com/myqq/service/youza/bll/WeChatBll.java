@@ -19,8 +19,11 @@ import static com.myqq.service.youza.bll.ConstInfo.contentTypeUrl;
 @Service
 public class WeChatBll {
 
-    static String appId = "wxd3d83c9777dc66d8";
-    static String appSecret = "805daf72762211103e234acdc8a48623";
+    static String appId = "wx3a790a4b88cbeb67";//"wxd3d83c9777dc66d8";
+    static String appSecret = "58b5850c48f484654752e1df8a597592";//"805daf72762211103e234acdc8a48623";
+    static String templateUrl = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=";
+    static String openId="oTX2GvzcTrl7Xi1pE4fwQBEnQPkI";
+
 
     public static void main(String[] args) {
         String accessTokenJson =getAccessToken(appId, appSecret);

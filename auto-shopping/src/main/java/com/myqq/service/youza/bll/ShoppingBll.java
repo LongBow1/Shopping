@@ -364,34 +364,48 @@ public class ShoppingBll {
                 return;
             }
             GoodStockDataV2Data  goodStockData = goodStockDataV2.goodsData;
-            if(goodStockData != null && goodStockData.goods != null && goodStockData.skuInfo != null && !goodStockData.skuInfo.hideStock && goodStockData.skuInfo.skuStocks != null){
-                goodStockData.skuInfo.skuStocks.stream().filter(stock -> stock.stockNum > 0).forEach(stockItem -> {
-                    boolean isMatchSku = true;
-                    if(resetStockItem(stockItem,goodStockData.skuInfo)){
-                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("颜色")) && skuColorKeyWords != null && !skuColorKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("颜色")), keyword, false));
-                        }
-                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("尺码")) && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuSizeKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("尺码")), keyword, true));
-                        }
-                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("款式")) && skuStyleKeyWords != null && !skuStyleKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuStyleKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("款式")), keyword, false));
-                        }
-                        if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("规格")) && skuSpecKeyWords != null && !skuSpecKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuSpecKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("规格")), keyword, false));
-                        }
-                        if(isMatchSku){
-                            ToBuyGoodSkuInfo toBuyGoodSkuInfo = toBuyGoodInfo.toBuyGoodSkuInfos.stream().filter(info -> info.skuId.equals(stockItem.skuId)).findFirst().orElse(null);
-                            if(toBuyGoodSkuInfo == null){
-                                System.out.println("toBuyNew");
-                                toBuyGoodInfo.toBuyGoodSkuInfos.add(new ToBuyGoodSkuInfo(stockItem.skuId,stockItem.stockNum < toBuyNum ? stockItem.stockNum:toBuyNum , stockItem.toString()));
-                            }else {
-                                System.out.println("toBuyUpdate");
-                                toBuyGoodSkuInfo.num = stockItem.stockNum < toBuyNum ? stockItem.stockNum:toBuyNum;
+            if(goodStockData != null && goodStockData.goods != null && goodStockData.skuInfo != null && !goodStockData.skuInfo.hideStock){
+                if(goodStockData.skuInfo.skuStocks != null && !goodStockData.skuInfo.skuStocks.isEmpty()){
+                    goodStockData.skuInfo.skuStocks.stream().filter(stock -> stock.stockNum > 0).forEach(stockItem -> {
+                        boolean isMatchSku = true;
+                        if(resetStockItem(stockItem,goodStockData.skuInfo)){
+                            if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("颜色")) && skuColorKeyWords != null && !skuColorKeyWords.isEmpty()){
+                                isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("颜色")), keyword, false));
+                            }
+                            if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("尺码")) && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
+                                isMatchSku = isMatchSku && skuSizeKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("尺码")), keyword, true));
+                            }
+                            if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("款式")) && skuStyleKeyWords != null && !skuStyleKeyWords.isEmpty()){
+                                isMatchSku = isMatchSku && skuStyleKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("款式")), keyword, false));
+                            }
+                            if(stockItem.skuPropList.stream().anyMatch(propItem -> propItem.getK().contains("规格")) && skuSpecKeyWords != null && !skuSpecKeyWords.isEmpty()){
+                                isMatchSku = isMatchSku && skuSpecKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(stockItem.skuPropList.stream().filter(propItem -> propItem.getK().contains("规格")), keyword, false));
+                            }
+                            if(isMatchSku){
+                                ToBuyGoodSkuInfo toBuyGoodSkuInfo = toBuyGoodInfo.toBuyGoodSkuInfos.stream().filter(info -> info.skuId.equals(stockItem.skuId)).findFirst().orElse(null);
+                                if(toBuyGoodSkuInfo == null){
+                                    System.out.println("toBuyNew");
+                                    toBuyGoodInfo.toBuyGoodSkuInfos.add(new ToBuyGoodSkuInfo(stockItem.skuId,stockItem.stockNum < toBuyNum ? stockItem.stockNum:toBuyNum , stockItem.toString()));
+                                }else {
+                                    System.out.println("toBuyUpdate");
+                                    toBuyGoodSkuInfo.num = stockItem.stockNum < toBuyNum ? stockItem.stockNum:toBuyNum;
+                                }
                             }
                         }
+                    });
+                }else if(goodStockData.skuInfo.spuStock != null){
+                    if(goodStockData.skuInfo.spuStock.stockNum > 0){
+                        ToBuyGoodSkuInfo toBuyGoodSkuInfo = toBuyGoodInfo.toBuyGoodSkuInfos.stream().filter(info -> info.skuId.equals(goodStockData.skuInfo.spuStock.skuId)).findFirst().orElse(null);
+                        if(toBuyGoodSkuInfo == null){
+                            System.out.println("toBuyNew spuStock skuId");
+                            toBuyGoodInfo.toBuyGoodSkuInfos.add(new ToBuyGoodSkuInfo(goodStockData.skuInfo.spuStock.skuId,goodStockData.skuInfo.spuStock.stockNum < toBuyNum ? goodStockData.skuInfo.spuStock.stockNum:toBuyNum , ""));
+                        }else {
+                            System.out.println("toBuyUpdate collectionId");
+                            toBuyGoodSkuInfo.num = goodStockData.skuInfo.spuStock.stockNum < toBuyNum ? goodStockData.skuInfo.spuStock.stockNum:toBuyNum;
+                        }
                     }
-                });
+                }
+
             }
         }
     }

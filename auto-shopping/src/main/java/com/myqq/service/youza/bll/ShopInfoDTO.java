@@ -51,6 +51,7 @@ public class ShopInfoDTO {
         public List<SKUInfoPropDTO> props;
         public List<SKUStockKVDTO> skuStocks;
         public List<SKURelationDTO> skus;
+        public SKUStockKVDTO spuStock;
     }
 
     /**
