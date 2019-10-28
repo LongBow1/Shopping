@@ -831,4 +831,21 @@ public class ShopInfoDTO {
                     '}';
         }
     }
+
+    public static class WeChatMessageDTO{
+        public String touser;
+        public String msgtype;
+        public WeChatMessageDetailDTO text;
+    }
+
+    public static class WeChatMessageDetailDTO{
+        public String content;
+
+        @Override
+        public String toString() {
+            return "WeChatMessageDetailDTO{" +
+                    "content='" + content + '\'' +
+                    '}';
+        }
+    }
 }

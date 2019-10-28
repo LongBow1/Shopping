@@ -25,7 +25,7 @@ public class WeChatController {
     @ResponseBody
     @RequestMapping("/test")
     public String testMessage(){
-        return WeChatBll.sendMessageTest();
+        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}");
     }
 
 

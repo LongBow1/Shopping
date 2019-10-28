@@ -22,7 +22,8 @@ public class WeChatBll {
     static String appId = "wx3a790a4b88cbeb67";//"wxd3d83c9777dc66d8";
     static String appSecret = "58b5850c48f484654752e1df8a597592";//"805daf72762211103e234acdc8a48623";
     static String templateUrl = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=";
-    static String openId="oTX2GvzcTrl7Xi1pE4fwQBEnQPkI";
+    static String qqOpenId="oTX2GvzcTrl7Xi1pE4fwQBEnQPkI";
+    static String zzOpenId = "oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM";
 
 
     public static void main(String[] args) {
@@ -31,18 +32,18 @@ public class WeChatBll {
         System.out.println(jsonObject);
         String accessToken = jsonObject.get("access_token").toString();
         System.out.println("accessToken:"+accessToken);
-        sendMessage("test from local", accessToken);
-
+        sendMessage("{\"touser\":\""+qqOpenId+"\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}", accessToken);
+        sendMessage("{\"touser\":\""+qqOpenId+"\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}", accessToken);
     }
 
-    public static String sendMessageTest(){
-        String accessTokenJson =getAccessToken(appId, appSecret);
+    public static String sendMessage(String message){
+        String accessTokenJson = getAccessToken(appId, appSecret);
         JSONObject jsonObject = JSONObject.parseObject(accessTokenJson);
-        System.out.println(jsonObject);
+        //System.out.println(jsonObject);
         String accessToken = jsonObject.get("access_token").toString();
-        System.out.println("accessToken:"+accessToken);
-        String res = sendMessage("test from local", accessToken);
-        return "accessTokenJson:"+accessTokenJson + "\r\nres:"+res;
+        System.out.println("accessToken:" + accessToken);
+        sendMessage("{\"touser\":\"" + qqOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
+        return sendMessage("{\"touser\":\"" + zzOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
     }
 
     /**
@@ -84,6 +85,7 @@ public class WeChatBll {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             res += ex.getMessage();
+            System.out.println(res);
         }
         return res;
 
