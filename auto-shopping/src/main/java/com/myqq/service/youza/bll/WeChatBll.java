@@ -32,18 +32,28 @@ public class WeChatBll {
         System.out.println(jsonObject);
         String accessToken = jsonObject.get("access_token").toString();
         System.out.println("accessToken:"+accessToken);
-        sendMessage("{\"touser\":\""+qqOpenId+"\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}", accessToken);
-        sendMessage("{\"touser\":\""+qqOpenId+"\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}", accessToken);
+        //sendMessage("{\"touser\":\""+qqOpenId+"\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}", accessToken);
+        sendMessage("{\"touser\":\""+zzOpenId+"\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你老婆\"}}", accessToken);
     }
 
     public static String sendMessage(String message){
-        String accessTokenJson = getAccessToken(appId, appSecret);
-        JSONObject jsonObject = JSONObject.parseObject(accessTokenJson);
-        //System.out.println(jsonObject);
-        String accessToken = jsonObject.get("access_token").toString();
-        System.out.println("accessToken:" + accessToken);
-        sendMessage("{\"touser\":\"" + qqOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
-        return sendMessage("{\"touser\":\"" + zzOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
+        System.out.println(message);
+        if(message == null || message.isEmpty()){
+            return "";
+        }
+        try {
+            String accessTokenJson = getAccessToken(appId, appSecret);
+            JSONObject jsonObject = JSONObject.parseObject(accessTokenJson);
+            //System.out.println(jsonObject);
+            String accessToken = jsonObject.get("access_token").toString();
+            System.out.println("accessToken:" + accessToken);
+            sendMessage("{\"touser\":\"" + qqOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
+            return sendMessage("{\"touser\":\"" + zzOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println(ex.getMessage());
+            return "exception occur";
+        }
     }
 
     /**

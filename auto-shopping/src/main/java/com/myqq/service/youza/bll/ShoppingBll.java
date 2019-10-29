@@ -251,7 +251,7 @@ public class ShoppingBll {
                 alreadyBuyGoodInfo.addAll(toBuyGoodAndAddressInfos.stream().filter(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderNo() != null && !commitOrder.getData().getOrderNo().isEmpty()).count() == item.getReadyToBuyGoodNum()).collect(Collectors.toList()));
                 List<String> alreadyBuyLocalNos = alreadyBuyGoodInfo.stream().map(ToBuyGoodAndAddressInfo::getLocalNo).collect(Collectors.toList());
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderNo() != null && !commitOrder.getData().getOrderNo().isEmpty()).count() == item.getReadyToBuyGoodNum());
-                if(alreadyBuyLocalNos != null){
+                if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
                     WeChatBll.sendMessage("下单成功:"+intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodAndAddressInfo()).getDesc());
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                 }
