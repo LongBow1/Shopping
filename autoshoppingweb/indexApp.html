@@ -4,7 +4,7 @@
 		<meta charset="utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
-		<title>抢单Beta</title>
+		<title>抢单AppBeta</title>
 		 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<script src="js/jquery.min.js" type="text/javascript"></script>
 		<link href="css/amazeui.min.css" type="text/css" rel="stylesheet" />
@@ -14,8 +14,10 @@
 		//购物数量加减
 		$(function(){
 			//39.105.64.90
-			var requestUrlPrefix = "http://39.105.64.90:80/order/";
-			var sessionid =  $("#sessioninput").val();
+			var auth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1NzUwODU2MDQsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiNGM4YTUxYzEtMjk5MC00NmMyLThjYmQtYmJmMzdiOWYwMmEwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.L6rnyIDf4xxCZ62L1oNvR4rCRyHx_OpybY2iA_4D4527AEjnhg9-XkN1B1Nbg6mg1qeQl0Omg3_hrkn_aQMUZJaunDAbetr41qrq8H7Fzh-8XC8Ui3PRLCo4KGOI4wSegnmqgyWGwJfskz1yTmU2LWNxnFF_-ateeb2NEL6RG7Rdx3wGfwcHBuQRf1k7it7zKLWTonaX5N8JPIOg-LTYOKtjG3H4b6B2aw80_crMU6RSg1lIDiqRu0HA2dLhYJaF6UIaR8rAKiwQI7EFwQvoN6DBY6rFik-s5aqMoRQu0hu1Ir9bRLzff3UKIhsZ6i4jHxekj-nNj2igAfhSHzPr_A";
+			var memberId = "e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735";
+			var requestUrlPrefix = "http://39.105.64.90:80/orderApp/";
+			var sessionid =  $("#authinput").val();
 			checkSession();
 			var timeClock ;
 			$('#testsession').click(function(){
@@ -40,7 +42,7 @@
 					var goodSpecs = new Array();
 					var receipts = new Array();
 					checkedRecepts.each(function(i,e){
-						receipts.push($(e).data("dataid"));
+						receipts.push($(e).data("dataaddressid"));
 					});
 					$(".intendgoodcolor").each(function(i,e){
 						if($(e).val() != null && $(e).val().trim().length > 0){
@@ -73,9 +75,9 @@
 						"needPresale":$('#intendgoodpresale').is(':checked')
 					}
 					var intentInfo = {
-					"session":$("#sessioninput").val().trim(),
+					"auth":$("#authinput").val().trim(),
 					"intendOrderInfo": JSON.stringify(intendOrder),
-					"shopInfo":getShopInfo()
+					"memberId":$("#memberidinput").val().trim()
 					}
 		
 				$.post(requestUrlPrefix+"createIntendOrder",intentInfo,function(res){
@@ -98,9 +100,9 @@
 					intendLocalNo.push($(e).data("id"));
 				})
 				var commitOrderInfo = {
-					session:$("#sessioninput").val().trim(),
+					auth:$("#authinput").val().trim(),
 					localNos:intendLocalNo.join(","),
-					"shopInfo":getShopInfo()
+					memberId:$("#memberidinput").val().trim()
 				}
 				$.post(requestUrlPrefix+"autoShopping",commitOrderInfo, function(result){
 					//$(this).html(result);
@@ -119,9 +121,9 @@
 			$('#canceltppayorderbtn').click(function(){
 				if(confirm("取消全部待支付订单？")){
 						var cancelOrderInfo = {
-						"session":$("#sessioninput").val().trim(),
+						"auth":$("#authinput").val().trim(),
 						"orderNos":"",
-						"shopInfo":getShopInfo()
+						"memberId":$("#memberidinput").val().trim()
 					}
 					$.post(requestUrlPrefix+"cancelOrder", cancelOrderInfo, function(result){
 						$("#topayorderlistlabel").html(result);
@@ -134,8 +136,8 @@
 			$("#clearallinfo").click(function(){	
 				if(confirm("清空记录将停止下单!")){
 					var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":$("#memberidinput").val().trim()
 					}
 					$.post(requestUrlPrefix+"clearAllOrderInfo",postInfo, function(result){
 						if(!result){
@@ -148,8 +150,8 @@
 		
 			$('#tosendorderlist').click(function(){
 				var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":$("#memberidinput").val().trim()
 				}
 				$.post(requestUrlPrefix+"getToSendOrderList",postInfo, function(result){
 					
@@ -174,8 +176,8 @@
 			$('#stopcommitorder').click(function(){
 				//window.clearInterval(timeClock);
 				var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":$("#memberidinput").val().trim()
 				}
 				$.post(requestUrlPrefix+"stopCommitOrder",postInfo, function(result){					
 					if(result){		
@@ -196,9 +198,9 @@
 					deleteIntendLocalNo.push($(e).data("id"));
 				})
 				var delteIntendOrderInfo = {
-					session:$("#sessioninput").val().trim(),
+					auth:$("#authinput").val().trim(),
 					localNos:deleteIntendLocalNo.join(","),
-					"shopInfo":getShopInfo()		
+					memberId:$("#memberidinput").val().trim()	
 				}
 				$.post(requestUrlPrefix+"deleteIntendOrderList",delteIntendOrderInfo, function(result){
 					if(result){
@@ -244,19 +246,19 @@
 			})
 
 			$('#shopselect').change(function(){
-				$("#sessioninput").val($('#shopselect option:selected').data('sessionid'));
+				$("#authinput").val($('#shopselect option:selected').data('sessionid'));
 			})
 
 			function checkSession(){
-				sessionid =  $("#sessioninput").val();
+				sessionid =  $("#authinput").val();
 				if(sessionid == null || sessionid.trim().length == 0){
 					alert("凭证不能为空!");
 					return false;
 				}
-				sessionid =  $("#sessioninput").val().trim();
+				sessionid =  $("#authinput").val().trim();
 				var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":$("#memberidinput").val().trim()//getShopInfo()
 				}
 					$.post(requestUrlPrefix+"testConnect",postInfo, function(result){
 						if(result == true){					
@@ -266,8 +268,8 @@
 								if(address != null && address.length > 0){
 									$("#receptdiv").empty();
 									var addressInfo = JSON.parse(address);							
-									$.each(addressInfo.addressList, function(i,e){
-										$("#receptdiv").append("<input class='addintendorder' type='checkbox' id='"+ e.id +"' data-dataid='" + e.id+"' data-username='"+ e.userName +"'>"+e.userName +"  "+ e.addressDetail +"</input><br/>");
+									$.each(addressInfo, function(i,e){
+										$("#receptdiv").append("<input class='addintendorder' type='checkbox' id='"+ e.addressId +"' data-dataaddressid='" + e.addressId+"' data-username='"+ e.receiveName +"'>"+e.receiveName +"  "+e.province+e.city+e.area+ e.address +"</input><br/>");
 											addressIdArray.push(e.id);																
 									});
 									$("#connectpromptinput").val("成功,共"+addressIdArray.length+"个人");
@@ -287,8 +289,9 @@
 
 			function refreshIntendOrderList(){
 				var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":memberId
+					//"shopInfo":getShopInfo()
 				}
 				$.post(requestUrlPrefix+"getIntendOrderList",postInfo, function(result){
 					//$(this).html(result);
@@ -311,10 +314,10 @@
 			}
 		
 			function refreshAlreadBuyOrderList(){
-				var sessionid =  $("#sessioninput").val().trim();
+				var sessionid =  $("#authinput").val().trim();
 				var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":$("#memberidinput").val().trim()
 				}
 				var readyOrders = new Array();
 				var commitOrders = new Array();
@@ -347,7 +350,7 @@
 							$.each(commitOrders, function(i,e){
 								var orderNos = ""; 
 							$.each(e.commitOrderInfoList, function (i2,e2){
-								orderNos = orderNos+e2.data.orderNo+" ";
+								orderNos = orderNos+e2.data.orderId+" ";
 								realOrderNum++;
 							})
 							$("#commitorderlistdiv").append("<input class='alreadybuyorderlist' type='checkbox' id='"+ e.localNo +"' data-id='" + e.localNo+"'>"+ e.desc +",订单号:" +orderNos +"</input><br/>");
@@ -360,8 +363,8 @@
 		
 			function refreshToPayOrderInfo(){
 				var postInfo = {
-					"session":$("#sessioninput").val().trim(),
-					"shopInfo":getShopInfo()
+					"auth":$("#authinput").val().trim(),
+					"memberId":$("#memberidinput").val().trim()
 				}
 				$.post(requestUrlPrefix+"getToPayOrderList",postInfo, function(result){
 					
@@ -382,18 +385,18 @@
 				})
 			}
 		
-		function refreshAllOrderInfo(){
-			sessionid =  $("#sessioninput").val().trim();
-			refreshIntendOrderList();
-			refreshAlreadBuyOrderList();
-			refreshToPayOrderInfo();
-		}
+		// function refreshAllOrderInfo(){
+		// 	sessionid =  $("#authinput").val().trim();
+		// 	refreshIntendOrderList();
+		// 	refreshAlreadBuyOrderList();
+		// 	refreshToPayOrderInfo();
+		// }
 
 		function changeOrderCommittingStatus(){
-			var sessionid =  $("#sessioninput").val().trim();
+			var sessionid =  $("#authinput").val().trim();
 			var postInfo = {
-				"session":$("#sessioninput").val().trim(),
-				"shopInfo":getShopInfo()
+				"auth":$("#authinput").val().trim(),
+				"memberId":$("#memberidinput").val().trim()
 			}
 			var readyOrders = new Array();
 			$.post(requestUrlPrefix+"getReadyToBuyOrderList",postInfo,function(result){
@@ -418,9 +421,9 @@
 					intendLocalNo.push($(e).data("id"));
 				})
 				var commitOrderInfo = {
-					session:$("#sessioninput").val().trim(),
+					auth:$("#authinput").val().trim(),
 					localNos:intendLocalNo.join(","),
-					"shopInfo":getShopInfo()
+					memberId:$("#memberidinput").val().trim()
 				}
 				$.post(requestUrlPrefix+"autoShopping",commitOrderInfo, function(result){
 					//$(this).html(result);
@@ -487,10 +490,11 @@
 	<body>
 		<header data-am-widget="header" class="am-header am-header-default sq-head ">
 		   <div class="am-header-nav">
-					<label for="sessioninput" title="凭证" style="color: red; size: 10px">凭证: </label>
+					<label for="authinput" title="凭证" style="color: red; size: 10px">凭证: </label>
 					<!-- KDTSESSIONID=YZ593591929204215808YZiLHRuC4Q -->
-					<input id="sessioninput" title="这个位置填凭证,必填的" type="text" value="YZ588805925511446528YZoNbQsG4R" style="color: black;width:280px">		
-				 <!-- <label for="testsession" id="testsessionlabel" title="这个位置填凭证" style="color: green; size: 10px"></label> -->
+					<input id="authinput" title="这个位置填凭证,必填的" type="text" value="bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1NzUwODU2MDQsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiNGM4YTUxYzEtMjk5MC00NmMyLThjYmQtYmJmMzdiOWYwMmEwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.L6rnyIDf4xxCZ62L1oNvR4rCRyHx_OpybY2iA_4D4527AEjnhg9-XkN1B1Nbg6mg1qeQl0Omg3_hrkn_aQMUZJaunDAbetr41qrq8H7Fzh-8XC8Ui3PRLCo4KGOI4wSegnmqgyWGwJfskz1yTmU2LWNxnFF_-ateeb2NEL6RG7Rdx3wGfwcHBuQRf1k7it7zKLWTonaX5N8JPIOg-LTYOKtjG3H4b6B2aw80_crMU6RSg1lIDiqRu0HA2dLhYJaF6UIaR8rAKiwQI7EFwQvoN6DBY6rFik-s5aqMoRQu0hu1Ir9bRLzff3UKIhsZ6i4jHxekj-nNj2igAfhSHzPr_A" style="color: black;width:100px">		
+					<input id="memberidinput" title="这个位置填凭证,必填的" type="text" value="e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735" style="color: black;width:100px">		
+					<!-- <label for="testsession" id="testsessionlabel" title="这个位置填凭证" style="color: green; size: 10px"></label> -->
 	          <!-- <button type="button" class="am-btn am-btn-warning" id="doc-confirm-toggle" style="background: none; border: 0; font-size: 24px;">
                  <i class="am-header-icon am-icon-trash"></i>
 	          </button> -->
@@ -558,14 +562,11 @@
  <div style="height: 330px;" ></div>
  
 	<div class="fix-bot" style="height: 300px;font-size: 10px; bottom: auto; " >
-			<label style="color: red">意向商品关键信息:</label>
-			<select id="shopselect">				
-				<!-- kdtid|shopid|goodslisttagid -->
+			<!-- <label style="color: red">意向商品关键信息:</label>
+			<select id="shopselect">								
 				<option value="shopyxyz" data-sessionid="YZ588805925511446528YZoNbQsG4R" data-shopinfo="42536286|42728454|106033118">严选优质</option>
 				<option value="shoppzyx" data-sessionid="YZ581208139995590656YZaplnXugK" data-shopinfo="41763685|41955853|103968846">品质优秀</option>
-				<!-- <option value="shopyxyz" data-sessionid="YZ590348618200805376YZb81UN8KM" data-shopinfo="42536286|42728454|106033118">严选优质</option>
-				<option value="shoppzyx" data-sessionid="YZ587000853467045888YZNXBpIsx2" data-shopinfo="41763685|41955853|103968846">品质优秀</option> -->
-			</select>
+			</select> -->
 			<br>
 			<label for="intendgoodshotname" style="color: red; size: 10px">名称关键字: </label>
 			<input id="intendgoodshotname" type="text" title="必填,模糊匹配" value="必填,模糊匹配" style="color: black;width: 100px;" 

@@ -75,6 +75,14 @@ public class OrderController {
     public String getSendedOrderList(@RequestParam("session")String kdtSession, @RequestParam("shopInfo")String shopInfo){
         return JSONObject.toJSONString(AutoShoppingEntry.getSendedOrderList(kdtSession,AutoShoppingEntry.getIdByIndex(shopInfo,0)));
     }
+
+    /**
+     * 创建意向单
+     * @param kdtSession
+     * @param intendOrderInfoStr
+     * @param shopInfo
+     * @return
+     */
     @RequestMapping("/createIntendOrder")
     public String createIntendOrder(@RequestParam("session")String kdtSession, @RequestParam("intendOrderInfo") String intendOrderInfoStr, @RequestParam("shopInfo")String shopInfo){
         IntendOrderDTO intendOrderInfo = null;
@@ -111,4 +119,5 @@ public class OrderController {
         String result = AutoShoppingEntry.startAutoShopping(kdtSession, localNos,AutoShoppingEntry.getIdByIndex(shopInfo,0),AutoShoppingEntry.getIdByIndex(shopInfo,1),AutoShoppingEntry.getIdByIndex(shopInfo,2));
         return result;
     }
+
 }

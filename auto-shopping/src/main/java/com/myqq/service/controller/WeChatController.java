@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +24,15 @@ public class WeChatController {
     }
 
     @ResponseBody
-    @RequestMapping("/test")
-    public String testMessage(){
-        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"爱你爱你爱你\"}}");
+    @RequestMapping("/sendMsg")
+    public String sendMessage(@RequestParam("msg")String message){
+        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}");
+    }
+
+    @ResponseBody
+    @RequestMapping("/send")
+    public String sendMessage(){
+        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"哈哈哈测试收件人的\"}}");
     }
 
 

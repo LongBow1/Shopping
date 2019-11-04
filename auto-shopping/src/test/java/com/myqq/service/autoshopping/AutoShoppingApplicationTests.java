@@ -5,7 +5,13 @@ import com.myqq.service.youza.entity.IntendOrderDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +46,9 @@ class AutoShoppingApplicationTests {
 	@Test
 	public void otherTest(){
 
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		System.out.println(ZoneId.systemDefault());
+		System.out.println(dateTimeFormatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(1572763513273L), ZoneId.systemDefault())));
 		System.out.printf(UUID.randomUUID().toString());
 	}
 }
