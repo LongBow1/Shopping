@@ -1,6 +1,7 @@
 package com.myqq.service.autoshopping;
 
 import com.alibaba.fastjson.JSONObject;
+import com.myqq.service.youza.bll.ShopInfoDTO;
 import com.myqq.service.youza.entity.IntendOrderDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,6 +48,19 @@ class AutoShoppingApplicationTests {
 
 	@Test
 	public void otherTest(){
+
+		ShopInfoDTO.ToBuyGoodSkuInfo toBuyGoodSkuInfo = new ShopInfoDTO.ToBuyGoodSkuInfo(1,1,"");
+		ShopInfoDTO.ToBuyGoodSkuInfo toBuyGoodSkuInfo2 = new ShopInfoDTO.ToBuyGoodSkuInfo(1,2,"");
+		ShopInfoDTO.ToBuyGoodSkuInfo toBuyGoodSkuInfo3 = new ShopInfoDTO.ToBuyGoodSkuInfo(1,3,"");
+		List<ShopInfoDTO.ToBuyGoodSkuInfo> toBuyGoodSkuInfos = new ArrayList<>();
+		toBuyGoodSkuInfos.add(toBuyGoodSkuInfo);
+		toBuyGoodSkuInfos.add(toBuyGoodSkuInfo2);
+		toBuyGoodSkuInfos.add(toBuyGoodSkuInfo3);
+		toBuyGoodSkuInfo.num = 4;
+		toBuyGoodSkuInfos.add(toBuyGoodSkuInfo);
+
+		toBuyGoodSkuInfos.remove(toBuyGoodSkuInfo);
+		System.out.println(toBuyGoodSkuInfo.equals(toBuyGoodSkuInfo2));
 
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		System.out.println(ZoneId.systemDefault());

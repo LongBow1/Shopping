@@ -130,11 +130,11 @@ public class RequestBll {
                     if(commitOrderInfo.getData() != null){
                         toBuyGoodSkuInfo.orderNo = commitOrderInfo.getData().getOrderNo();
                         commitOrderInfo.getData().setSkuInfo(toBuyGoodSkuInfo.sku);
+                        if(toBuy.getCommitOrderInfoList() == null){
+                            toBuy.setCommitOrderInfoList(new ArrayList<>());
+                        }
+                        toBuy.getCommitOrderInfoList().add(commitOrderInfo);
                     }
-                    if(toBuy.getCommitOrderInfoList() == null){
-                        toBuy.setCommitOrderInfoList(new ArrayList<>());
-                    }
-                    toBuy.getCommitOrderInfoList().add(commitOrderInfo);
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
