@@ -18,7 +18,7 @@ public class ConstInfo {
     /*static final String getgoodListUrl = "https://shop41955853.youzan.com/wscshop/showcase/goodsList.json?tagId=103968846&page=1&pageSize=20&goodsIds=&goodsFrom=1&isAdv=0&offlineId=0&goodsNumber=80";
     static String goodsUrl2 = "https://shop41955853.youzan.com/wscshop/showcase/goods/recommend/goods.json?bizName=goods_detail&goodsId%5B%5D=467490122&alias=1y2wd7y69gsth&storeId=&itemSize=10";*/
 
-    static final String getgoodListUrl = "https://shop{0}.youzan.com/wscshop/showcase/goodsList.json?tagId={1}&page=1&pageSize=20&goodsIds=&goodsFrom=1&isAdv=0&offlineId=0&goodsNumber=80";
+    static final String getgoodListUrl = "https://shop{0}.youzan.com/wscshop/showcase/goodsList.json?tagId={1}&page=1&pageSize=60&goodsIds=&goodsFrom=1&isAdv=0&offlineId=0&goodsNumber=80";
 
 
     static final String buyUrl = "https://cashier.youzan.com/pay/wsctrade/order/buy/v2/bill.json";

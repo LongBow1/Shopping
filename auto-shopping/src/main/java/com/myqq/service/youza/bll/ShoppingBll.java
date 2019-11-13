@@ -158,9 +158,10 @@ public class ShoppingBll {
                 List<String> skuSpecKeyWords = goodInfo.getGoodSpecKeyWords();
 
                 List<ToBuyGoodInfo> realToBuyGoodList = new ArrayList<>(10);
-                if(goodInfo.getToBuyGoodInfoList() == null){
+                /*if(goodInfo.getToBuyGoodInfoList() == null){
                     goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
-                }
+                }*/
+                goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
                 GoodsList goodsList = JSONObject.parseObject(goodsInfo, GoodsList.class);
                 if(goodsList != null && goodsList.data != null && goodsList.data.list != null){
                     //非预售
