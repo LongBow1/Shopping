@@ -135,7 +135,7 @@ public class OrderForAppController {
      */
     @RequestMapping("/syncAddress")
     public boolean syncAddress(){
-        return AutoShoppingEntryForApp.syncAddress(qqAuth, qqMemberId);
+        return AutoShoppingEntryForApp.syncAddress(zzAuth, zzMemberId);
     }
 
     /**

@@ -14,8 +14,8 @@
 		//购物数量加减
 		$(function(){
 			//39.105.64.90
-			var auth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMzY2NjE0NzkzNyIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiI2OGRjMTI5Ni00MmM2LWZkODktM2I1ZS0wNTk3ZGYyNjI5NzEiLCJleHAiOjE1NzcwODE5NDYsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiZDJiZDkxNzQtYjFhNi00OWEzLWI2MzEtNTgzZDc5Yjg2YWNhIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.deScgfhLs5Nw_SJWI0O52wkgegnsMby7Uq48fQy_6viRvbkZZq9F_vYTVfzTTM4Vsi4Ru6Rki0Znsxe7HrC5-hO6ChE5iuhFNbnYDncaOmop-neAjM9iuK5dWLUIdqQ02uYnSMf6OaokUOdCS8Y7S0MLfRp0cDO0NM1X6aX1quW2uhZJ2c9jrgqh4qNdbVOS_ZZ2nNf5UpkxMhGKk0ydwJ_f5sFmzl5K0bz7JMkEiz8a7BPGJwGjC_l6lpaNprQXEKbpGirVdJpE5QG9JvrA33oWmc4P6hwMq1s6pHjCAF60Wb9vF6oHcs-MoXq3kgkopmI0BGibChvA6ZViNbiqXA";
-			var memberId = "68dc1296-42c6-fd89-3b5e-0597df262971";
+			var auth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1NzUwODU2MDQsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiNGM4YTUxYzEtMjk5MC00NmMyLThjYmQtYmJmMzdiOWYwMmEwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.L6rnyIDf4xxCZ62L1oNvR4rCRyHx_OpybY2iA_4D4527AEjnhg9-XkN1B1Nbg6mg1qeQl0Omg3_hrkn_aQMUZJaunDAbetr41qrq8H7Fzh-8XC8Ui3PRLCo4KGOI4wSegnmqgyWGwJfskz1yTmU2LWNxnFF_-ateeb2NEL6RG7Rdx3wGfwcHBuQRf1k7it7zKLWTonaX5N8JPIOg-LTYOKtjG3H4b6B2aw80_crMU6RSg1lIDiqRu0HA2dLhYJaF6UIaR8rAKiwQI7EFwQvoN6DBY6rFik-s5aqMoRQu0hu1Ir9bRLzff3UKIhsZ6i4jHxekj-nNj2igAfhSHzPr_A";
+			var memberId = "e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735";
 			var requestUrlPrefix = "http://39.105.64.90:80/orderApp/";
 			var sessionid =  $("#authinput").val();
 			checkSession();
@@ -492,8 +492,8 @@
 		   <div class="am-header-nav">
 					<label for="authinput" title="凭证" style="color: red; size: 10px">凭证: </label>
 					<!-- KDTSESSIONID=YZ593591929204215808YZiLHRuC4Q -->
-					<input id="authinput" title="这个位置填凭证,必填的" type="text" value="bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMzY2NjE0NzkzNyIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiI2OGRjMTI5Ni00MmM2LWZkODktM2I1ZS0wNTk3ZGYyNjI5NzEiLCJleHAiOjE1NzcwODE5NDYsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiZDJiZDkxNzQtYjFhNi00OWEzLWI2MzEtNTgzZDc5Yjg2YWNhIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.deScgfhLs5Nw_SJWI0O52wkgegnsMby7Uq48fQy_6viRvbkZZq9F_vYTVfzTTM4Vsi4Ru6Rki0Znsxe7HrC5-hO6ChE5iuhFNbnYDncaOmop-neAjM9iuK5dWLUIdqQ02uYnSMf6OaokUOdCS8Y7S0MLfRp0cDO0NM1X6aX1quW2uhZJ2c9jrgqh4qNdbVOS_ZZ2nNf5UpkxMhGKk0ydwJ_f5sFmzl5K0bz7JMkEiz8a7BPGJwGjC_l6lpaNprQXEKbpGirVdJpE5QG9JvrA33oWmc4P6hwMq1s6pHjCAF60Wb9vF6oHcs-MoXq3kgkopmI0BGibChvA6ZViNbiqXA" style="color: black;width:100px">		
-					<input id="memberidinput" title="这个位置填凭证,必填的" type="text" value="68dc1296-42c6-fd89-3b5e-0597df262971" style="color: black;width:100px">		
+					<input id="authinput" title="这个位置填凭证,必填的" type="text" value="bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1NzUwODU2MDQsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiNGM4YTUxYzEtMjk5MC00NmMyLThjYmQtYmJmMzdiOWYwMmEwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.L6rnyIDf4xxCZ62L1oNvR4rCRyHx_OpybY2iA_4D4527AEjnhg9-XkN1B1Nbg6mg1qeQl0Omg3_hrkn_aQMUZJaunDAbetr41qrq8H7Fzh-8XC8Ui3PRLCo4KGOI4wSegnmqgyWGwJfskz1yTmU2LWNxnFF_-ateeb2NEL6RG7Rdx3wGfwcHBuQRf1k7it7zKLWTonaX5N8JPIOg-LTYOKtjG3H4b6B2aw80_crMU6RSg1lIDiqRu0HA2dLhYJaF6UIaR8rAKiwQI7EFwQvoN6DBY6rFik-s5aqMoRQu0hu1Ir9bRLzff3UKIhsZ6i4jHxekj-nNj2igAfhSHzPr_A" style="color: black;width:100px">		
+					<input id="memberidinput" title="这个位置填凭证,必填的" type="text" value="e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735" style="color: black;width:100px">		
 					<!-- <label for="testsession" id="testsessionlabel" title="这个位置填凭证" style="color: green; size: 10px"></label> -->
 	          <!-- <button type="button" class="am-btn am-btn-warning" id="doc-confirm-toggle" style="background: none; border: 0; font-size: 24px;">
                  <i class="am-header-icon am-icon-trash"></i>
