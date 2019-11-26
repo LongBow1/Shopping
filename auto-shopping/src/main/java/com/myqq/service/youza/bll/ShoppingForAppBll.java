@@ -143,8 +143,9 @@ public class ShoppingForAppBll {
                             isMatchSku = isMatchSku && skuSpecKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("规格")), keyword, false));
                         }
                     }
-                    finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
+                    //finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
                     if(isMatchSku){
+                        finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
                         finalToBuyGoodInfo.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                     }
                 });
@@ -245,7 +246,7 @@ public class ShoppingForAppBll {
                 try {
                     String commitResult = task.get();
                     System.out.println(commitResult);
-                    if(commitResult != null && commitResult.contains("下单太频繁")){
+                    if(commitResult != null && (commitResult.contains("下单太频繁") || commitResult.contains("系统繁忙"))){
                         Thread.sleep(1000);
                         System.out.println(Thread.currentThread().getName()+" 暂停1000 ");
                     }

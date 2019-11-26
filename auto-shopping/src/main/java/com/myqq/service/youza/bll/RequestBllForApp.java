@@ -130,7 +130,7 @@ public class RequestBllForApp {
                     "    \"province\": \"%s\",\n" +
                     "    \"city\": \"%s\",\n" +
                     "    \"area\": \"%s\",\n" +
-                    "    \"street\": \"%s\",\n" +
+                    //"    \"street\": \"%s\",\n" +
                     "    \"houseNumber\": \"%s\",\n" +
                     "    \"zipCode\": \"\",\n" +
                     "    \"receiverName\": \"%s\",\n" +
@@ -144,7 +144,7 @@ public class RequestBllForApp {
                     "        }\n" +
                     "    ]\n" +
                     "}";
-            StringBuilder commitOrderContentSB = new StringBuilder(String.format(postDataFormat, addressDetailInfo.getProvince(), addressDetailInfo.getCity(), addressDetailInfo.getArea(), addressDetailInfo.getAddress(), addressDetailInfo.getAddress(), addressDetailInfo.getReceiveName(), addressDetailInfo.getReceivePhone(), buyGood.getGoodsId(), toBuyNum));
+            StringBuilder commitOrderContentSB = new StringBuilder(String.format(postDataFormat, addressDetailInfo.getProvince(), addressDetailInfo.getCity(), addressDetailInfo.getArea(),  addressDetailInfo.getAddress(), addressDetailInfo.getReceiveName(), addressDetailInfo.getReceivePhone(), buyGood.getGoodsId(), toBuyNum));
             entity = new StringEntity(commitOrderContentSB.toString(),"utf-8");
         }catch (Exception ex){
             operationInfo += ex.getMessage();

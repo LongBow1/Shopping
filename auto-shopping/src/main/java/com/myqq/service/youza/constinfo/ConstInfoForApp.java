@@ -22,7 +22,7 @@ public class ConstInfoForApp {
      * 获取商品列表信息--前20个
      * get
      */
-    public static final String getGoodListUrlForApp = "http://www.baiqiujie.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=30";
+    public static final String getGoodListUrlForApp = "http://www.baiqiujie.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=60";
 
     /**
      * 查询商品概要信息(getGoodListUrlForApp返回goodsId)
@@ -44,23 +44,23 @@ public class ConstInfoForApp {
      * 待支付
      * get
      */
-    public static String getToPayGoodDetailUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=20&status=pending";
+    public static String getToPayGoodDetailUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=pending";
     /**
      * 待发货
      * get
      */
-    public static String getToSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=20&status=payed";
+    public static String getToSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=payed";
 
     /**
      * 待收货
      * get
      */
-    public static String getSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=20&status=posted_out";
+    public static String getSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=posted_out";
     /**
      * 已完成订单
      * get
      */
-    public static String getCompletedGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=20&status=received";
+    public static String getCompletedGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=received";
 
     /**
      * 取消订单(参数为orderId--下单commitOrderUrlForApp返回)
