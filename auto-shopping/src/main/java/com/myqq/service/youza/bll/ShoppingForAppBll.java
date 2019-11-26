@@ -127,6 +127,11 @@ public class ShoppingForAppBll {
                 //无属性信息时，忽略设置的属性信息
                 boolean hasAttrInfo = goodDataDetail.getSpecList() != null && !goodDataDetail.getSpecList().isEmpty();
                 resetGoodDetailSpecListInfo(goodDataDetail);
+                goodDataDetail.getGoodsList().forEach(item -> {
+                    if(item.getInventory() == null){
+                        item.setInventory(goodItem.getInventoryAmount());
+                    }
+                });
                 goodDataDetail.getGoodsList().stream().filter(item -> Optional.ofNullable(item.getInventory()).orElse(0) > 0).forEach(goodDetail -> {
                     boolean isMatchSku = true;
                     if(hasAttrInfo){
