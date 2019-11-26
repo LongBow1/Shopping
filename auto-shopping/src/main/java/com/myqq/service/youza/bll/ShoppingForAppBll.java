@@ -5,6 +5,7 @@ import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,17 +66,17 @@ public class ShoppingForAppBll {
                                 ShoppingForAppDTO.GoodDataStockDetailDTO toBuyGoodInfo = realToBuyGoodList.stream().filter(good -> good.getMainGoodsId().equalsIgnoreCase(item.getGoodsId())).findFirst().orElse(null);
                                 if(toBuyGoodInfo == null){
                                     toBuyGoodInfo = new ShoppingForAppDTO.GoodDataStockDetailDTO();
-                                    realToBuyGoodList.add(toBuyGoodInfo);
+                                    //realToBuyGoodList.add(toBuyGoodInfo);
                                     toBuyGoodInfo.setMainGoodsId(item.getGoodsId());
                                     toBuyGoodInfo.setName(item.getName());
 
                                     ShoppingForAppDTO.GoodDataStockDetailDTO finalToBuyGoodInfo1 = toBuyGoodInfo;
-                                    System.out.println("getToBuyGoodSkuInfoDetail buy new :"+JSONObject.toJSONString(goodInfo));
-                                    taskList.add(executorServiceForGoodDetail.submit(() -> {getToBuyGoodSkuInfoDetail(item, finalToBuyGoodInfo1, skuColorKeyWords,skuSizeKeyWords, skuStyleKeyWords, skuSpecKeyWords, goodInfo.getToBuyNum(), auth); return Boolean.TRUE; }));
+                                    System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" getToBuyGoodSkuInfoDetail buy new :"+JSONObject.toJSONString(goodInfo));
+                                    taskList.add(executorServiceForGoodDetail.submit(() -> {getToBuyGoodSkuInfoDetail(item, finalToBuyGoodInfo1, skuColorKeyWords,skuSizeKeyWords, skuStyleKeyWords, skuSpecKeyWords, goodInfo.getToBuyNum(), auth, realToBuyGoodList); return Boolean.TRUE; }));
                                 }else {
                                     ShoppingForAppDTO.GoodDataStockDetailDTO finalToBuyGoodInfo = toBuyGoodInfo;
-                                    System.out.println("getToBuyGoodSkuInfoDetail update:"+JSONObject.toJSONString(goodInfo));
-                                    taskList.add(executorServiceForGoodDetail.submit(() -> {getToBuyGoodSkuInfoDetail(item, finalToBuyGoodInfo, skuColorKeyWords,skuSizeKeyWords, skuStyleKeyWords, skuSpecKeyWords, goodInfo.getToBuyNum(), auth); return true;}));
+                                    System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+" getToBuyGoodSkuInfoDetail update:"+JSONObject.toJSONString(goodInfo));
+                                    taskList.add(executorServiceForGoodDetail.submit(() -> {getToBuyGoodSkuInfoDetail(item, finalToBuyGoodInfo, skuColorKeyWords,skuSizeKeyWords, skuStyleKeyWords, skuSpecKeyWords, goodInfo.getToBuyNum(), auth, realToBuyGoodList); return true;}));
                                 }
                             }
                         }
@@ -103,8 +104,7 @@ public class ShoppingForAppBll {
 
     /**
      * 构建商品明细
-     *
-     * @param goodItem
+     *  @param goodItem
      * @param finalToBuyGoodInfo
      * @param skuColorKeyWords
      * @param skuSizeKeyWords
@@ -112,8 +112,9 @@ public class ShoppingForAppBll {
      * @param skuSpecKeyWords
      * @param toBuyNum
      * @param auth
+     * @param realToBuyGoodList
      */
-    private static void getToBuyGoodSkuInfoDetail(ShoppingForAppDTO.GoodsListDataRowDTO goodItem, ShoppingForAppDTO.GoodDataStockDetailDTO finalToBuyGoodInfo, List<String> skuColorKeyWords, List<String> skuSizeKeyWords, List<String> skuStyleKeyWords, List<String> skuSpecKeyWords, int toBuyNum, String auth) {
+    private static void getToBuyGoodSkuInfoDetail(ShoppingForAppDTO.GoodsListDataRowDTO goodItem, ShoppingForAppDTO.GoodDataStockDetailDTO finalToBuyGoodInfo, List<String> skuColorKeyWords, List<String> skuSizeKeyWords, List<String> skuStyleKeyWords, List<String> skuSpecKeyWords, int toBuyNum, String auth, List<ShoppingForAppDTO.GoodDataStockDetailDTO> realToBuyGoodList) {
         StringBuilder operationInfo = new StringBuilder("");
         try {
             String goodDataInfo = RequestBllForApp.doGet(MessageFormat.format(getGoodDataDetailUrlForApp, goodItem.getGoodsId()), auth);
@@ -150,8 +151,14 @@ public class ShoppingForAppBll {
                     }
                     //finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
                     if(isMatchSku){
-                        finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
-                        finalToBuyGoodInfo.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
+                        ShoppingForAppDTO.GoodDataStockDetailDTO tmpToBuy = new ShoppingForAppDTO.GoodDataStockDetailDTO();
+                        tmpToBuy.setMainGoodsId(goodItem.getGoodsId());
+                        tmpToBuy.setName(goodItem.getName());
+                        tmpToBuy.setGoodsId(goodDetail.getGoodsId());
+                        tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
+                        realToBuyGoodList.add(tmpToBuy);
+                        //finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
+                        //finalToBuyGoodInfo.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                     }
                 });
             }
@@ -242,7 +249,7 @@ public class ShoppingForAppBll {
                         //已下单排除
                         boolean canCommitOrder = buyGood != null && buyGood.getGoodsId() != null && !buyGood.getGoodsId().isEmpty() && Optional.ofNullable(buyGood.getToBuyNum()).orElse(0) > 0 && (buyGood.getOrderNo() == null || buyGood.getOrderNo().isEmpty());
                         if(canCommitOrder){
-                            commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), toBuy.getToBuyNum()), auth)));
+                            commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), buyGood.getToBuyNum()), auth)));
                         }
                     });
                 }

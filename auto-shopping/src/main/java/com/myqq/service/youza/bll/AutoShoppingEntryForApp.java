@@ -48,7 +48,7 @@ public class AutoShoppingEntryForApp {
      */
     public static ConcurrentHashMap<String,List<ShoppingForAppDTO.AddressDataRowDetailDTO>> mapAddressInfos= new ConcurrentHashMap<>(2);
     //endregion
-    static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     /**
      * 链接测试
      *

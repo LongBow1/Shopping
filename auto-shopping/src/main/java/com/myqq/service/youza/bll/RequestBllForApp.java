@@ -19,14 +19,31 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.myqq.service.youza.bll.ConstInfo.*;
 import static com.myqq.service.youza.constinfo.ConstInfoForApp.commitOrderUrlForApp;
 
 public class RequestBllForApp {
 
+    static Pattern pattern = Pattern.compile("\\s*|\\t|\\r|\\n");
+
+    public static String replaceBlank(String str){
+        String res = "";
+        if(str != null){
+            Matcher matcher = pattern.matcher(str);
+            res = matcher.replaceAll("");
+        }
+        return res;
+    }
+
     public static void main(String[] args){
-        String postDataFormat = "{\n" +
+        String address = "\n河南许昌禹州市颍川街道禹州市顺杨厨卫批发\n马依琳13619889195";
+        System.out.println(address);
+        System.out.println("after");
+        System.out.println(replaceBlank(address));
+        /*String postDataFormat = "{\n" +
                 "    \"province\": \"%s\",\n" +
                 "    \"city\": \"%s\",\n" +
                 "    \"area\": \"%s\",\n" +
@@ -45,7 +62,7 @@ public class RequestBllForApp {
                 "    ]\n" +
                 "}";
         StringBuilder commitOrderContentSB = new StringBuilder(String.format(postDataFormat, "0", "1", "2", "3", "4", "5", "8", "6", 7));
-        System.out.println(commitOrderContentSB.toString());
+        System.out.println(commitOrderContentSB.toString());*/
 
         try {
             System.out.println(URLEncoder.encode("测试的","utf-8"));
@@ -144,7 +161,7 @@ public class RequestBllForApp {
                     "        }\n" +
                     "    ]\n" +
                     "}";
-            StringBuilder commitOrderContentSB = new StringBuilder(String.format(postDataFormat, addressDetailInfo.getProvince(), addressDetailInfo.getCity(), addressDetailInfo.getArea(),  addressDetailInfo.getAddress(), addressDetailInfo.getReceiveName(), addressDetailInfo.getReceivePhone(), buyGood.getGoodsId(), toBuyNum));
+            StringBuilder commitOrderContentSB = new StringBuilder(String.format(postDataFormat, addressDetailInfo.getProvince(), addressDetailInfo.getCity(), addressDetailInfo.getArea(),  replaceBlank(addressDetailInfo.getAddress()), addressDetailInfo.getReceiveName(), addressDetailInfo.getReceivePhone(), buyGood.getGoodsId(), toBuyNum));
             entity = new StringEntity(commitOrderContentSB.toString(),"utf-8");
         }catch (Exception ex){
             operationInfo += ex.getMessage();
