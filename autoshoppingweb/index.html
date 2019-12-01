@@ -14,7 +14,7 @@
 		//购物数量加减
 		$(function(){
 			//39.105.64.90
-			var requestUrlPrefix = "http://39.105.64.90:80/order/";
+			var requestUrlPrefix = "http://localhost:8080/order/";
 			var sessionid =  $("#sessioninput").val();
 			checkSession();
 			var timeClock ;
@@ -569,14 +569,14 @@
 				<option value="shoppzyx" data-sessionid="YZ587000853467045888YZNXBpIsx2" data-shopinfo="41763685|41955853|103968846">品质优秀</option> -->
 			</select>
 			<br>
-			<label for="intendgoodshotname" style="color: red; size: 10px">名称关键字: </label>
+			<label for="intendgoodshotname" style="color: red; size: 10px">名称关键字:</label>
 			<input id="intendgoodshotname" type="text" title="必填,模糊匹配" value="必填,模糊匹配" style="color: black;width: 100px;" 
 			onfocus="javascript:if(this.value=='必填,模糊匹配')this.value='';" onblur="javascript:if(this.value.trim()=='')this.value='必填,模糊匹配';">
-			<label for="intendgoodnum" style="color: red; size: 5px">商品数量: </label>
+			<label for="intendgoodnum" style="color: red; size: 5px">数量:</label>
 			<input id="intendgoodnum" type="text" title="必填,意向数量" value="1" style="color: black;width: 30px" >
 			<input name="stockorpresell" id="intendgoodpresale" type="radio" title="不限" value="0" checked = "checked">不限</input>
-			<input name="stockorpresell" id="intendgoodpresale2" type="radio" title="仅现货" value="1" >仅现货</input>
-			<input name="stockorpresell" id="intendgoodpresale3" type="radio" title="仅预售" value="2" >仅预售</input>
+			<input name="stockorpresell" id="intendgoodpresale2" type="radio" title="仅现货" value="1" >现货</input>
+			<input name="stockorpresell" id="intendgoodpresale3" type="radio" title="仅预售" value="2" >预售</input>
 			<br/>
 			<label for="intendgoodcolor"  style="color: green; size: 10px">颜色(不填表示所有):</label>
 			<input id="intendgoodcolor" class="intendgoodcolor" type="text" title="颜色(不填表示所有)"  style="color:cornflowerblue;width: 40px" >
