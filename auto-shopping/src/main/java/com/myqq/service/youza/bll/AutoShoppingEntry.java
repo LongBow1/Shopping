@@ -166,6 +166,7 @@ public class AutoShoppingEntry {
 
                 tmpToBuy.setToBuyNum(intendOrderInfo.getGoodNum());
                 tmpToBuy.setNeedPresale(intendOrderInfo.isNeedPresale());
+                tmpToBuy.setToBuySellType(intendOrderInfo.getToBuySellType());
                 StringBuilder descSB = new StringBuilder("名称:");
                 descSB.append(intendOrderInfo.getGoodShotName());
                 if(mapAddressInfos.get(kdtSession) != null){

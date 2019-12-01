@@ -14,6 +14,22 @@ public class IntendOrderDTO implements Serializable {
     private String receptNameList;
     private boolean needPresale;
 
+    public int getToBuySellType() {
+        return toBuySellType;
+    }
+
+    public void setToBuySellType(int toBuySellType) {
+        this.toBuySellType = toBuySellType;
+    }
+
+    /**
+     * 预售现货类型
+     * 0-不区分
+     * 1-现货
+     * 2-预售
+     */
+    private int toBuySellType;
+
     public boolean isNeedPresale() {
         return needPresale;
     }

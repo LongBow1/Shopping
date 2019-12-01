@@ -54,9 +54,10 @@ public class ShoppingForAppBll {
                 List<String> skuSpecKeyWords = goodInfo.getGoodSpecKeyWords();
 
                 List<ShoppingForAppDTO.GoodDataStockDetailDTO> realToBuyGoodList = new ArrayList<>(10);
-                if(goodInfo.getToBuyGoodInfoList() == null){
+                /*if(goodInfo.getToBuyGoodInfoList() == null){
                     goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
-                }
+                }*/
+                goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
                 ShoppingForAppDTO.GoodsListDTO goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
                 if(goodsList != null && goodsList.getData() != null && goodsList.getData().getRows() != null){
                     //非预售 TODO 后续区分

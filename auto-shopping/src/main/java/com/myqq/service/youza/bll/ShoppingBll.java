@@ -164,8 +164,13 @@ public class ShoppingBll {
                 goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
                 GoodsList goodsList = JSONObject.parseObject(goodsInfo, GoodsList.class);
                 if(goodsList != null && goodsList.data != null && goodsList.data.list != null){
-                    //非预售
-                    goodsList.data.list.stream().filter(data -> data.pre_sale == goodInfo.isNeedPresale()).forEach(item -> {
+                    //2-预售 1-现货 0-不区分
+                    if(goodInfo.getToBuySellType() == 2){
+                        goodsList.data.list = goodsList.data.list.stream().filter(data -> data.pre_sale).collect(Collectors.toList());
+                    }else if(goodInfo.getToBuySellType() == 1){
+                        goodsList.data.list = goodsList.data.list.stream().filter(data -> !data.pre_sale).collect(Collectors.toList());
+                    }
+                    goodsList.data.list.forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
                             if(item.title.contains(shotShopName)){
                                 ToBuyGoodInfo toBuyGoodInfo = realToBuyGoodList.stream().filter(good -> good.goodsId.equals(item.id)).findFirst().orElse(null);
@@ -254,7 +259,7 @@ public class ShoppingBll {
                 alreadyBuyGoodInfo.addAll(toBuyGoodAndAddressInfos.stream().filter(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderNo() != null && !commitOrder.getData().getOrderNo().isEmpty()).count() == item.getReadyToBuyGoodNum()).collect(Collectors.toList()));
                 List<String> alreadyBuyLocalNos = alreadyBuyGoodInfo.stream().map(ToBuyGoodAndAddressInfo::getLocalNo).collect(Collectors.toList());
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderNo() != null && !commitOrder.getData().getOrderNo().isEmpty()).count() >= item.getReadyToBuyGoodNum());
-                //System.out.println("alreadyBuyLocalNos: " +alreadyBuyLocalNos);
+                System.out.println("alreadyBuyLocalNos: " +alreadyBuyLocalNos);
                 if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
                     WeChatBll.sendMessage("下单成功:"+intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodAndAddressInfo()).getDesc());
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
