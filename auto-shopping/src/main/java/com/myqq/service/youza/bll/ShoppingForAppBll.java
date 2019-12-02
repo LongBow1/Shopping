@@ -260,8 +260,8 @@ public class ShoppingForAppBll {
                     String commitResult = task.get();
                     System.out.println(commitResult);
                     if(commitResult != null && (commitResult.contains("下单太频繁") || commitResult.contains("系统繁忙"))){
-                        Thread.sleep(1000);
-                        System.out.println(Thread.currentThread().getName()+" 暂停1000 ");
+                        Thread.sleep(500);
+                        System.out.println(Thread.currentThread().getName()+" 暂停500 ");
                     }
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();

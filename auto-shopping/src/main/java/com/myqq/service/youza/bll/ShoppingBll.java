@@ -20,9 +20,9 @@ public class ShoppingBll {
     /**
      * 线程池
      */
-    public static ThreadPoolExecutor executorServiceForGoodDetail = new ThreadPoolExecutor (5, 20, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
+    public static ThreadPoolExecutor executorServiceForGoodDetail = new ThreadPoolExecutor (5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
     };
-    public static ThreadPoolExecutor executorServiceForCommitOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
+    public static ThreadPoolExecutor executorServiceForCommitOrder = new ThreadPoolExecutor (10, 30, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
     };
 
     public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
@@ -53,8 +53,8 @@ public class ShoppingBll {
                     String commitResult = task.get();
                     System.out.println(commitResult);
                     if(commitResult != null && commitResult.contains("下单太频繁")){
-                        Thread.sleep(1000);
-                        System.out.println(Thread.currentThread().getName()+" 暂停1000 ");
+                        Thread.sleep(500);
+                        System.out.println(Thread.currentThread().getName()+" 暂停500 ");
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
