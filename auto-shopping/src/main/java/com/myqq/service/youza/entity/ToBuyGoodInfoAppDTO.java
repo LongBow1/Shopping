@@ -24,6 +24,21 @@ public class ToBuyGoodInfoAppDTO {
         private boolean needPresale;
         private long readyToBuyGoodNum;
         private String kdtSession;
+        /**
+         * 预售现货类型
+         * 0-不区分
+         * 1-现货
+         * 2-预售
+         */
+        private int toBuySellType;
+
+        public int getToBuySellType() {
+            return toBuySellType;
+        }
+
+        public void setToBuySellType(int toBuySellType) {
+            this.toBuySellType = toBuySellType;
+        }
 
         public String getOrderDate() {
             return orderDate;

@@ -35,7 +35,7 @@ public class ConstInfo {
     static String getAddressInfoUrl = "https://h5.youzan.com/wsctrade/order/address/list?switchable=false";
 
     //待发货
-    static String getToSendGoodUrl = "https://h5.youzan.com/wsctrade/order/list.json?page_id=1&page=1&page_type=&page_size=30&type=tosend&orderMark=";
+    static String getToSendGoodUrl = "https://h5.youzan.com/wsctrade/order/list.json?page_id=1&page=1&page_type=&page_size=60&type=tosend&orderMark=";
     static String getTopayGoodDetailUrl = "https://h5.youzan.com/wsctrade/order/detail?order_no={0}&kdt_id={1}";
     //已发货
     static String getSendGoodUrl = "https://h5.youzan.com/wsctrade/order/list.json?page_id=1&page=1&page_type=&page_size=50&type=send&orderMark=";

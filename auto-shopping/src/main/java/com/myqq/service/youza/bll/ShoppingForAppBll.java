@@ -61,6 +61,12 @@ public class ShoppingForAppBll {
                 ShoppingForAppDTO.GoodsListDTO goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
                 if(goodsList != null && goodsList.getData() != null && goodsList.getData().getRows() != null){
                     //非预售 TODO 后续区分
+                    //2-预售 1-现货 0-不区分
+                    if(goodInfo.getToBuySellType() == 2){
+                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() > 0 && !data.getName().contains("现货")).collect(Collectors.toList()));
+                    }else if(goodInfo.getToBuySellType() == 1){
+                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() > 0 && data.getName().contains("现货")).collect(Collectors.toList()));
+                    }
                     goodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() > 0).forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
                             if(item.getName().contains(shotShopName)){

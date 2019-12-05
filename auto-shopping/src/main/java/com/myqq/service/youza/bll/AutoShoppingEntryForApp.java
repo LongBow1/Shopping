@@ -255,6 +255,7 @@ public class AutoShoppingEntryForApp {
 
                 tmpToBuy.setToBuyNum(intendOrderInfo.getGoodNum());
                 tmpToBuy.setNeedPresale(intendOrderInfo.isNeedPresale());
+                tmpToBuy.setToBuySellType(intendOrderInfo.getToBuySellType());
                 StringBuilder descSB = new StringBuilder("名称:");
                 descSB.append(intendOrderInfo.getGoodShotName());
                 if(mapAddressInfos.get(auth) != null){
@@ -285,7 +286,14 @@ public class AutoShoppingEntryForApp {
                     tmpToBuy.setGoodSpecKeyWords(Arrays.asList(intendOrderInfo.getGoodSpecList().split("\\,")));
                     descSB.append(" 规格:").append(intendOrderInfo.getGoodSpecList());
                 }
-                descSB.append(" 预售:").append(intendOrderInfo.isNeedPresale() ? "是":"否").append(" 时间:").append(tmpToBuy.getOrderDate());
+                //descSB.append(" 预售:").append(intendOrderInfo.isNeedPresale() ? "是":"否").append(" 时间:").append(tmpToBuy.getOrderDate());
+                String preSellDesc = "不限";
+                if(intendOrderInfo.getToBuySellType() == 1){
+                    preSellDesc = "现货";
+                }else if(intendOrderInfo.getToBuySellType() == 2){
+                    preSellDesc = "预售";
+                }
+                descSB.append(" 预售:").append(preSellDesc).append(" 时间:").append(tmpToBuy.getOrderDate());
                 tmpToBuy.setDesc(descSB.toString());
             });
         }

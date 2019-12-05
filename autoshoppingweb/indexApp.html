@@ -64,6 +64,7 @@
 							goodSpecs.push($(e).val().trim());
 						}
 					})
+					var toBuySellType = $('#settingdiv input[type=radio]:checked');
 					var intendOrder = {
 						"goodShotName":goodShotName.trim(),
 						"goodColorList":goodColors.join(","),
@@ -72,7 +73,8 @@
 						"goodSpecList":goodSpecs.join(","),
 						"goodNum": $("#intendgoodnum").val().trim(),
 						"receptNameList":receipts.join(","),
-						"needPresale":$('#intendgoodpresale').is(':checked')
+						"needPresale":$('#intendgoodpresale').is(':checked'),
+						"toBuySellType":toBuySellType != undefined && toBuySellType != null ? toBuySellType.val() : 0
 					}
 					var intentInfo = {
 					"auth":$("#authinput").val().trim(),
@@ -561,7 +563,7 @@
 	    <!--底部-->
  <div style="height: 330px;" ></div>
  
-	<div class="fix-bot" style="height: 300px;font-size: 10px; bottom: auto; " >
+	<div class="fix-bot" style="height: 300px;font-size: 10px; bottom: auto; " id="settingdiv">
 			<!-- <label style="color: red">意向商品关键信息:</label>
 			<select id="shopselect">								
 				<option value="shopyxyz" data-sessionid="YZ588805925511446528YZoNbQsG4R" data-shopinfo="42536286|42728454|106033118">严选优质</option>
@@ -573,7 +575,10 @@
 			onfocus="javascript:if(this.value=='必填,模糊匹配')this.value='';" onblur="javascript:if(this.value.trim()=='')this.value='必填,模糊匹配';">
 			<label for="intendgoodnum" style="color: red; size: 5px">商品数量: </label>
 			<input id="intendgoodnum" type="text" title="必填,意向数量" value="1" style="color: black;width: 30px" >
-			<input id="intendgoodpresale" type="checkbox" title="是否预售" value="0" >是否预售</input>
+			<!-- <input id="intendgoodpresale" type="checkbox" title="是否预售" value="0" >是否预售</input> -->
+			<input name="stockorpresell" id="intendgoodpresale" type="radio" title="不限" value="0" checked = "checked">不限</input>
+			<input name="stockorpresell" id="intendgoodpresale2" type="radio" title="仅现货" value="1" >现货</input>
+			<input name="stockorpresell" id="intendgoodpresale3" type="radio" title="仅预售" value="2" >预售</input>
 			<br/>
 			<label for="intendgoodcolor"  style="color: green; size: 10px">颜色(不填表示所有):</label>
 			<input id="intendgoodcolor" class="intendgoodcolor" type="text" title="颜色(不填表示所有)"  style="color:cornflowerblue;width: 40px" >
