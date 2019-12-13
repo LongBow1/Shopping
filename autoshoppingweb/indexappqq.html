@@ -260,7 +260,8 @@
 				sessionid =  $("#authinput").val().trim();
 				var postInfo = {
 					"auth":$("#authinput").val().trim(),
-					"memberId":$("#memberidinput").val().trim()//getShopInfo()
+					"memberId":$("#memberidinput").val().trim(),//getShopInfo()
+					"useLocalAddress":$("#enablelocaladdress").is(':checked')
 				}
 					$.post(requestUrlPrefix+"testConnect",postInfo, function(result){
 						if(result == true){					
@@ -271,7 +272,7 @@
 									$("#receptdiv").empty();
 									var addressInfo = JSON.parse(address);							
 									$.each(addressInfo, function(i,e){
-										$("#receptdiv").append("<input class='addintendorder' type='checkbox' id='"+ e.addressId +"' data-dataaddressid='" + e.addressId+"' data-username='"+ e.receiveName +"'>"+e.receiveName +"  "+e.province+e.city+e.area+ e.address +"</input><br/>");
+										$("#receptdiv").append("<p > <input class='addintendorder' type='checkbox' id='"+ e.addressId +"' data-dataaddressid='" + e.addressId+"' data-username='"+ e.receiveName +"' >"+e.receiveName +"  "+e.province+e.city+e.area+ e.address +"</input> </p>");
 											addressIdArray.push(e.id);																
 									});
 									$("#connectpromptinput").val("成功,共"+addressIdArray.length+"个人");
@@ -440,14 +441,22 @@
 
 	$(function(){
 
-		$("#intendreceiptname").bind('input propertychange',function(){
+		$("#intendreceiptname").on('input propertychange',function(){
 			var inputVal = $(this).val();
-			var checkedRecepts = $(".addintendorder:checkbox");
+			var checkedRecepts = $("#receptdiv .addintendorder:checkbox");
 			if(checkedRecepts != null){
 				if(inputVal == null || inputVal.trim() == '' || inputVal.trim() == '搜索收件人'){
 					checkedRecepts.each(function(i,e){
-						$(e).show();
+						$(e).parent().show();
 					})
+				}else {
+					checkedRecepts.each(function(i,e){
+						if($(e).data('username').indexOf(inputVal.trim()) >= 0){
+							$(e).parent().show();
+						}else{
+							$(e).parent().hide();
+						}
+					})					
 				}
 			}
 			});
@@ -494,7 +503,7 @@
 		   <div class="am-header-nav">
 					<label for="authinput" title="凭证" style="color: red; size: 10px">凭证: </label>
 					<!-- KDTSESSIONID=YZ593591929204215808YZiLHRuC4Q -->
-					<input id="authinput" title="这个位置填凭证,必填的" type="text" value="bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1NzUwODU2MDQsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiNGM4YTUxYzEtMjk5MC00NmMyLThjYmQtYmJmMzdiOWYwMmEwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.L6rnyIDf4xxCZ62L1oNvR4rCRyHx_OpybY2iA_4D4527AEjnhg9-XkN1B1Nbg6mg1qeQl0Omg3_hrkn_aQMUZJaunDAbetr41qrq8H7Fzh-8XC8Ui3PRLCo4KGOI4wSegnmqgyWGwJfskz1yTmU2LWNxnFF_-ateeb2NEL6RG7Rdx3wGfwcHBuQRf1k7it7zKLWTonaX5N8JPIOg-LTYOKtjG3H4b6B2aw80_crMU6RSg1lIDiqRu0HA2dLhYJaF6UIaR8rAKiwQI7EFwQvoN6DBY6rFik-s5aqMoRQu0hu1Ir9bRLzff3UKIhsZ6i4jHxekj-nNj2igAfhSHzPr_A" style="color: black;width:100px">		
+					<input id="authinput" title="这个位置填凭证,必填的" type="text" value="bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1Nzg4MjE2MzksInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiYzNjNGQzNGUtOWUxMy00NmY2LWJjYTUtMThjODQ5YjgyZjYwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.fFe58cXab-LlISjFJ9WGkzbApWJEX-xVQdxq0LxfWuO2DEoQRufcNaSv8uAPiThbxka1bn58fLSTOf9c3NalD76IobgWjwEqwo63Ml4pyMOBmO8YYOyC57TSc-wF6L6KicjaVA8wCbpTKlMigsJAMIuHvQS2xqe2qKrh5zOwbsSBZb5qJvb2yQeJvES44PbCD5r07OR7SWHdLkS0mNXvLpovlF61fullUfsAR532q64av0rwk5t1fjsYSahHQ7-EyyiuWtt5EJDlU_2zumYBjt7FuCeDioQCrXHK1tZLmFXkziBB75fuo9xRVhwSwBhl0aoP192mm_BpXIMbnG8FmQ" style="color: black;width:100px">		
 					<input id="memberidinput" title="这个位置填凭证,必填的" type="text" value="e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735" style="color: black;width:100px">		
 					<!-- <label for="testsession" id="testsessionlabel" title="这个位置填凭证" style="color: green; size: 10px"></label> -->
 	          <!-- <button type="button" class="am-btn am-btn-warning" id="doc-confirm-toggle" style="background: none; border: 0; font-size: 24px;">
@@ -596,8 +605,10 @@
 			<input id="intendgoodspec" class="intendgoodspec" type="text" title="款式(不填表示所有)" style="color:cornflowerblue;width: 40px" >
 			<button type="button" id="addgoodspec">添加</button><button type="button" id="removegoodspec">移除</button>			
 			<br/>
-			<label for="receptdiv" style="color: red;"> 选择收件人:</label>  <button id="createintendorder">创建意向单</button>
-			<input id="intendreceiptname" type="text" title="搜索收件人" value="搜索收件人" style="display: none; color:cornflowerblue;width: 100px" onfocus="javascript:if(this.value=='搜索收件人')this.value='';" onblur="javascript:if(this.value.trim()=='')this.value='搜索收件人';" >
+			<label for="receptdiv" style="color: red;"> 选择收件人:</label> 
+			<input id="intendreceiptname" type="text" title="搜索收件人" value="搜索收件人" style="color:cornflowerblue;width: 100px" onfocus="javascript:if(this.value=='搜索收件人')this.value='';" onblur="javascript:if(this.value.trim()=='')this.value='搜索收件人';" >
+			<button id="createintendorder">创建意向单</button>
+			<input id="enablelocaladdress" type="checkbox">使用本地地址
 			<br>
 				<div  id="receptdiv" style="height: 180px; overflow-y: auto">
 			</div>

@@ -6,7 +6,7 @@ import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.entity.ToPayOrderDTO;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -102,7 +102,7 @@ public class AutoShoppingEntryForApp {
      * @param memberId
      * @return
      */
-    public static String getAddressInfo(String auth, String memberId) {
+    public static String getAddressInfo(String auth, String memberId, boolean useLocalAddress) {
         initMapInfoByAuth(auth);
         String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId), auth);
         try {
@@ -115,18 +115,106 @@ public class AutoShoppingEntryForApp {
                     }
                     List<ShoppingForAppDTO.AddressDataRowDetailDTO> finalAddressDetailInfoDTOS = addressDetailInfoDTOS;
                     addressData.getData().getRows().forEach(item -> {
-                        if(finalAddressDetailInfoDTOS.stream().noneMatch(address -> address.getAddressId().equalsIgnoreCase(item.getAddressId()))){
+                        if(finalAddressDetailInfoDTOS.stream().noneMatch(address -> address.getAddressId() != null && address.getAddressId().equalsIgnoreCase(item.getAddressId()))){
                             finalAddressDetailInfoDTOS.add(item);
                         }
                     });
-                    return JSONObject.toJSONString(addressData.getData().getRows());
+
+                    String addressInfoJsonStr = JSONObject.toJSONString(addressData.getData().getRows());
+                    if(useLocalAddress){
+                        return syncLocalAddress(addressInfoJsonStr, memberId, addressDetailInfoDTOS);
+                    }
+
+                    return addressInfoJsonStr;
                 }
             }
         }catch (Exception ex){
             System.out.println(ex.getMessage());
-            return "null";
+            return "";
         }
         return "";
+    }
+
+    public static String syncLocalAddress(String remoteAddress, String memberId, List<ShoppingForAppDTO.AddressDataRowDetailDTO> addressDetailInfoDTOS){
+        String path = "addressinfo" + memberId + ".txt";
+        File file = new File(path);
+        if(file.exists()){
+            System.out.println(path + " exist");
+        }else {
+            System.out.println(path + " not exist");
+        }
+        StringBuilder existAddress = new StringBuilder();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null){
+                System.out.println(line);
+                existAddress.append(line);
+            }
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+
+        }
+        List<ShoppingForAppDTO.AddressDataRowDetailDTO> toAddAddress = new ArrayList<>();
+        List<ShoppingForAppDTO.AddressDataRowDetailDTO> localAddressList = new ArrayList<>();
+        if(existAddress.toString().length() > 0){
+            localAddressList = JSONObject.parseArray(existAddress.toString(),ShoppingForAppDTO.AddressDataRowDetailDTO.class);
+        }
+        //String address = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, zzjjMemberId), zzjjAuth);
+        try {
+            if(remoteAddress != null && remoteAddress.trim() != "null" && remoteAddress.trim() != ""){
+                List<ShoppingForAppDTO.AddressDataRowDetailDTO> remoteAddressList = JSONObject.parseArray(remoteAddress,ShoppingForAppDTO.AddressDataRowDetailDTO.class );
+                if(remoteAddressList != null && !remoteAddressList.isEmpty()){
+                    List<ShoppingForAppDTO.AddressDataRowDetailDTO> finalLocalAddressList = localAddressList;
+                    remoteAddressList.forEach(item -> {
+                        ShoppingForAppDTO.AddressDataRowDetailDTO tmpInfo = new ShoppingForAppDTO.AddressDataRowDetailDTO();
+                        tmpInfo.setAddressId(item.getAddressId());
+                        tmpInfo.setReceiveName(item.getReceiveName());
+                        tmpInfo.setReceivePhone(item.getReceivePhone());
+                        tmpInfo.setProvince(item.getProvince());
+                        tmpInfo.setCity(item.getCity());
+                        tmpInfo.setArea(item.getArea());
+                        tmpInfo.setAddress(item.getAddress());
+                        if(!finalLocalAddressList.contains(tmpInfo)){
+                            toAddAddress.add(tmpInfo);
+                            finalLocalAddressList.add(tmpInfo);
+                        }
+                    });
+                }
+            }
+            if(!toAddAddress.isEmpty()){
+                System.out.println("toAddAddress count: "+ toAddAddress.size());
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(JSONObject.toJSONString(localAddressList).getBytes());
+                fileOutputStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+
+        }
+        StringBuilder addressInfoSb = new StringBuilder();
+        String addressInfo = null;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            while ((addressInfo = bufferedReader.readLine()) != null){
+                addressInfoSb.append(addressInfo);
+            }
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            localAddressList.forEach(address -> {
+                if(!addressDetailInfoDTOS.contains(address)){
+                    addressDetailInfoDTOS.add(address);
+                }
+            });
+            return JSONObject.toJSONString(addressDetailInfoDTOS);
+        }
     }
 
     /**

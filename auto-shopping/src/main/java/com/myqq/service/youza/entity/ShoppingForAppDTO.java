@@ -2,6 +2,7 @@ package com.myqq.service.youza.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 白秋洁 app
@@ -18,6 +19,13 @@ public class ShoppingForAppDTO {
 
         public void setData(GoodsListDataDTO data) {
             this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return "GoodsListDTO{" +
+                    "data=" + data +
+                    '}';
         }
     }
 
@@ -48,6 +56,15 @@ public class ShoppingForAppDTO {
 
         public void setTotal(Integer total) {
             this.total = total;
+        }
+
+        @Override
+        public String toString() {
+            return "GoodsListDataDTO{" +
+                    "rows=" + rows +
+                    ", hasNextPage=" + hasNextPage +
+                    ", total=" + total +
+                    '}';
         }
     }
 
@@ -109,6 +126,18 @@ public class ShoppingForAppDTO {
         public void setInventoryAmount(int inventoryAmount) {
             this.inventoryAmount = inventoryAmount;
         }
+
+        @Override
+        public String toString() {
+            return "GoodsListDataRowDTO{" +
+                    "name='" + name + '\'' +
+                    ", goodsId='" + goodsId + '\'' +
+                    ", pic='" + pic + '\'' +
+                    ", price=" + price +
+                    ", shiftedOn=" + shiftedOn +
+                    ", inventoryAmount=" + inventoryAmount +
+                    '}';
+        }
     }
     //endregion
 
@@ -144,6 +173,15 @@ public class ShoppingForAppDTO {
         public void setMessage(String message) {
             this.message = message;
         }
+
+        @Override
+        public String toString() {
+            return "GoodDataDTO{" +
+                    "data=" + data +
+                    ", code=" + code +
+                    ", message='" + message + '\'' +
+                    '}';
+        }
     }
     public static class GoodDataDetailDTO{
         List<GoodDataSpecDetailDTO> specList;
@@ -163,6 +201,14 @@ public class ShoppingForAppDTO {
 
         public void setGoodsList(List<GoodDataStockDetailDTO> goodsList) {
             this.goodsList = goodsList;
+        }
+
+        @Override
+        public String toString() {
+            return "GoodDataDetailDTO{" +
+                    "specList=" + specList +
+                    ", goodsList=" + goodsList +
+                    '}';
         }
     }
     public static class GoodDataStockDetailDTO{
@@ -289,6 +335,25 @@ public class ShoppingForAppDTO {
         public void setSpecList(List<ToBuyGoodInfoAppDTO.KV> specList) {
             this.specList = specList;
         }
+
+
+        @Override
+        public String toString() {
+            return "GoodDataStockDetailDTO{" +
+                    "goodsId='" + goodsId + '\'' +
+                    ", name='" + name + '\'' +
+                    ", mainGoodsId='" + mainGoodsId + '\'' +
+                    ", price=" + price +
+                    ", inventory=" + inventory +
+                    ", spec1='" + spec1 + '\'' +
+                    ", spec2='" + spec2 + '\'' +
+                    ", spec3='" + spec3 + '\'' +
+                    ", spec4='" + spec4 + '\'' +
+                    ", orderNo='" + orderNo + '\'' +
+                    ", toBuyNum=" + toBuyNum +
+                    ", specList=" + specList +
+                    '}';
+        }
     }
     public static class GoodDataSpecDetailDTO{
         /**
@@ -314,6 +379,14 @@ public class ShoppingForAppDTO {
 
         public void setSpecList(List<String> specList) {
             this.specList = specList;
+        }
+
+        @Override
+        public String toString() {
+            return "GoodDataSpecDetailDTO{" +
+                    "title='" + title + '\'' +
+                    ", specList=" + specList +
+                    '}';
         }
     }
     //endregion
@@ -350,6 +423,15 @@ public class ShoppingForAppDTO {
         public void setMessage(String message) {
             this.message = message;
         }
+
+        @Override
+        public String toString() {
+            return "AddressDataDTO{" +
+                    "data=" + data +
+                    ", code=" + code +
+                    ", message='" + message + '\'' +
+                    '}';
+        }
     }
     public static class AddressDataRowDTO{
         List<AddressDataRowDetailDTO> rows;
@@ -360,6 +442,13 @@ public class ShoppingForAppDTO {
 
         public void setRows(List<AddressDataRowDetailDTO> rows) {
             this.rows = rows;
+        }
+
+        @Override
+        public String toString() {
+            return "AddressDataRowDTO{" +
+                    "rows=" + rows +
+                    '}';
         }
     }
     public static class AddressDataRowDetailDTO{
@@ -435,6 +524,37 @@ public class ShoppingForAppDTO {
         public void setDef(Boolean def) {
             this.def = def;
         }
+
+        @Override
+        public String toString() {
+            return "AddressDataRowDetailDTO{" +
+                    "addressId='" + addressId + '\'' +
+                    ", receiveName='" + receiveName + '\'' +
+                    ", receivePhone='" + receivePhone + '\'' +
+                    ", province='" + province + '\'' +
+                    ", city='" + city + '\'' +
+                    ", area='" + area + '\'' +
+                    ", address='" + address + '\'' +
+                    ", def=" + def +
+                    '}';
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 31 * result + Objects.hashCode(this.receiveName);
+            result = 31 * result + Objects.hashCode(this.receivePhone);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj == null || getClass() != obj.getClass()){
+                return false;
+            }
+            AddressDataRowDetailDTO other = (AddressDataRowDetailDTO)obj;
+            return Objects.equals(this.receiveName, other.receiveName) && Objects.equals(this.receivePhone, other.receivePhone);
+        }
     }
     //endregion
     //region 订单信息--待支付、待发货、待收货、已完成
@@ -469,6 +589,15 @@ public class ShoppingForAppDTO {
         public void setData(OrderDataRowsDTO data) {
             this.data = data;
         }
+
+        @Override
+        public String toString() {
+            return "OrderDataDTO{" +
+                    "code=" + code +
+                    ", message='" + message + '\'' +
+                    ", data=" + data +
+                    '}';
+        }
     }
     public static class OrderDataRowsDTO{
         List<OrderDataRowDetailDTO> rows;
@@ -479,6 +608,13 @@ public class ShoppingForAppDTO {
 
         public void setRows(List<OrderDataRowDetailDTO> rows) {
             this.rows = rows;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderDataRowsDTO{" +
+                    "rows=" + rows +
+                    '}';
         }
     }
     public static class OrderDataRowDetailDTO{
@@ -599,6 +735,25 @@ public class ShoppingForAppDTO {
         public void setGoodsList(List<OrderDataRowDetailGoodDetailDTO> goodsList) {
             this.goodsList = goodsList;
         }
+
+        @Override
+        public String toString() {
+            return "OrderDataRowDetailDTO{" +
+                    "receiverName='" + receiverName + '\'' +
+                    ", orderId='" + orderId + '\'' +
+                    ", status='" + status + '\'' +
+                    ", addressProvince='" + addressProvince + '\'' +
+                    ", addressCity='" + addressCity + '\'' +
+                    ", addressArea='" + addressArea + '\'' +
+                    ", addressStreet='" + addressStreet + '\'' +
+                    ", address='" + address + '\'' +
+                    ", price=" + price +
+                    ", expireTime=" + expireTime +
+                    ", createTime=" + createTime +
+                    ", receiverTelephone='" + receiverTelephone + '\'' +
+                    ", goodsList=" + goodsList +
+                    '}';
+        }
     }
     public static class OrderDataRowDetailGoodDetailDTO{
         String goodsId;
@@ -655,6 +810,18 @@ public class ShoppingForAppDTO {
         public void setSpecTitle(String specTitle) {
             this.specTitle = specTitle;
         }
+
+        @Override
+        public String toString() {
+            return "OrderDataRowDetailGoodDetailDTO{" +
+                    "goodsId='" + goodsId + '\'' +
+                    ", goodsName='" + goodsName + '\'' +
+                    ", goodsPic='" + goodsPic + '\'' +
+                    ", count='" + count + '\'' +
+                    ", price='" + price + '\'' +
+                    ", specTitle='" + specTitle + '\'' +
+                    '}';
+        }
     }
 
     /**
@@ -691,6 +858,15 @@ public class ShoppingForAppDTO {
         public void setData(CommitOrderDataDTO data) {
             this.data = data;
         }
+
+        @Override
+        public String toString() {
+            return "CommitOrderDTO{" +
+                    "code=" + code +
+                    ", message='" + message + '\'' +
+                    ", data=" + data +
+                    '}';
+        }
     }
     public static class CommitOrderDataDTO{
         private String orderId;
@@ -719,6 +895,15 @@ public class ShoppingForAppDTO {
 
         public void setPostFee(String postFee) {
             this.postFee = postFee;
+        }
+
+        @Override
+        public String toString() {
+            return "CommitOrderDataDTO{" +
+                    "orderId='" + orderId + '\'' +
+                    ", price='" + price + '\'' +
+                    ", postFee='" + postFee + '\'' +
+                    '}';
         }
     }
     //endregion

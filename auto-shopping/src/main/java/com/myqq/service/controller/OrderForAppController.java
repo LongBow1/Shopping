@@ -38,8 +38,8 @@ public class OrderForAppController {
      * @return
      */
     @RequestMapping("/getAddress")
-    public String getAllAddress(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
-        return AutoShoppingEntryForApp.getAddressInfo(auth, memberId);
+    public String getAllAddress(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId, @RequestParam("useLocalAddress")boolean useLocalAddress){
+        return AutoShoppingEntryForApp.getAddressInfo(auth, memberId, useLocalAddress);
     }
 
     @RequestMapping("/getIntendOrderList")

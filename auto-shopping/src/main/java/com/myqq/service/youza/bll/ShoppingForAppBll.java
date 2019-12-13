@@ -3,6 +3,7 @@ package com.myqq.service.youza.bll;
 import com.alibaba.fastjson.JSONObject;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
+import com.myqq.service.youza.util.CustomThreadFactory;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -24,12 +25,12 @@ public class ShoppingForAppBll {
     /**
      * 线程池
      */
-    public static ThreadPoolExecutor executorServiceForGoodDetail = new ThreadPoolExecutor (5, 20, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
+    public static ThreadPoolExecutor executorServiceForGoodDetail = new ThreadPoolExecutor (5, 20, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("GoodDetail")) {
     };
-    public static ThreadPoolExecutor executorServiceForCommitOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
+    public static ThreadPoolExecutor executorServiceForCommitOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CommitOrder")) {
     };
 
-    public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100)) {
+    public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CancelOrder")) {
     };
 
     /**
@@ -43,7 +44,10 @@ public class ShoppingForAppBll {
         if(toBuyGoodAndAddressInfos == null || toBuyGoodAndAddressInfos.isEmpty()){
             return;
         }
+        String newGoodsInfo = RequestBllForApp.doGet(getNewGoodListUrlForApp,auth);
+        //System.out.println("newGoodsInfo:"+newGoodsInfo);
         String goodsInfo = RequestBllForApp.doGet(getGoodListUrlForApp, auth);
+        //System.out.println("goodsInfo:"+goodsInfo);
         List<Future<Boolean>> taskList = new ArrayList<>();
         toBuyGoodAndAddressInfos.forEach(goodInfo -> {
             if(goodInfo != null && goodInfo.getAddressDetailInfo() != null ){
@@ -59,17 +63,24 @@ public class ShoppingForAppBll {
                 }*/
                 goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
                 ShoppingForAppDTO.GoodsListDTO goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+                ShoppingForAppDTO.GoodsListDTO newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
                 if(goodsList != null && goodsList.getData() != null && goodsList.getData().getRows() != null){
-                    //非预售 TODO 后续区分
+                    if(newGoodsList != null && newGoodsList.getData() != null && newGoodsList.getData().getRows() != null){
+                        newGoodsList.getData().getRows().removeIf(newGood -> goodsList.getData().getRows().stream().anyMatch(existGood -> existGood.getGoodsId().equalsIgnoreCase(newGood.getGoodsId())));
+                        if(!newGoodsList.getData().getRows().isEmpty()){
+                            goodsList.getData().getRows().addAll(newGoodsList.getData().getRows());
+                        }
+                    }
                     //2-预售 1-现货 0-不区分
                     if(goodInfo.getToBuySellType() == 2){
-                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() > 0 && !data.getName().contains("现货")).collect(Collectors.toList()));
+                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && !data.getName().contains("现货")).collect(Collectors.toList()));
                     }else if(goodInfo.getToBuySellType() == 1){
-                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() > 0 && data.getName().contains("现货")).collect(Collectors.toList()));
+                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && data.getName().contains("现货")).collect(Collectors.toList()));
                     }
-                    goodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() > 0).forEach(item -> {
+                    goodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
                             if(item.getName().contains(shotShopName)){
+                                System.out.println("shotShopName:" + shotShopName + " "+ item.toString());
                                 ShoppingForAppDTO.GoodDataStockDetailDTO toBuyGoodInfo = realToBuyGoodList.stream().filter(good -> good.getMainGoodsId().equalsIgnoreCase(item.getGoodsId())).findFirst().orElse(null);
                                 if(toBuyGoodInfo == null){
                                     toBuyGoodInfo = new ShoppingForAppDTO.GoodDataStockDetailDTO();
@@ -171,6 +182,7 @@ public class ShoppingForAppBll {
             }
 
         }catch (Exception ex){
+            ex.printStackTrace();
             operationInfo.append(ex.getMessage());
         }
         if(!operationInfo.toString().isEmpty()){
