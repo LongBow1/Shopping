@@ -18,12 +18,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.myqq.service.youza.bll.ConstInfo.*;
 import static com.myqq.service.youza.constinfo.ConstInfoForApp.commitOrderUrlForApp;
+import static com.myqq.service.youza.constinfo.ConstInfoForApp.userAgentForApp;
 
 public class RequestBllForApp {
 
@@ -76,7 +78,7 @@ public class RequestBllForApp {
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         httpGet.addHeader("contentType", contentTypeJson);
-        httpGet.addHeader("User-Agent",userAgent);
+        httpGet.addHeader("User-Agent",userAgentForApp);
         httpGet.addHeader("Authorization", auth);
         //httpGet.addHeader("Cookie", MessageFormat.format(ConstInfoForApp.cookieFormat, ConstInfoForApp.qqAuth));
         String res = null;
@@ -94,7 +96,7 @@ public class RequestBllForApp {
         HttpPatch httpPatch = new HttpPatch(url);
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         httpPatch.addHeader("contentType", contentTypeJson);
-        httpPatch.addHeader("User-Agent",userAgent);
+        httpPatch.addHeader("User-Agent",userAgentForApp);
         httpPatch.addHeader("Authorization", auth);
         //httpPatch.addHeader("Cookie", MessageFormat.format(ConstInfoForApp.cookieFormat, ConstInfoForApp.qqAuth));
         String res = null;
@@ -113,7 +115,7 @@ public class RequestBllForApp {
         CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost(postUrl);
         httpPost.addHeader("Content-type", contentTypeJson);
-        httpPost.addHeader("User-Agent",userAgent);
+        httpPost.addHeader("User-Agent",userAgentForApp);
         httpPost.addHeader("Authorization", auth);
 
         String res = null;
@@ -128,7 +130,7 @@ public class RequestBllForApp {
             httpPost.setEntity(stringEntity);
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
             res = EntityUtils.toString(httpResponse.getEntity());
-            System.out.println("commitOrder entity:"+ EntityUtils.toString(stringEntity) +" result:"+res);
+            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" commitOrder entity:"+ EntityUtils.toString(stringEntity) +" result:"+res);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (ClientProtocolException e) {
@@ -202,7 +204,7 @@ public class RequestBllForApp {
             }
         }
         if(!operationInfo.toString().isEmpty()){
-            System.out.println("commitToBuyOrder operationInfo: "+ operationInfo.toString());
+            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" commitToBuyOrder operationInfo: "+ operationInfo.toString());
         }
         return orderInfo;
     }

@@ -5,6 +5,8 @@ package com.myqq.service.youza.constinfo;
  * @desc 白秋洁app
  */
 public class ConstInfoForApp {
+    public static String userAgentForApp = "Mozilla/5.0 (Linux; Android 10; YAL-AL10 Build/HUAWEIYAL-AL10; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.186 Mobile Safari/537.36 Html5Plus/1.0";
+
     public static String qqAuth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1Nzg4MjE2MzksInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiYzNjNGQzNGUtOWUxMy00NmY2LWJjYTUtMThjODQ5YjgyZjYwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.fFe58cXab-LlISjFJ9WGkzbApWJEX-xVQdxq0LxfWuO2DEoQRufcNaSv8uAPiThbxka1bn58fLSTOf9c3NalD76IobgWjwEqwo63Ml4pyMOBmO8YYOyC57TSc-wF6L6KicjaVA8wCbpTKlMigsJAMIuHvQS2xqe2qKrh5zOwbsSBZb5qJvb2yQeJvES44PbCD5r07OR7SWHdLkS0mNXvLpovlF61fullUfsAR532q64av0rwk5t1fjsYSahHQ7-EyyiuWtt5EJDlU_2zumYBjt7FuCeDioQCrXHK1tZLmFXkziBB75fuo9xRVhwSwBhl0aoP192mm_BpXIMbnG8FmQ";
     public static String qqMemberId = "e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735";
     public static String cookieFormat = "Authorization={0}";
@@ -30,7 +32,7 @@ public class ConstInfoForApp {
     /**
      * 每日上新商品(新商品开始抢购到到商城有几秒钟延迟)
      */
-    public static String getNewGoodListUrlForApp = "http://backend.baiqiujie.cn/backend/goods?homeType=2&sortType=AES";
+    public static String getNewGoodListUrlForApp = "http://backend.baiqiujie.cn/backend/goods?homeType=1&sortType=AES";
     /**
      * 查询商品概要信息(getGoodListUrlForApp返回goodsId)
      * get

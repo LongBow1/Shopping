@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import static com.myqq.service.youza.bll.ConstInfo.contentTypeUrl;
 
@@ -52,7 +53,7 @@ public class WeChatBll {
     }
 
     public static String sendMessage(String message){
-        System.out.println(message);
+        //System.out.println(message);
         if(message == null || message.isEmpty() || !message.contains("收件人")){
             return "";
         }
@@ -61,7 +62,8 @@ public class WeChatBll {
             JSONObject jsonObject = JSONObject.parseObject(accessTokenJson);
             //System.out.println(jsonObject);
             String accessToken = jsonObject.get("access_token").toString();
-            System.out.println("accessToken:" + accessToken);
+            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) + message);
+            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" accessToken:" + accessToken);
             sendMessage("{\"touser\":\"" + qqOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
             return sendMessage("{\"touser\":\"" + zzOpenId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken);
         }catch (Exception ex){
@@ -106,8 +108,8 @@ public class WeChatBll {
         try {
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
             res = EntityUtils.toString(httpResponse.getEntity());
-            System.out.println("sendWeChatMessage:" + res);
-        } catch (IOException ex) {
+            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +"sendWeChatMessage:" + res);
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
             res += ex.getMessage();
             System.out.println(res);

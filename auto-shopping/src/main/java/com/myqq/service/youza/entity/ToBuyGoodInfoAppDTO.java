@@ -167,6 +167,29 @@ public class ToBuyGoodInfoAppDTO {
         public void setKdtSession(String kdtSession) {
             this.kdtSession = kdtSession;
         }
+
+        @Override
+        public String toString() {
+            return "ToBuyGoodAndAddressInfoDTO{" +
+                    "orderDate='" + orderDate + '\'' +
+                    ", receiptName='" + receiptName + '\'' +
+                    ", shotGoodName='" + shotGoodName + '\'' +
+                    ", toBuyNum=" + toBuyNum +
+                    ", desc='" + desc + '\'' +
+                    ", goodColorKeyWords=" + goodColorKeyWords +
+                    ", goodSizeKeyWords=" + goodSizeKeyWords +
+                    ", goodStyleKeyWords=" + goodStyleKeyWords +
+                    ", goodSpecKeyWords=" + goodSpecKeyWords +
+                    ", toBuyGoodInfoList=" + toBuyGoodInfoList +
+                    ", addressDetailInfo=" + addressDetailInfo +
+                    ", commitOrderInfoList=" + commitOrderInfoList +
+                    ", localNo='" + localNo + '\'' +
+                    ", needPresale=" + needPresale +
+                    ", readyToBuyGoodNum=" + readyToBuyGoodNum +
+                    ", kdtSession='" + kdtSession + '\'' +
+                    ", toBuySellType=" + toBuySellType +
+                    '}';
+        }
     }
 
     public static class KV{

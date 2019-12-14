@@ -55,6 +55,8 @@ class AutoShoppingApplicationTests {
 	@Test
 	public void otherTest(){
 
+		System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+"test");
+
 		ShopInfoDTO.ToBuyGoodSkuInfo toBuyGoodSkuInfo = new ShopInfoDTO.ToBuyGoodSkuInfo(1,1,"");
 		ShopInfoDTO.ToBuyGoodSkuInfo toBuyGoodSkuInfo2 = new ShopInfoDTO.ToBuyGoodSkuInfo(1,2,"");
 		ShopInfoDTO.ToBuyGoodSkuInfo toBuyGoodSkuInfo3 = new ShopInfoDTO.ToBuyGoodSkuInfo(1,3,"");
