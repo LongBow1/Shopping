@@ -13,6 +13,15 @@ public class IntendOrderDTO implements Serializable {
     private int goodNum;
     private String receptNameList;
     private boolean needPresale;
+    private String quantifierNum;
+
+    public String getQuantifierNum() {
+        return quantifierNum;
+    }
+
+    public void setQuantifierNum(String quantifierNum) {
+        this.quantifierNum = quantifierNum;
+    }
 
     public int getToBuySellType() {
         return toBuySellType;

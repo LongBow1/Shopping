@@ -33,6 +33,8 @@ public class ShoppingForAppBll {
     public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CancelOrder")) {
     };
 
+    static List<String> quantifiers = new ArrayList<>(Arrays.asList("匹","张","座","回","场","尾","条","个","首","阙","阵","网","炮","顶","丘","棵","只","支","袭","辆","挑","担","颗","壳","窠","曲","墙","群","腔","砣","座","客","贯","扎","捆","刀","令","打","手","罗","坡","山","岭","江","溪","钟","队","单","双","对","出","口","头","脚","板","跳","枝","件","贴","针","线","管","名","位","身","堂","课","本","页","丝","毫","厘","分","钱","两","斤","担","铢","石","钧","锱","忽","撮","勺","合","升","斗","石","盘","碗","碟","叠","桶","笼","盆","盒","杯","钟","斛","锅","簋","篮","盘","桶","罐","瓶","壶","卮","盏","箩","箱","煲","啖","袋","钵","年","月","日","季","刻","时","周","天","秒","分","旬","纪","岁","世","更","夜","春","夏","秋","冬","代","伏","辈","丸","泡","粒","颗","幢","堆"));
+
     /**
      * 匹配意向单信息
      *
@@ -80,7 +82,11 @@ public class ShoppingForAppBll {
                     }
                     goodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
-                            if(item.getName().toLowerCase().contains(shotShopName.toLowerCase())){
+                            boolean nameMatch = item.getName().toLowerCase().contains(shotShopName.toLowerCase());
+                            if(goodInfo.getQuantifierNum() != null && !goodInfo.getQuantifierNum().isEmpty()){
+                                nameMatch = nameMatch && quantifiers.stream().anyMatch(qItem -> item.getName().contains(goodInfo.getQuantifierNum()+qItem));
+                            }
+                            if(nameMatch){
                                 System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" shotShopName:" + shotShopName + " "+ item.toString());
                                 ShoppingForAppDTO.GoodDataStockDetailDTO toBuyGoodInfo = realToBuyGoodList.stream().filter(good -> good.getMainGoodsId().equalsIgnoreCase(item.getGoodsId())).findFirst().orElse(null);
                                 if(toBuyGoodInfo == null){

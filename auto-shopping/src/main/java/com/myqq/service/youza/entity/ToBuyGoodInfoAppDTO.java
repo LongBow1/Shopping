@@ -8,6 +8,10 @@ public class ToBuyGoodInfoAppDTO {
         private String orderDate;
         private String receiptName;
         private String shotGoodName;
+        /**
+         * 名称中的量词
+         */
+        private String quantifierNum;
         private int toBuyNum;
         private String desc;
         private List<String> goodColorKeyWords;
@@ -31,6 +35,14 @@ public class ToBuyGoodInfoAppDTO {
          * 2-预售
          */
         private int toBuySellType;
+
+        public String getQuantifierNum() {
+            return quantifierNum;
+        }
+
+        public void setQuantifierNum(String quantifierNum) {
+            this.quantifierNum = quantifierNum;
+        }
 
         public int getToBuySellType() {
             return toBuySellType;

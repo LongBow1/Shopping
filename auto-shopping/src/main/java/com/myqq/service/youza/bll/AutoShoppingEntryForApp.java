@@ -381,6 +381,10 @@ public class AutoShoppingEntryForApp {
                 }else if(intendOrderInfo.getToBuySellType() == 2){
                     preSellDesc = "预售";
                 }
+                if(intendOrderInfo.getQuantifierNum() != null && !intendOrderInfo.getQuantifierNum().isEmpty()){
+                    tmpToBuy.setQuantifierNum(intendOrderInfo.getQuantifierNum());
+                    descSB.append(" 计量:").append(intendOrderInfo.getQuantifierNum());
+                }
                 descSB.append(" 预售:").append(preSellDesc).append(" 时间:").append(tmpToBuy.getOrderDate());
                 tmpToBuy.setDesc(descSB.toString());
             });
