@@ -82,4 +82,9 @@ public class ConstInfoForApp {
      * post
      */
     public static String addAddressForApp = "http://www.baiqiujie.cn/backend/member/{0}/address?receiveName={1}&receivePhone={2}&province={3}&city={4}&area={5}&address={6}&def=true";
+
+    /**
+     * 登录地址，获取auth信息
+     */
+    public static String loginUrlForApp = "http://backend.baiqiujie.cn/backend/shm/longin?username={0}&password={1}&type=member";
 }

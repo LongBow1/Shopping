@@ -30,6 +30,11 @@ public class OrderForAppController {
         return testRes;
     }
 
+    @RequestMapping("getAuth")
+    public String getAuthInfo(@RequestParam("username")String userName, @RequestParam("password")String password){
+        return AutoShoppingEntryForApp.getAuthInfo(userName, password);
+    }
+
     /**
      * 设置收件人信息
      *
@@ -44,22 +49,22 @@ public class OrderForAppController {
 
     @RequestMapping("/getIntendOrderList")
     public String getIntendOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
-        return JSONObject.toJSONString(AutoShoppingEntryForApp.mapIntendToBuyGoodInfos.get(auth));
+        return JSONObject.toJSONString(AutoShoppingEntryForApp.mapIntendToBuyGoodInfos.get(memberId));
     }
 
     @RequestMapping("/deleteIntendOrderList")
     public String deleteIntendOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId, @RequestParam("localNos")String localNos){
-        return JSONObject.toJSONString(AutoShoppingEntryForApp.deleteIntendOrders(auth,localNos));
+        return JSONObject.toJSONString(AutoShoppingEntryForApp.deleteIntendOrders(memberId, localNos));
     }
 
     @RequestMapping("/getAlreadyBuyOrderList")
     public String getAlreadyBuyOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
-        return JSONObject.toJSONString(AutoShoppingEntryForApp.mapAlreadyBuyGoodAndAddressInfos.get(auth));
+        return JSONObject.toJSONString(AutoShoppingEntryForApp.mapAlreadyBuyGoodAndAddressInfos.get(memberId));
     }
 
     @RequestMapping("/getReadyToBuyOrderList")
     public String getReadyToBuyOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
-        return JSONObject.toJSONString(AutoShoppingEntryForApp.mapToBuyGoodAndAddressInfos.get(auth));
+        return JSONObject.toJSONString(AutoShoppingEntryForApp.mapToBuyGoodAndAddressInfos.get(memberId));
     }
 
     @RequestMapping("/getToPayOrderList")
@@ -78,12 +83,12 @@ public class OrderForAppController {
 
     @RequestMapping("/clearAllOrderInfo")
     public boolean clearAllOrderInfo(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
-        return AutoShoppingEntryForApp.clearAllOrderInfo(auth);
+        return AutoShoppingEntryForApp.clearAllOrderInfo(memberId);
     }
 
     @RequestMapping("/stopCommitOrder")
     public boolean stopCommitOrder(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
-        return AutoShoppingEntryForApp.clearStandToBuyOrderInfo(auth);
+        return AutoShoppingEntryForApp.clearStandToBuyOrderInfo(memberId);
     }
 
     @RequestMapping("/cancelOrder")
@@ -110,7 +115,7 @@ public class OrderForAppController {
         if(intendOrderInfo == null){
             return "unable to resolve intention order";
         }
-        String resultJson = JSONObject.toJSONString(AutoShoppingEntryForApp.getToBuyGoodAndAddressInfoList(intendOrderInfo,auth));
+        String resultJson = JSONObject.toJSONString(AutoShoppingEntryForApp.getToBuyGoodAndAddressInfoList(intendOrderInfo, memberId));
         return resultJson;
     }
 

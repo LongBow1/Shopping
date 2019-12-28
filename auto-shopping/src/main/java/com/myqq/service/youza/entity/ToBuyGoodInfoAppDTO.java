@@ -4,6 +4,97 @@ package com.myqq.service.youza.entity;
 import java.util.List;
 
 public class ToBuyGoodInfoAppDTO {
+
+    public static class AuthInfoDTO{
+        private int code;
+        private AuthDataInfoDTO data;
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public AuthDataInfoDTO getData() {
+            return data;
+        }
+
+        public void setData(AuthDataInfoDTO data) {
+            this.data = data;
+        }
+    }
+    public static class AuthDataInfoDTO{
+        private JwtDTO jwt;
+        private UserDTO user;
+
+        public JwtDTO getJwt() {
+            return jwt;
+        }
+
+        public void setJwt(JwtDTO jwt) {
+            this.jwt = jwt;
+        }
+
+        public UserDTO getUser() {
+            return user;
+        }
+
+        public void setUser(UserDTO user) {
+            this.user = user;
+        }
+    }
+    public static class JwtDTO{
+        private String scope;
+        private String jti;
+        private String access_token;
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
+
+        public String getJti() {
+            return jti;
+        }
+
+        public void setJti(String jti) {
+            this.jti = jti;
+        }
+
+        public String getAccess_token() {
+            return access_token;
+        }
+
+        public void setAccess_token(String access_token) {
+            this.access_token = access_token;
+        }
+    }
+    public static class UserDTO{
+        private String id;
+        private String userName;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+    }
+
     public static class ToBuyGoodAndAddressInfoDTO{
         private String orderDate;
         private String receiptName;

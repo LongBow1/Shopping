@@ -57,7 +57,7 @@ public class AutoShoppingEntryForApp {
      * @return
      */
     public static boolean testConnect(String auth, String memberId) {
-        initMapInfoByAuth(auth);
+        initMapInfoByAuth(memberId);
         String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId), auth);
         try {
             if(addressInfo != null){
@@ -74,24 +74,24 @@ public class AutoShoppingEntryForApp {
     /**
      * 用户下单信息初始化--用auth初始化是为了多用户使用
      *
-     * @param auth
+     * @param memberId
      */
-    private static void initMapInfoByAuth(String auth) {
-        if(mapIntendToBuyGoodInfos.get(auth) == null){
-            mapIntendToBuyGoodInfos.putIfAbsent(auth, new ArrayList<>());
+    private static void initMapInfoByAuth(String memberId) {
+        if(mapIntendToBuyGoodInfos.get(memberId) == null){
+            mapIntendToBuyGoodInfos.putIfAbsent(memberId, new ArrayList<>());
             mapIntendToBuyGoodInfos.remove("",null);
         }
-        if(mapToBuyGoodAndAddressInfos.get(auth) == null){
-            mapToBuyGoodAndAddressInfos.putIfAbsent(auth, new ArrayList<>());
+        if(mapToBuyGoodAndAddressInfos.get(memberId) == null){
+            mapToBuyGoodAndAddressInfos.putIfAbsent(memberId, new ArrayList<>());
         }
-        if(mapAlreadyBuyGoodAndAddressInfos.get(auth) == null){
-            mapAlreadyBuyGoodAndAddressInfos.putIfAbsent(auth, new ArrayList<>());
+        if(mapAlreadyBuyGoodAndAddressInfos.get(memberId) == null){
+            mapAlreadyBuyGoodAndAddressInfos.putIfAbsent(memberId, new ArrayList<>());
         }
-        if(mapStartShoppingSymbol.get(auth) == null){
-            mapStartShoppingSymbol.putIfAbsent(auth,false);
+        if(mapStartShoppingSymbol.get(memberId) == null){
+            mapStartShoppingSymbol.putIfAbsent(memberId,false);
         }
-        if(mapAddressInfos.get(auth) == null){
-            mapAddressInfos.putIfAbsent(auth, new ArrayList<>());
+        if(mapAddressInfos.get(memberId) == null){
+            mapAddressInfos.putIfAbsent(memberId, new ArrayList<>());
         }
     }
 
@@ -103,13 +103,13 @@ public class AutoShoppingEntryForApp {
      * @return
      */
     public static String getAddressInfo(String auth, String memberId, boolean useLocalAddress) {
-        initMapInfoByAuth(auth);
+        initMapInfoByAuth(memberId);
         String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId), auth);
         try {
             if(addressInfo != null){
                 ShoppingForAppDTO.AddressDataDTO addressData = JSONObject.parseObject(addressInfo,ShoppingForAppDTO.AddressDataDTO.class);
                 if(addressData != null && addressData.getMessage().equals("成功") && addressData.getData() != null){
-                    List<ShoppingForAppDTO.AddressDataRowDetailDTO> addressDetailInfoDTOS = mapAddressInfos.get(auth);
+                    List<ShoppingForAppDTO.AddressDataRowDetailDTO> addressDetailInfoDTOS = mapAddressInfos.get(memberId);
                     if(addressDetailInfoDTOS == null){
                         addressDetailInfoDTOS = new ArrayList<>();
                     }
@@ -220,40 +220,39 @@ public class AutoShoppingEntryForApp {
     /**
      * 删除本地意向单
      *
-     * @param auth
      * @param localNos
      * @return
      */
-    public static boolean deleteIntendOrders(String auth, String localNos) {
-        initMapInfoByAuth(auth);
-        mapIntendToBuyGoodInfos.get(auth).removeIf(item -> localNos.contains(item.getLocalNo()));
-        mapToBuyGoodAndAddressInfos.get(auth).removeIf(item -> localNos.contains(item.getLocalNo()));
+    public static boolean deleteIntendOrders(String memberId, String localNos) {
+        initMapInfoByAuth(memberId);
+        mapIntendToBuyGoodInfos.get(memberId).removeIf(item -> localNos.contains(item.getLocalNo()));
+        mapToBuyGoodAndAddressInfos.get(memberId).removeIf(item -> localNos.contains(item.getLocalNo()));
         return true;
     }
 
     /**
      * 清空记录
      *
-     * @param auth
+     * @param memberId
      * @return
      */
-    public static boolean clearAllOrderInfo(String auth) {
-        initMapInfoByAuth(auth);
-        mapToBuyGoodAndAddressInfos.get(auth).clear();
-        mapAlreadyBuyGoodAndAddressInfos.get(auth).clear();
-        mapIntendToBuyGoodInfos.get(auth).clear();
+    public static boolean clearAllOrderInfo(String memberId) {
+        initMapInfoByAuth(memberId);
+        mapToBuyGoodAndAddressInfos.get(memberId).clear();
+        mapAlreadyBuyGoodAndAddressInfos.get(memberId).clear();
+        mapIntendToBuyGoodInfos.get(memberId).clear();
         return true;
     }
 
     /**
      * 清除下单中订单
      *
-     * @param auth
+     * @param memberId
      * @return
      */
-   public static boolean clearStandToBuyOrderInfo(String auth) {
-        initMapInfoByAuth(auth);
-        mapToBuyGoodAndAddressInfos.get(auth).clear();
+   public static boolean clearStandToBuyOrderInfo(String memberId) {
+        initMapInfoByAuth(memberId);
+        mapToBuyGoodAndAddressInfos.get(memberId).clear();
         return true;
     }
 
@@ -297,7 +296,7 @@ public class AutoShoppingEntryForApp {
      */
     public static List<ToPayOrderDTO> getToPayOrderList(String auth, String memberId, String dataUrl) {
         List<ToPayOrderDTO> toPayOrderDTOS = new ArrayList<>();
-        initMapInfoByAuth(auth);
+        initMapInfoByAuth(memberId);
         String toPayInfo = RequestBllForApp.doGet(MessageFormat.format(dataUrl, memberId), auth);
         try {
             if(toPayInfo != null){
@@ -325,20 +324,20 @@ public class AutoShoppingEntryForApp {
      * 添加意向单信息
      *
      * @param intendOrderInfo
-     * @param auth
+     * @param memberId
      * @return
      */
-    public static List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> getToBuyGoodAndAddressInfoList(IntendOrderDTO intendOrderInfo, String auth) {
-        initMapInfoByAuth(auth);
+    public static List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> getToBuyGoodAndAddressInfoList(IntendOrderDTO intendOrderInfo, String memberId) {
+        initMapInfoByAuth(memberId);
         if(intendOrderInfo != null && intendOrderInfo.getReceptNameList() != null && !intendOrderInfo.getReceptNameList().isEmpty()){
             List<String> receiptNames = Arrays.asList(intendOrderInfo.getReceptNameList().split("\\,"));
             receiptNames.forEach(item -> {
                 ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO tmpToBuy = new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO();
-                mapIntendToBuyGoodInfos.get(auth).add(tmpToBuy);
+                mapIntendToBuyGoodInfos.get(memberId).add(tmpToBuy);
                 //intendToBuyGoods.add(tmpToBuy);
                 tmpToBuy.setOrderDate(dateTimeFormatter.format(LocalDateTime.now()));
                 tmpToBuy.setLocalNo(UUID.randomUUID().toString());
-                tmpToBuy.setKdtSession(auth);
+                tmpToBuy.setKdtSession(memberId);
                 tmpToBuy.setShotGoodName(intendOrderInfo.getGoodShotName());
 
                 tmpToBuy.setToBuyNum(intendOrderInfo.getGoodNum());
@@ -346,8 +345,8 @@ public class AutoShoppingEntryForApp {
                 tmpToBuy.setToBuySellType(intendOrderInfo.getToBuySellType());
                 StringBuilder descSB = new StringBuilder("名称:");
                 descSB.append(intendOrderInfo.getGoodShotName());
-                if(mapAddressInfos.get(auth) != null){
-                    ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo = mapAddressInfos.get(auth).stream().filter(address -> address.getAddressId().equalsIgnoreCase(item)).findFirst().orElse(null);
+                if(mapAddressInfos.get(memberId) != null){
+                    ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo = mapAddressInfos.get(memberId).stream().filter(address -> address.getAddressId().equalsIgnoreCase(item)).findFirst().orElse(null);
                     if(addressDetailInfo != null){
                         tmpToBuy.setAddressDetailInfo(addressDetailInfo);
                         tmpToBuy.setReceiptName(addressDetailInfo.getReceiveName());
@@ -389,7 +388,7 @@ public class AutoShoppingEntryForApp {
                 tmpToBuy.setDesc(descSB.toString());
             });
         }
-        return mapIntendToBuyGoodInfos.get(auth);
+        return mapIntendToBuyGoodInfos.get(memberId);
     }
 
     /**
@@ -402,13 +401,13 @@ public class AutoShoppingEntryForApp {
      * @return
      */
     public static String startAutoShopping(String auth, String memberId, String localNos) {
-        initMapInfoByAuth(auth);
+        initMapInfoByAuth(memberId);
         StringBuilder resultBuilder = new StringBuilder();
-        String standToBuyLocalNos = mapToBuyGoodAndAddressInfos.get(auth).stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.joining(","));
-        if(mapIntendToBuyGoodInfos.get(auth).size() > 0){
-            List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> needToAddIntends = mapIntendToBuyGoodInfos.get(auth).stream().filter(item -> localNos.contains(item.getLocalNo()) && !standToBuyLocalNos.contains(item.getLocalNo())).collect(Collectors.toList());
+        String standToBuyLocalNos = mapToBuyGoodAndAddressInfos.get(memberId).stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.joining(","));
+        if(mapIntendToBuyGoodInfos.get(memberId).size() > 0){
+            List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> needToAddIntends = mapIntendToBuyGoodInfos.get(memberId).stream().filter(item -> localNos.contains(item.getLocalNo()) && !standToBuyLocalNos.contains(item.getLocalNo())).collect(Collectors.toList());
             if(needToAddIntends != null && !needToAddIntends.isEmpty()){
-                mapToBuyGoodAndAddressInfos.get(auth).addAll(needToAddIntends);
+                mapToBuyGoodAndAddressInfos.get(memberId).addAll(needToAddIntends);
             }else {
                 return "mission added";
             }
@@ -416,27 +415,27 @@ public class AutoShoppingEntryForApp {
             return "no intention order";
         }
         //buildToBuyAddressInfo(mapToBuyGoodAndAddressInfos.get(kdtSession),kdtSession,kdtId);
-        if(mapStartShoppingSymbol.get(auth)){
+        if(mapStartShoppingSymbol.get(memberId)){
             return "ordering";
         }
         //自旋下单流程
         for(long i=0;;i++){
-            mapStartShoppingSymbol.put(auth,true);
+            mapStartShoppingSymbol.put(memberId, true);
             //System.out.println(resultBuilder.toString());
             try {
-                ShoppingForAppBll.buildToBuyGoodInfo(mapToBuyGoodAndAddressInfos.get(auth),auth);
+                ShoppingForAppBll.buildToBuyGoodInfo(mapToBuyGoodAndAddressInfos.get(memberId),auth);
                 //System.out.println(Calendar.getInstance().toInstant().toString() +" "+ i +" times buildToBuyGoodInfo mapToBuyGoodAndAddressInfos:"+ JSONObject.toJSONString(mapToBuyGoodAndAddressInfos.get(kdtSession)));
                 //System.out.println(Calendar.getInstance().toInstant().toString() +" "+ i +" times buildToBuyGoodInfo mapToBuyGoodAndAddressInfos:"+ JSONObject.toJSONString(mapToBuyGoodAndAddressInfos.get(kdtSession)));
-                ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(auth),auth);
-                ShoppingForAppBll.removeAlreadyBuyAndToPayGood(mapToBuyGoodAndAddressInfos.get(auth),mapAlreadyBuyGoodAndAddressInfos.get(auth),mapIntendToBuyGoodInfos.get(auth));
+                ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(memberId),auth);
+                ShoppingForAppBll.removeAlreadyBuyAndToPayGood(mapToBuyGoodAndAddressInfos.get(memberId),mapAlreadyBuyGoodAndAddressInfos.get(memberId),mapIntendToBuyGoodInfos.get(memberId));
             }catch (Exception ex){
                 ex.printStackTrace();
                 resultBuilder.append(ex.getMessage());
             }
-            if(mapToBuyGoodAndAddressInfos.get(auth).isEmpty()){
-                resultBuilder.append("ordered success:").append(MessageFormat.format("order number: {0} , details：{1}",mapAlreadyBuyGoodAndAddressInfos.get(auth).size(),JSONObject.toJSONString(mapAlreadyBuyGoodAndAddressInfos.get(auth))));
+            if(mapToBuyGoodAndAddressInfos.get(memberId).isEmpty()){
+                resultBuilder.append("ordered success:").append(MessageFormat.format("order number: {0} , details：{1}",mapAlreadyBuyGoodAndAddressInfos.get(memberId).size(),JSONObject.toJSONString(mapAlreadyBuyGoodAndAddressInfos.get(memberId))));
                 System.out.println(resultBuilder.toString());
-                mapStartShoppingSymbol.put(auth,false);
+                mapStartShoppingSymbol.put(memberId,false);
                 return resultBuilder.toString();
             }
         }
@@ -445,7 +444,7 @@ public class AutoShoppingEntryForApp {
     public static boolean syncAddress(String auth, String memberId) {
         ShopInfoDTO.AddressInfoDTO addressInfo = getAllAddressInfo("YZ588805925511446528YZoNbQsG4R","42536286");
         if(addressInfo != null && addressInfo.addressList != null){
-            List<ShoppingForAppDTO.AddressDataRowDetailDTO> addressDetailInfoDTOS = mapAddressInfos.get(auth);
+            List<ShoppingForAppDTO.AddressDataRowDetailDTO> addressDetailInfoDTOS = mapAddressInfos.get(memberId);
             if(addressDetailInfoDTOS == null){
                 addressDetailInfoDTOS = new ArrayList<>();
             }
@@ -476,5 +475,14 @@ public class AutoShoppingEntryForApp {
             }
         }
         return true;
+    }
+
+    public static String getAuthInfo(String userName, String password) {
+        ToBuyGoodInfoAppDTO.AuthInfoDTO authInfo = new ToBuyGoodInfoAppDTO.AuthInfoDTO();
+        String loginResultStr = RequestBllForApp.doPost(MessageFormat.format(loginUrlForApp, userName, password), null, "");
+        if(loginResultStr != null){
+            authInfo = JSONObject.parseObject(loginResultStr, ToBuyGoodInfoAppDTO.AuthInfoDTO.class);
+        }
+        return JSONObject.toJSONString(authInfo);
     }
 }
