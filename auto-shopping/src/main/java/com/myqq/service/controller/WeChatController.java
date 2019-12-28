@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @Controller
 @EnableAutoConfiguration
@@ -26,13 +27,7 @@ public class WeChatController {
     @ResponseBody
     @RequestMapping("/sendMsg")
     public String sendMessage(@RequestParam("msg")String message){
-        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}");
-    }
-
-    @ResponseBody
-    @RequestMapping("/send")
-    public String sendMessage(){
-        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"哈哈哈测试收件人的\"}}");
+        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", Arrays.asList("oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM"));
     }
 
 

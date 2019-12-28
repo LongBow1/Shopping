@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import static com.myqq.service.youza.bll.ConstInfo.*;
 import static com.myqq.service.youza.bll.ShopInfoDTO.*;
+import static com.myqq.service.youza.constinfo.ConstInfoForApp.qqOpenId;
 
 public class ShoppingBll {
     static final List<ToBuyGoodInfo> preToBuyGoodList = new ArrayList<>(50);
@@ -261,7 +262,7 @@ public class ShoppingBll {
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderNo() != null && !commitOrder.getData().getOrderNo().isEmpty()).count() >= item.getReadyToBuyGoodNum());
                 System.out.println("alreadyBuyLocalNos: " +alreadyBuyLocalNos);
                 if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
-                    WeChatBll.sendMessage("下单成功:"+intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodAndAddressInfo()).getDesc());
+                    WeChatBll.sendMessage("下单成功:"+intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodAndAddressInfo()).getDesc(), Arrays.asList(qqOpenId));
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                 }
 

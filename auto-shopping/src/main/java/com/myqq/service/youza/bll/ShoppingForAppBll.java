@@ -33,7 +33,7 @@ public class ShoppingForAppBll {
     public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CancelOrder")) {
     };
 
-    static List<String> quantifiers = new ArrayList<>(Arrays.asList("匹","张","座","回","场","尾","条","个","首","阙","阵","网","炮","顶","丘","棵","只","支","袭","辆","挑","担","颗","壳","窠","曲","墙","群","腔","砣","座","客","贯","扎","捆","刀","令","打","手","罗","坡","山","岭","江","溪","钟","队","单","双","对","出","口","头","脚","板","跳","枝","件","贴","针","线","管","名","位","身","堂","课","本","页","丝","毫","厘","分","钱","两","斤","担","铢","石","钧","锱","忽","撮","勺","合","升","斗","石","盘","碗","碟","叠","桶","笼","盆","盒","杯","钟","斛","锅","簋","篮","盘","桶","罐","瓶","壶","卮","盏","箩","箱","煲","啖","袋","钵","年","月","日","季","刻","时","周","天","秒","分","旬","纪","岁","世","更","夜","春","夏","秋","冬","代","伏","辈","丸","泡","粒","颗","幢","堆"));
+    public static List<String> quantifiers = new ArrayList<>(Arrays.asList("匹","张","尾","条","个","网","棵","只","支","颗","群","砣","座","贯","扎","捆","刀","打","手","队","单","双","对","口","头","脚","枝","件","贴","名","位","本","页","丝","两","斤","升","盘","碗","碟","叠","笼","盆","盒","杯","钟","锅","簋","篮","盘","桶","罐","瓶","壶","盏","箩","箱","袋","分","夜","代","丸","泡","粒","颗","幢","堆","包"));
 
     /**
      * 匹配意向单信息
@@ -319,7 +319,7 @@ public class ShoppingForAppBll {
                 List<String> alreadyBuyLocalNos = alreadyBuyGoodInfo.stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.toList());
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderId() != null && !commitOrder.getData().getOrderId().isEmpty()).count() >= item.getReadyToBuyGoodNum());
                 if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
-                    String messageResult = WeChatBll.sendMessage("order success:"+intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc());
+                    String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId));
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                     if(messageResult != null && !messageResult.isEmpty()){
                         System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+"toBuyGoodAndAddressInfos: "+toBuyGoodAndAddressInfos.toString());

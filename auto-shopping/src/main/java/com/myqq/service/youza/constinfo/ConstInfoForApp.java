@@ -5,6 +5,9 @@ package com.myqq.service.youza.constinfo;
  * @desc 白秋洁app
  */
 public class ConstInfoForApp {
+    public static String qqOpenId="oTX2GvzcTrl7Xi1pE4fwQBEnQPkI";
+    public static String zzOpenId = "oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM";
+
     public static String userAgentForApp = "Mozilla/5.0 (Linux; Android 10; YAL-AL10 Build/HUAWEIYAL-AL10; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.186 Mobile Safari/537.36 Html5Plus/1.0";
 
     public static String qqAuth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1Nzg4MjE2MzksInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiYzNjNGQzNGUtOWUxMy00NmY2LWJjYTUtMThjODQ5YjgyZjYwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.fFe58cXab-LlISjFJ9WGkzbApWJEX-xVQdxq0LxfWuO2DEoQRufcNaSv8uAPiThbxka1bn58fLSTOf9c3NalD76IobgWjwEqwo63Ml4pyMOBmO8YYOyC57TSc-wF6L6KicjaVA8wCbpTKlMigsJAMIuHvQS2xqe2qKrh5zOwbsSBZb5qJvb2yQeJvES44PbCD5r07OR7SWHdLkS0mNXvLpovlF61fullUfsAR532q64av0rwk5t1fjsYSahHQ7-EyyiuWtt5EJDlU_2zumYBjt7FuCeDioQCrXHK1tZLmFXkziBB75fuo9xRVhwSwBhl0aoP192mm_BpXIMbnG8FmQ";

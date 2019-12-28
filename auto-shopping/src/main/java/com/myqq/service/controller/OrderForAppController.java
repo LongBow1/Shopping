@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.myqq.service.youza.bll.ShoppingForAppBll.quantifiers;
 import static com.myqq.service.youza.constinfo.ConstInfoForApp.*;
 
 @RestController
@@ -151,5 +152,18 @@ public class OrderForAppController {
     @RequestMapping("/love")
     public String love(){
         return WeChatBll.loveZZ();
+    }
+
+    @RequestMapping("/getQuantifier")
+    public String getQuantifier(){
+        return JSONObject.toJSONString(quantifiers);
+    }
+
+    @RequestMapping("/addQuantifier")
+    public String addQuantifier(@RequestParam("newQuantifier")String newQuantifier){
+        if(!quantifiers.contains(newQuantifier)){
+            quantifiers.add(newQuantifier);
+        }
+        return JSONObject.toJSONString(quantifiers);
     }
 }
