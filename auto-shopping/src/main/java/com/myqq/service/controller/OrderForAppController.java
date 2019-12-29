@@ -48,6 +48,11 @@ public class OrderForAppController {
         return AutoShoppingEntryForApp.getAddressInfo(auth, memberId, useLocalAddress);
     }
 
+    @RequestMapping("/deleteLocalAddress")
+    public String deleteLocalAddress(@RequestParam("memberId")String memberId, @RequestParam("addressIds") String deleteAddressIds){
+        return AutoShoppingEntryForApp.deleteLocalAddress(memberId, deleteAddressIds);
+    }
+
     @RequestMapping("/getIntendOrderList")
     public String getIntendOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
         return JSONObject.toJSONString(AutoShoppingEntryForApp.mapIntendToBuyGoodInfos.get(memberId));

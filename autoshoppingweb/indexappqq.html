@@ -17,14 +17,35 @@
 		//39.105.64.90
 		var auth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1NzUwODU2MDQsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiNGM4YTUxYzEtMjk5MC00NmMyLThjYmQtYmJmMzdiOWYwMmEwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.L6rnyIDf4xxCZ62L1oNvR4rCRyHx_OpybY2iA_4D4527AEjnhg9-XkN1B1Nbg6mg1qeQl0Omg3_hrkn_aQMUZJaunDAbetr41qrq8H7Fzh-8XC8Ui3PRLCo4KGOI4wSegnmqgyWGwJfskz1yTmU2LWNxnFF_-ateeb2NEL6RG7Rdx3wGfwcHBuQRf1k7it7zKLWTonaX5N8JPIOg-LTYOKtjG3H4b6B2aw80_crMU6RSg1lIDiqRu0HA2dLhYJaF6UIaR8rAKiwQI7EFwQvoN6DBY6rFik-s5aqMoRQu0hu1Ir9bRLzff3UKIhsZ6i4jHxekj-nNj2igAfhSHzPr_A";
 		var memberId = "e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735";
-		var requestUrlPrefix = "http://localhost:8080/orderApp/";
+		var requestUrlPrefix = "http://39.105.64.90:80/orderApp/";
 		var sessionid = $("#authinput").val();
 		checkSession();
 		var timeClock;
 		$('#testsession').click(function () {
 			checkSession();
 		});
+		$("#deletelocaladdress").click(function () {
+			var checkedRecepts = $(".addintendorder:checkbox:checked");
+			if (checkedRecepts.length == 0) {
+				alert("收件人必选!")
+				return;
+			}
+			var receipts = new Array();
+			checkedRecepts.each(function (i, e) {
+				receipts.push($(e).data("dataaddressid"));
+			});
+			var intentInfo = {
+				"auth": $("#authinput").val().trim(),
+				"addressIds": receipts.join(","),
+				"memberId": $("#memberidinput").val().trim()
+			}
 
+			$.post(requestUrlPrefix + "deleteLocalAddress", intentInfo, function (res) {
+				if (res != null) {
+					refreshAddress();
+				}
+			});
+		})
 		$("#createintendorder").click(function () {
 			if ($("#authinput").val().trim().length > 0) {
 				var goodShotName = $("#intendgoodshotname").val();
@@ -251,7 +272,9 @@
 		$('#shopselect').change(function () {
 			$("#authinput").val($('#shopselect option:selected').data('sessionid'));
 		})
-
+		$('#enablelocaladdress').change(function () {
+			refreshAddress();
+		})
 		function checkSession() {
 			var username = $("#username").val().trim();
 			var password = $("#password").val().trim();
@@ -457,7 +480,32 @@
 				//alert(result);
 			})
 		}
-
+		function refreshAddress() {
+			var postInfo = {
+				"auth": $("#authinput").val().trim(),
+				"memberId": $("#memberidinput").val().trim(),//getShopInfo()
+				"useLocalAddress": $("#enablelocaladdress").is(':checked')
+			}
+			$.post(requestUrlPrefix + "testConnect", postInfo, function (result) {
+				if (result == true) {
+					$("#connectpromptinput").val("成功");
+					$.post(requestUrlPrefix + "getAddress", postInfo, function (address) {
+						var addressIdArray = new Array();
+						if (address != null && address.length > 0) {
+							$("#receptdiv").empty();
+							var addressInfo = JSON.parse(address);
+							$.each(addressInfo, function (i, e) {
+								$("#receptdiv").append("<p > <input class='addintendorder' type='checkbox' id='" + e.addressId + "' data-dataaddressid='" + e.addressId + "' data-username='" + e.receiveName + "' >" + e.receiveName + "  " + e.province + e.city + e.area + e.address + "</input> </p>");
+								addressIdArray.push(e.id);
+							});
+							$("#connectpromptinput").val("成功,共" + addressIdArray.length + "个人");
+						}
+					})
+				} else {
+					$("#connectpromptinput").val("连接失败，凭证失效,请重新抓包获取(PC端Fiddler,APP端抓包精灵)");
+				}
+			})
+		}
 
 	})
 
@@ -644,7 +692,8 @@
 			onfocus="javascript:if(this.value=='搜索收件人')this.value='';"
 			onblur="javascript:if(this.value.trim()=='')this.value='搜索收件人';">
 		<button id="createintendorder">创建意向单</button>
-		<input id="enablelocaladdress" type="checkbox" checked="checked">使用本地地址
+		<input id="enablelocaladdress" type="checkbox" checked="checked">本地地址</input>
+		<button id="deletelocaladdress">删除本地地址</button>
 		<br>
 		<div id="receptdiv" style="height: 180px; overflow-y: auto">
 		</div>

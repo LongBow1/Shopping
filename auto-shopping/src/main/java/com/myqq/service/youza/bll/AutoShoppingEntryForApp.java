@@ -188,7 +188,10 @@ public class AutoShoppingEntryForApp {
             if(!toAddAddress.isEmpty()){
                 System.out.println("toAddAddress count: "+ toAddAddress.size());
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
-                fileOutputStream.write(JSONObject.toJSONString(localAddressList).getBytes());
+                //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream,"utf-8");
+                //outputStreamWriter.append(JSONObject.toJSONString(localAddressList));
+                //outputStreamWriter.close();
+                fileOutputStream.write(JSONObject.toJSONString(localAddressList).getBytes("utf-8"));
                 fileOutputStream.close();
             }
         } catch (Exception e) {
@@ -213,6 +216,9 @@ public class AutoShoppingEntryForApp {
                     addressDetailInfoDTOS.add(address);
                 }
             });
+            if(!localAddressList.isEmpty()){
+                return JSONObject.toJSONString(localAddressList);
+            }
             return JSONObject.toJSONString(addressDetailInfoDTOS);
         }
     }
@@ -484,5 +490,73 @@ public class AutoShoppingEntryForApp {
             authInfo = JSONObject.parseObject(loginResultStr, ToBuyGoodInfoAppDTO.AuthInfoDTO.class);
         }
         return JSONObject.toJSONString(authInfo);
+    }
+
+    public static String deleteLocalAddress(String memberId, String deleteAddressIds) {
+        String path = "addressinfo" + memberId + ".txt";
+        File file = new File(path);
+        if(file.exists()){
+            System.out.println(path + " exist");
+        }else {
+            System.out.println(path + " not exist");
+        }
+        StringBuilder existAddress = new StringBuilder();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null){
+                System.out.println(line);
+                existAddress.append(line);
+            }
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+
+        }
+        List<ShoppingForAppDTO.AddressDataRowDetailDTO> toRemoveAddress = new ArrayList<>();
+        List<ShoppingForAppDTO.AddressDataRowDetailDTO> localAddressList = new ArrayList<>();
+        List<ShoppingForAppDTO.AddressDataRowDetailDTO> newLocalAddressList = new ArrayList<>();
+        if(existAddress.toString().length() > 0){
+            localAddressList = JSONObject.parseArray(existAddress.toString(),ShoppingForAppDTO.AddressDataRowDetailDTO.class);
+        }
+        //String address = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, zzjjMemberId), zzjjAuth);
+        try {
+            if(localAddressList != null && !localAddressList.isEmpty()){
+                localAddressList.forEach(item -> {
+                    ShoppingForAppDTO.AddressDataRowDetailDTO tmpInfo = new ShoppingForAppDTO.AddressDataRowDetailDTO();
+                    tmpInfo.setAddressId(item.getAddressId());
+                    tmpInfo.setReceiveName(item.getReceiveName());
+                    tmpInfo.setReceivePhone(item.getReceivePhone());
+                    tmpInfo.setProvince(item.getProvince());
+                    tmpInfo.setCity(item.getCity());
+                    tmpInfo.setArea(item.getArea());
+                    tmpInfo.setAddress(item.getAddress());
+                    if(deleteAddressIds.contains(item.getAddressId())){
+                        toRemoveAddress.add(tmpInfo);
+                    }else {
+                        newLocalAddressList.add(tmpInfo);
+                    }
+                });
+            }
+            if(!toRemoveAddress.isEmpty()){
+                System.out.println("toRemoveAddress count: "+ toRemoveAddress.size());
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream,"utf-8");
+                //outputStreamWriter.append(JSONObject.toJSONString(localAddressList));
+                //outputStreamWriter.close();
+                fileOutputStream.write(JSONObject.toJSONString(newLocalAddressList).getBytes("utf-8"));
+                fileOutputStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+
+        }
+        if(toRemoveAddress.isEmpty()){
+            return "no find delete address";
+        }
+        return "delete address count: "+toRemoveAddress.size();
     }
 }
