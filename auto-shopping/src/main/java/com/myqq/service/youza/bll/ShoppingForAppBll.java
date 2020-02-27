@@ -64,11 +64,22 @@ public class ShoppingForAppBll {
                     goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
                 }*/
                 goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
-                ShoppingForAppDTO.GoodsListDTO goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
-                ShoppingForAppDTO.GoodsListDTO newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+                ShoppingForAppDTO.GoodsListDTO goodsList = null ;
+                try {
+                    goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+                }catch (Exception ex){
+                    System.out.println(ex.getMessage());
+                }
+                ShoppingForAppDTO.GoodsListDTO newGoodsList = null;
+                try {
+                    newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+                }catch (Exception ex){
+                    System.out.println(ex.getMessage());
+                }
                 if(goodsList != null && goodsList.getData() != null && goodsList.getData().getRows() != null){
                     if(newGoodsList != null && newGoodsList.getData() != null && newGoodsList.getData().getRows() != null){
-                        newGoodsList.getData().getRows().removeIf(newGood -> goodsList.getData().getRows().stream().anyMatch(existGood -> existGood.getGoodsId().equalsIgnoreCase(newGood.getGoodsId())));
+                        ShoppingForAppDTO.GoodsListDTO finalGoodsList = goodsList;
+                        newGoodsList.getData().getRows().removeIf(newGood -> finalGoodsList.getData().getRows().stream().anyMatch(existGood -> existGood.getGoodsId().equalsIgnoreCase(newGood.getGoodsId())));
                         if(!newGoodsList.getData().getRows().isEmpty()){
                             goodsList.getData().getRows().addAll(newGoodsList.getData().getRows());
                         }

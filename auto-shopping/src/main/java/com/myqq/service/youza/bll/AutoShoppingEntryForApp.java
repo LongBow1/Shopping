@@ -13,10 +13,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -149,7 +146,7 @@ public class AutoShoppingEntryForApp {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
             String line = null;
             while ((line = bufferedReader.readLine()) != null){
-                System.out.println(line);
+                //System.out.println(line);
                 existAddress.append(line);
             }
             fileInputStream.close();

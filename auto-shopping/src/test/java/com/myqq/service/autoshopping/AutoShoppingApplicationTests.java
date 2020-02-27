@@ -17,10 +17,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.myqq.service.youza.constinfo.ConstInfoForApp.*;
@@ -111,6 +108,8 @@ class AutoShoppingApplicationTests {
 		if(existAddress.toString().length() > 0){
 			localAddressList = JSONObject.parseArray(existAddress.toString(),ShoppingForAppDTO.AddressDataRowDetailDTO.class);
 		}
+		localAddressList.sort(Comparator.comparing(ShoppingForAppDTO.AddressDataRowDetailDTO::getReceiveName));
+		localAddressList.stream().sorted(Comparator.comparing(ShoppingForAppDTO.AddressDataRowDetailDTO::getReceiveName));
 		//String address = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, zzjjMemberId), zzjjAuth);
 		try {
 			String remoteAddress = AutoShoppingEntryForApp.getAddressInfo(zzjjAuth, zzjjMemberId, false);
