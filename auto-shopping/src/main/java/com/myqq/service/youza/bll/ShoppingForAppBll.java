@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.CustomThreadFactory;
+import com.myqq.service.youza.util.TimeUtil;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class ShoppingForAppBll {
     public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CancelOrder")) {
     };
 
-    public static List<String> quantifiers = new ArrayList<>(Arrays.asList("匹","张","尾","条","个","网","棵","只","支","颗","群","砣","座","贯","扎","捆","刀","打","手","队","单","双","对","口","头","脚","枝","件","贴","名","位","本","页","丝","两","斤","升","盘","碗","碟","叠","笼","盆","盒","杯","钟","锅","簋","篮","盘","桶","罐","瓶","壶","盏","箩","箱","袋","分","夜","代","丸","泡","粒","颗","幢","堆","包"));
+    public static List<String> quantifiers = new ArrayList<>(Arrays.asList("匹","张","尾","条","个","网","棵","只","支","颗","群","砣","座","贯","扎","捆","刀","打","手","队","单","双","对","口","头","脚","枝","件","贴","名","位","本","页","丝","两","斤","升","盘","碗","碟","叠","笼","盆","盒","杯","钟","锅","簋","篮","盘","桶","罐","瓶","壶","盏","箩","箱","袋","分","夜","代","丸","泡","粒","颗","幢","堆","包","提"));
 
     /**
      * 匹配意向单信息
@@ -68,13 +69,13 @@ public class ShoppingForAppBll {
                 try {
                     goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
                 }catch (Exception ex){
-                    System.out.println(ex.getMessage());
+                    System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
                 }
                 ShoppingForAppDTO.GoodsListDTO newGoodsList = null;
                 try {
                     newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
                 }catch (Exception ex){
-                    System.out.println(ex.getMessage());
+                    System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
                 }
                 if(goodsList != null && goodsList.getData() != null && goodsList.getData().getRows() != null){
                     if(newGoodsList != null && newGoodsList.getData() != null && newGoodsList.getData().getRows() != null){
@@ -87,9 +88,9 @@ public class ShoppingForAppBll {
                     //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" combined goodsList" + goodsList.toString());
                     //2-预售 1-现货 0-不区分
                     if(goodInfo.getToBuySellType() == 2){
-                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && !data.getName().contains("现货")).collect(Collectors.toList()));
+                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (!data.getName().contains("现货") || data.getName().contains("发货"))).collect(Collectors.toList()));
                     }else if(goodInfo.getToBuySellType() == 1){
-                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && data.getName().contains("现货")).collect(Collectors.toList()));
+                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (data.getName().contains("现货") || !data.getName().contains("发货"))).collect(Collectors.toList()));
                     }
                     goodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
@@ -98,7 +99,7 @@ public class ShoppingForAppBll {
                                 nameMatch = nameMatch && quantifiers.stream().anyMatch(qItem -> item.getName().contains(goodInfo.getQuantifierNum()+qItem));
                             }
                             if(nameMatch){
-                                System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" shotShopName:" + shotShopName + " "+ item.toString());
+                                System.out.println(TimeUtil.getCurrentTimeString() +" shotShopName:" + shotShopName + " "+ item.toString());
                                 ShoppingForAppDTO.GoodDataStockDetailDTO toBuyGoodInfo = realToBuyGoodList.stream().filter(good -> good.getMainGoodsId().equalsIgnoreCase(item.getGoodsId())).findFirst().orElse(null);
                                 if(toBuyGoodInfo == null){
                                     toBuyGoodInfo = new ShoppingForAppDTO.GoodDataStockDetailDTO();
@@ -107,11 +108,11 @@ public class ShoppingForAppBll {
                                     toBuyGoodInfo.setName(item.getName());
 
                                     ShoppingForAppDTO.GoodDataStockDetailDTO finalToBuyGoodInfo1 = toBuyGoodInfo;
-                                    System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" getToBuyGoodSkuInfoDetail buy new :"+JSONObject.toJSONString(goodInfo));
+                                    System.out.println(TimeUtil.getCurrentTimeString() + " getToBuyGoodSkuInfoDetail buy new :"+JSONObject.toJSONString(goodInfo));
                                     taskList.add(executorServiceForGoodDetail.submit(() -> {getToBuyGoodSkuInfoDetail(item, finalToBuyGoodInfo1, skuColorKeyWords,skuSizeKeyWords, skuStyleKeyWords, skuSpecKeyWords, goodInfo.getToBuyNum(), auth, realToBuyGoodList); return Boolean.TRUE; }));
                                 }else {
                                     ShoppingForAppDTO.GoodDataStockDetailDTO finalToBuyGoodInfo = toBuyGoodInfo;
-                                    System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+" getToBuyGoodSkuInfoDetail update:"+JSONObject.toJSONString(goodInfo));
+                                    System.out.println(TimeUtil.getCurrentTimeString() + " getToBuyGoodSkuInfoDetail update:"+JSONObject.toJSONString(goodInfo));
                                     taskList.add(executorServiceForGoodDetail.submit(() -> {getToBuyGoodSkuInfoDetail(item, finalToBuyGoodInfo, skuColorKeyWords,skuSizeKeyWords, skuStyleKeyWords, skuSpecKeyWords, goodInfo.getToBuyNum(), auth, realToBuyGoodList); return true;}));
                                 }
                             }
@@ -134,7 +135,7 @@ public class ShoppingForAppBll {
         });
 
         if(!operationInfo.toString().isEmpty()){
-            System.out.println("buildToBuyGoodInfo operationInfo: "+ operationInfo.toString());
+            System.out.println(TimeUtil.getCurrentTimeString() + "buildToBuyGoodInfo operationInfo: "+ operationInfo.toString());
         }
     }
 
@@ -204,7 +205,7 @@ public class ShoppingForAppBll {
             operationInfo.append(ex.getMessage());
         }
         if(!operationInfo.toString().isEmpty()){
-            System.out.println("getToBuyGoodSkuInfoDetail operationInfo: "+ operationInfo.toString());
+            System.out.println(TimeUtil.getCurrentTimeString() + "getToBuyGoodSkuInfoDetail operationInfo: "+ operationInfo.toString());
         }
     }
     private static boolean isSkuItemListMatch(Stream<ToBuyGoodInfoAppDTO.KV> propList, String keyword, boolean strictEqual) {
@@ -294,10 +295,10 @@ public class ShoppingForAppBll {
             commitOrderFutures.forEach(task -> {
                 try {
                     String commitResult = task.get();
-                    System.out.println(commitResult);
+                    System.out.println(TimeUtil.getCurrentTimeString() + commitResult);
                     if(commitResult != null && (commitResult.contains("下单太频繁") || commitResult.contains("系统繁忙"))){
                         Thread.sleep(500);
-                        System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) + Thread.currentThread().getName()+" 暂停500 ");
+                        System.out.println(TimeUtil.getCurrentTimeString() +  Thread.currentThread().getName()+" 暂停500 ");
                     }
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
@@ -309,7 +310,7 @@ public class ShoppingForAppBll {
             });
         }
         if(!operationInfo.toString().isEmpty()){
-            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) + "commitToBuyOrder operationInfo: "+ operationInfo.toString());
+            System.out.println(TimeUtil.getCurrentTimeString() + "commitToBuyOrder operationInfo: "+ operationInfo.toString());
         }
     }
 
@@ -333,9 +334,9 @@ public class ShoppingForAppBll {
                     String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId));
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                     if(messageResult != null && !messageResult.isEmpty()){
-                        System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+"toBuyGoodAndAddressInfos: "+toBuyGoodAndAddressInfos.toString());
-                        System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+"alreadyBuyGoodInfo: "+alreadyBuyGoodInfo.toString());
-                        System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now())+"intendToBuyGoods: "+intendToBuyGoods.toString());
+                        System.out.println(TimeUtil.getCurrentTimeString() + "toBuyGoodAndAddressInfos: "+toBuyGoodAndAddressInfos.toString());
+                        System.out.println(TimeUtil.getCurrentTimeString() + "alreadyBuyGoodInfo: "+alreadyBuyGoodInfo.toString());
+                        System.out.println(TimeUtil.getCurrentTimeString() + "intendToBuyGoods: "+intendToBuyGoods.toString());
                     }
                 }
 
@@ -345,7 +346,7 @@ public class ShoppingForAppBll {
             }
         }
         if(!operationInfo.isEmpty()){
-            System.out.println("removeAlreadyBuyAndToPayGood operationInfo: "+ operationInfo);
+            System.out.println(TimeUtil.getCurrentTimeString() + "removeAlreadyBuyAndToPayGood operationInfo: "+ operationInfo);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.myqq.service.youza.entity.IntendOrderDTO;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.entity.ToPayOrderDTO;
+import com.myqq.service.youza.util.TimeUtil;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -62,7 +63,7 @@ public class AutoShoppingEntryForApp {
                 return addressData != null && addressData.getMessage().equals("成功");
             }
         }catch (Exception ex){
-            System.out.println(ex.getMessage());
+            System.out.println(TimeUtil.getCurrentTimeString()+ex.getMessage());
             return false;
         }
         return true;
@@ -126,7 +127,7 @@ public class AutoShoppingEntryForApp {
                 }
             }
         }catch (Exception ex){
-            System.out.println(ex.getMessage());
+            System.out.println(TimeUtil.getCurrentTimeString()+ex.getMessage());
             return "";
         }
         return "";
@@ -136,9 +137,9 @@ public class AutoShoppingEntryForApp {
         String path = "addressinfo" + memberId + ".txt";
         File file = new File(path);
         if(file.exists()){
-            System.out.println(path + " exist");
+            System.out.println(TimeUtil.getCurrentTimeString()+path + " exist");
         }else {
-            System.out.println(path + " not exist");
+            System.out.println(TimeUtil.getCurrentTimeString()+path + " not exist");
         }
         StringBuilder existAddress = new StringBuilder();
         try {
@@ -183,7 +184,7 @@ public class AutoShoppingEntryForApp {
                 }
             }
             if(!toAddAddress.isEmpty()){
-                System.out.println("toAddAddress count: "+ toAddAddress.size());
+                System.out.println(TimeUtil.getCurrentTimeString()+"toAddAddress count: "+ toAddAddress.size());
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream,"utf-8");
                 //outputStreamWriter.append(JSONObject.toJSONString(localAddressList));
@@ -318,7 +319,7 @@ public class AutoShoppingEntryForApp {
                 }
             }
         }catch (Exception ex){
-            System.out.println(ex.getMessage());
+            System.out.println(TimeUtil.getCurrentTimeString()+ex.getMessage());
         }
         return toPayOrderDTOS;
     }
@@ -407,19 +408,26 @@ public class AutoShoppingEntryForApp {
         initMapInfoByAuth(memberId);
         StringBuilder resultBuilder = new StringBuilder();
         String standToBuyLocalNos = mapToBuyGoodAndAddressInfos.get(memberId).stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.joining(","));
-        if(mapIntendToBuyGoodInfos.get(memberId).size() > 0){
+        String resultStr = "";
+        if (mapIntendToBuyGoodInfos.get(memberId).size() > 0) {
             List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> needToAddIntends = mapIntendToBuyGoodInfos.get(memberId).stream().filter(item -> localNos.contains(item.getLocalNo()) && !standToBuyLocalNos.contains(item.getLocalNo())).collect(Collectors.toList());
-            if(needToAddIntends != null && !needToAddIntends.isEmpty()){
+            if (needToAddIntends != null && !needToAddIntends.isEmpty()) {
                 mapToBuyGoodAndAddressInfos.get(memberId).addAll(needToAddIntends);
-            }else {
-                return "mission added";
+            } else {
+                resultStr = "mission added";
+                System.out.println(TimeUtil.getCurrentTimeString() + resultStr);
+                return resultStr;
             }
-        }else {
-            return "no intention order";
+        } else {
+            resultStr = "no intention order";
+            System.out.println(TimeUtil.getCurrentTimeString() + resultStr);
+            return resultStr;
         }
         //buildToBuyAddressInfo(mapToBuyGoodAndAddressInfos.get(kdtSession),kdtSession,kdtId);
         if(mapStartShoppingSymbol.get(memberId)){
-            return "ordering";
+            resultStr = "ordering";
+            System.out.println(TimeUtil.getCurrentTimeString() + resultStr);
+            return resultStr;
         }
         //自旋下单流程
         for(long i=0;;i++){
@@ -437,7 +445,7 @@ public class AutoShoppingEntryForApp {
             }
             if(mapToBuyGoodAndAddressInfos.get(memberId).isEmpty()){
                 resultBuilder.append("ordered success:").append(MessageFormat.format("order number: {0} , details：{1}",mapAlreadyBuyGoodAndAddressInfos.get(memberId).size(),JSONObject.toJSONString(mapAlreadyBuyGoodAndAddressInfos.get(memberId))));
-                System.out.println(resultBuilder.toString());
+                System.out.println(TimeUtil.getCurrentTimeString() + resultBuilder.toString());
                 mapStartShoppingSymbol.put(memberId,false);
                 return resultBuilder.toString();
             }

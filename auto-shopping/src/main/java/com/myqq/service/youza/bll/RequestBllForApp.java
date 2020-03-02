@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.myqq.service.youza.constinfo.ConstInfoForApp;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
+import com.myqq.service.youza.util.TimeUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +15,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
+import javax.rmi.CORBA.Util;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -130,7 +132,7 @@ public class RequestBllForApp {
             httpPost.setEntity(stringEntity);
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
             res = EntityUtils.toString(httpResponse.getEntity());
-            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" commitOrder entity:"+ EntityUtils.toString(stringEntity) +" result:"+res);
+            System.out.println(TimeUtil.getCurrentTimeString() +" commitOrder entity:"+ EntityUtils.toString(stringEntity) +" result:"+res);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (ClientProtocolException e) {
@@ -169,7 +171,7 @@ public class RequestBllForApp {
             operationInfo += ex.getMessage();
         }
         if(!operationInfo.isEmpty()){
-            System.out.println("getCommitPostEntity operationInfo: "+operationInfo);
+            System.out.println(TimeUtil.getCurrentTimeString() + "getCommitPostEntity operationInfo: "+operationInfo);
         }
         return entity;
     }
@@ -204,7 +206,7 @@ public class RequestBllForApp {
             }
         }
         if(!operationInfo.toString().isEmpty()){
-            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" commitToBuyOrder operationInfo: "+ operationInfo.toString());
+            System.out.println(TimeUtil.getCurrentTimeString() +" commitToBuyOrder operationInfo: "+ operationInfo.toString());
         }
         return orderInfo;
     }

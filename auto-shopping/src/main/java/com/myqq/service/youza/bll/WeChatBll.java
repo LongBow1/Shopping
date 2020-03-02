@@ -2,6 +2,7 @@ package com.myqq.service.youza.bll;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.myqq.service.youza.util.TimeUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -11,7 +12,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,13 +63,13 @@ public class WeChatBll {
             JSONObject jsonObject = JSONObject.parseObject(accessTokenJson);
             //System.out.println(jsonObject);
             String accessToken = jsonObject.get("access_token").toString();
-            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) + message);
-            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" accessToken:" + accessToken);
+            System.out.println(TimeUtil.getCurrentTimeString() + message);
+            System.out.println(TimeUtil.getCurrentTimeString() +" accessToken:" + accessToken);
             openIds.forEach(openId -> sendMessage("{\"touser\":\"" + openId + "\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", accessToken));
             return "send message complete";
         }catch (Exception ex){
             ex.printStackTrace();
-            System.out.println(ex.getMessage());
+            System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
             return "exception occur:"+ex.getMessage();
         }
     }
@@ -81,7 +81,7 @@ public class WeChatBll {
      * @param appSecret
      * @return
      */
-    public static String getAccessToken(@NotEmpty String appId, @NotEmpty String appSecret) {
+    public static String getAccessToken(String appId, String appSecret) {
         String accessToken = "";
         String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + appSecret;
 
@@ -91,9 +91,9 @@ public class WeChatBll {
         try {
             HttpResponse httpResponse = closeableHttpClient.execute(httpGet);
             accessToken = EntityUtils.toString(httpResponse.getEntity());
-            System.out.println("get weChat accessToken:" + accessToken);
+            System.out.println(TimeUtil.getCurrentTimeString() + "get weChat accessToken:" + accessToken);
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
         }
         return accessToken;
     }
@@ -109,11 +109,10 @@ public class WeChatBll {
         try {
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
             res = EntityUtils.toString(httpResponse.getEntity());
-            System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +"sendWeChatMessage:" + res);
+            System.out.println(TimeUtil.getCurrentTimeString() +"sendWeChatMessage:" + res);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
             res += ex.getMessage();
-            System.out.println(res);
+            System.out.println(TimeUtil.getCurrentTimeString() + res);
         }
         return res;
 
