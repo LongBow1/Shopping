@@ -41,6 +41,7 @@ public class AutoShoppingEntryForApp {
      * 是否开始抢购标识
      */
     public static ConcurrentHashMap<String,Boolean> mapStartShoppingSymbol = new ConcurrentHashMap<>(2);
+    public static ConcurrentHashMap<String,String> mapOrderingSymbol = new ConcurrentHashMap<>(2);
     /**
      * 收件人信息
      */
@@ -398,6 +399,7 @@ public class AutoShoppingEntryForApp {
     /**
      * 主流程--自动下单
      * 循环逻辑: 从意向单中获取订单 --> 获取商品信息 --> 匹配订单信息 --> 下单成功后清除意向单信息
+     * request per thread, => 循环针对每个用户
      *
      * @param auth
      * @param memberId
@@ -405,48 +407,64 @@ public class AutoShoppingEntryForApp {
      * @return
      */
     public static String startAutoShopping(String auth, String memberId, String localNos) {
+        //监视是否下单中
+        int loopCountMark = 0;
+        int loolCount = 0;
+        int countLevel= 20;
+        String loopMark = mapOrderingSymbol.containsKey(memberId) ? mapOrderingSymbol.getOrDefault(memberId,"") : "";
         initMapInfoByAuth(memberId);
-        StringBuilder resultBuilder = new StringBuilder();
+
         String standToBuyLocalNos = mapToBuyGoodAndAddressInfos.get(memberId).stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.joining(","));
-        String resultStr = "";
+        StringBuilder resultStr = new StringBuilder(loopMark);
         if (mapIntendToBuyGoodInfos.get(memberId).size() > 0) {
             List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> needToAddIntends = mapIntendToBuyGoodInfos.get(memberId).stream().filter(item -> localNos.contains(item.getLocalNo()) && !standToBuyLocalNos.contains(item.getLocalNo())).collect(Collectors.toList());
             if (needToAddIntends != null && !needToAddIntends.isEmpty()) {
                 mapToBuyGoodAndAddressInfos.get(memberId).addAll(needToAddIntends);
             } else {
-                resultStr = "mission added";
-                System.out.println(TimeUtil.getCurrentTimeString() + resultStr);
-                return resultStr;
+                resultStr.append(" mission added ");
+                System.out.println(TimeUtil.getCurrentTimeString() + resultStr.toString());
+                return resultStr.toString();
             }
         } else {
-            resultStr = "no intention order";
-            System.out.println(TimeUtil.getCurrentTimeString() + resultStr);
-            return resultStr;
+            resultStr.append(" no intention order ");
+            System.out.println(TimeUtil.getCurrentTimeString() + resultStr.toString());
+            return resultStr.toString();
         }
         //buildToBuyAddressInfo(mapToBuyGoodAndAddressInfos.get(kdtSession),kdtSession,kdtId);
         if(mapStartShoppingSymbol.get(memberId)){
-            resultStr = "ordering";
-            System.out.println(TimeUtil.getCurrentTimeString() + resultStr);
-            return resultStr;
+            resultStr.append(" ordering ");
+            System.out.println(TimeUtil.getCurrentTimeString() + resultStr.toString());
+            return resultStr.toString();
         }
         //自旋下单流程
-        for(long i=0;;i++){
+        for(;;){
+            StringBuilder resultBuilder = new StringBuilder();
             mapStartShoppingSymbol.put(memberId, true);
             //System.out.println(resultBuilder.toString());
             try {
-                ShoppingForAppBll.buildToBuyGoodInfo(mapToBuyGoodAndAddressInfos.get(memberId),auth);
-                //System.out.println(Calendar.getInstance().toInstant().toString() +" "+ i +" times buildToBuyGoodInfo mapToBuyGoodAndAddressInfos:"+ JSONObject.toJSONString(mapToBuyGoodAndAddressInfos.get(kdtSession)));
-                //System.out.println(Calendar.getInstance().toInstant().toString() +" "+ i +" times buildToBuyGoodInfo mapToBuyGoodAndAddressInfos:"+ JSONObject.toJSONString(mapToBuyGoodAndAddressInfos.get(kdtSession)));
-                ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(memberId),auth);
-                ShoppingForAppBll.removeAlreadyBuyAndToPayGood(mapToBuyGoodAndAddressInfos.get(memberId),mapAlreadyBuyGoodAndAddressInfos.get(memberId),mapIntendToBuyGoodInfos.get(memberId));
+                loopCountMark++;
+                if(loopCountMark % countLevel == 0){
+                    loopMark = TimeUtil.getCurrentTimeString() + memberId + " loopCount: " + loolCount * countLevel;
+                    mapOrderingSymbol.put(memberId, loopMark);
+                    System.out.println(loopMark);
+                    loolCount ++;
+                    loopCountMark = loopCountMark % countLevel;
+                }
+                ShoppingForAppBll.buildToBuyGoodInfo(mapToBuyGoodAndAddressInfos.get(memberId), auth);
+                ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(memberId), auth);
+                ShoppingForAppBll.removeAlreadyBuyAndToPayGood(mapToBuyGoodAndAddressInfos.get(memberId), mapAlreadyBuyGoodAndAddressInfos.get(memberId), mapIntendToBuyGoodInfos.get(memberId));
             }catch (Exception ex){
                 ex.printStackTrace();
                 resultBuilder.append(ex.getMessage());
             }
-            if(mapToBuyGoodAndAddressInfos.get(memberId).isEmpty()){
-                resultBuilder.append("ordered success:").append(MessageFormat.format("order number: {0} , details：{1}",mapAlreadyBuyGoodAndAddressInfos.get(memberId).size(),JSONObject.toJSONString(mapAlreadyBuyGoodAndAddressInfos.get(memberId))));
+            if (mapToBuyGoodAndAddressInfos.get(memberId).isEmpty()) {
+                resultBuilder.append("ordered success:").append(MessageFormat.format("memberId: {0},order number: {1},details：{2}", memberId, mapAlreadyBuyGoodAndAddressInfos.get(memberId).size()));
                 System.out.println(TimeUtil.getCurrentTimeString() + resultBuilder.toString());
-                mapStartShoppingSymbol.put(memberId,false);
+                mapStartShoppingSymbol.put(memberId, false);
+                return resultBuilder.toString();
+            }
+            //所有用户抢购完成，退出循环
+            if(mapStartShoppingSymbol.values().stream().allMatch(item -> !item)){
                 return resultBuilder.toString();
             }
         }
