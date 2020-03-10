@@ -824,12 +824,58 @@ public class ShoppingForAppDTO {
         }
     }
 
+    public static class CommitOrderErrorDTO{
+        /**
+         * 0-success
+         * 80001-库存不足
+         * 80005-商品还未开始抢购
+         */
+        private Integer code;
+        private String message;
+        private String data;
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public void setData(String data) {
+            this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return "CommitOrderErrorDTO{" +
+                    "code=" + code +
+                    ", message='" + message + '\'' +
+                    ", data='" + data + '\'' +
+                    '}';
+        }
+    }
+
     /**
      * 下单返回信息
      */
     public static class CommitOrderDTO{
         /**
          * 0-success
+         * 80001-库存不足
+         * 80005-商品还未开始抢购
          */
         private Integer code;
         private String message;

@@ -287,7 +287,7 @@ public class ShoppingForAppBll {
                         //已下单排除
                         boolean canCommitOrder = buyGood != null && buyGood.getGoodsId() != null && !buyGood.getGoodsId().isEmpty() && Optional.ofNullable(buyGood.getToBuyNum()).orElse(0) > 0 && (buyGood.getOrderNo() == null || buyGood.getOrderNo().isEmpty());
                         if(canCommitOrder){
-                            commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), buyGood.getToBuyNum()), auth)));
+                            commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), buyGood.getToBuyNum()), auth, 0)));
                         }
                     });
                 }

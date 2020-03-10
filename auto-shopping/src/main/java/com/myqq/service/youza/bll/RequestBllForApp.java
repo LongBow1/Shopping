@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -183,11 +184,20 @@ public class RequestBllForApp {
      * @param buyGood
      * @param commitPostEntity
      * @param auth
+     * @param testMode 1= 模拟80005,2- 模拟80001
      * @return
      */
-    public static String commitOrderDetail(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth) {
-        StringBuilder operationInfo = new StringBuilder("");
-        String orderInfo = doPost(commitOrderUrlForApp, commitPostEntity, auth);
+    public static String commitOrderDetail(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
+        String operationInfo = "";
+        String orderInfo;
+        if(testMode == 1){
+            orderInfo = "{\"code\":80005,\"message\":\"商品还未开始抢购\",\"status\":400,\"data\":\"ORDER_GOODS_ONSTART\"}";
+        }else if(testMode == 2){
+            orderInfo = "{\"code\":80001,\"message\":\"库存不足\",\"status\":400,\"data\":\"ORDER_STOCK_INSUFFICIENT\"}";
+        }else {
+            orderInfo = doPost(commitOrderUrlForApp, commitPostEntity, auth);
+        }
+
         if(orderInfo != null){
             try {
                 ShoppingForAppDTO.CommitOrderDTO commitOrderInfo = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderDTO.class);
@@ -201,12 +211,65 @@ public class RequestBllForApp {
                     toBuy.getCommitOrderInfoList().add(commitOrderInfo);
                 }
             }catch (Exception ex){
-                ex.printStackTrace();
-                operationInfo.append(ex.getMessage());
+                //ex.printStackTrace();
+                try {
+                    ShoppingForAppDTO.CommitOrderErrorDTO commitOrderError = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                    System.out.println(TimeUtil.getCurrentTimeString() + " commitOrderError: " + commitOrderError.toString());
+                    if(commitOrderError != null){
+                        //80005 未开始抢，循环抢，不用重新查询库存信息
+                        int count = 0;
+                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005){
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            System.out.println(count);
+                        }
+                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            count++;
+                            System.out.println(count);
+                        }
+                    }
+                }catch (Exception ex1){
+                    ex1.printStackTrace();
+                }
+                operationInfo = ex.getMessage();
             }
         }
-        if(!operationInfo.toString().isEmpty()){
-            System.out.println(TimeUtil.getCurrentTimeString() +" commitToBuyOrder operationInfo: "+ operationInfo.toString());
+        if(!operationInfo.isEmpty()){
+            System.out.println(TimeUtil.getCurrentTimeString() +" commitToBuyOrder operationInfo: "+ operationInfo);
+        }
+        return orderInfo;
+    }
+
+    public static String commitOrderDetailV2(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
+        String operationInfo = "";
+        String orderInfo;
+        if(testMode == 1){
+            orderInfo = "{\"code\":80005,\"message\":\"商品还未开始抢购\",\"status\":400,\"data\":\"ORDER_GOODS_ONSTART\"}";
+        }else if(testMode == 2){
+            orderInfo = "{\"code\":80001,\"message\":\"库存不足\",\"status\":400,\"data\":\"ORDER_STOCK_INSUFFICIENT\"}";
+        }else {
+            orderInfo = doPost(commitOrderUrlForApp, commitPostEntity, auth);
+        }
+
+        if(orderInfo != null){
+            try {
+                ShoppingForAppDTO.CommitOrderDTO commitOrderInfo = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderDTO.class);
+                if(commitOrderInfo != null && commitOrderInfo.getData() != null){
+                    if(commitOrderInfo.getData() != null){
+                        buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
+                    }
+                    if(toBuy.getCommitOrderInfoList() == null){
+                        toBuy.setCommitOrderInfoList(new ArrayList<>());
+                    }
+                    toBuy.getCommitOrderInfoList().add(commitOrderInfo);
+                }
+            }catch (Exception ex){
+                //System.out.println(ex.getMessage());
+                operationInfo = ex.getMessage();
+            }
+        }
+        if(!operationInfo.isEmpty()){
+            System.out.println(TimeUtil.getCurrentTimeString() +" commitToBuyOrder operationInfo: "+ operationInfo);
         }
         return orderInfo;
     }
