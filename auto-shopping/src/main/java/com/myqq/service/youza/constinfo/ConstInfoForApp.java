@@ -25,7 +25,7 @@ public class ConstInfoForApp {
      * 收件人信息(参数为会员编号：e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735 )
      * get
      */
-    public static String getAddressInfoUrlForApp = "http://www.baiqiujie.cn/backend/member/{0}/address";
+    public static String getAddressInfoUrlForApp = "http://www.baiqiujie.cn/backend/member/{0}/address?pageIndex=1&pageSize=100";
     /**
      *
      * 获取商品列表信息--前20个
