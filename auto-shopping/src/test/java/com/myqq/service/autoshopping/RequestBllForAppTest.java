@@ -15,9 +15,9 @@ public class RequestBllForAppTest {
         StringEntity commitPostEntity = null;
         String auth = "";
 
-        String result = RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 1);
+        /*String result = RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 1);
         System.out.println(result);
         String result2 = RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 2);
-        System.out.println(result2);
+        System.out.println(result2);*/
     }
 }

@@ -1,26 +1,25 @@
 package com.myqq.service.youza.bll;
 
 import com.alibaba.fastjson.JSONObject;
-import com.myqq.service.youza.constinfo.ConstInfoForApp;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.TimeUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import javax.rmi.CORBA.Util;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -33,6 +32,7 @@ import static com.myqq.service.youza.constinfo.ConstInfoForApp.userAgentForApp;
 public class RequestBllForApp {
 
     static Pattern pattern = Pattern.compile("\\s*|\\t|\\r|\\n");
+    static RequestConfig appRequestConfig = RequestConfig.custom().setConnectTimeout(6000).setConnectionRequestTimeout(3000).setSocketTimeout(3000).build();
 
     public static String replaceBlank(String str){
         String res = "";
@@ -79,7 +79,8 @@ public class RequestBllForApp {
 
     public static String doGet(String url, String auth) {
         HttpGet httpGet = new HttpGet(url);
-        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+        //CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+        CloseableHttpClient closeableHttpClient = HttpClients.custom().setDefaultRequestConfig(appRequestConfig).build();
         httpGet.addHeader("contentType", contentTypeJson);
         httpGet.addHeader("User-Agent",userAgentForApp);
         httpGet.addHeader("Authorization", auth);
@@ -97,7 +98,8 @@ public class RequestBllForApp {
 
     public static String doPatch(String url, String auth) {
         HttpPatch httpPatch = new HttpPatch(url);
-        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+        //CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+        CloseableHttpClient closeableHttpClient = HttpClients.custom().setDefaultRequestConfig(appRequestConfig).build();
         httpPatch.addHeader("contentType", contentTypeJson);
         httpPatch.addHeader("User-Agent",userAgentForApp);
         httpPatch.addHeader("Authorization", auth);
@@ -222,6 +224,7 @@ public class RequestBllForApp {
                             commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             System.out.println(count);
                         }
+                        //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
                         while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
                             commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             count++;

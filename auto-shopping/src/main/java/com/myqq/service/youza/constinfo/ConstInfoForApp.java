@@ -61,7 +61,7 @@ public class ConstInfoForApp {
      * 待发货
      * get
      */
-    public static String getToSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=payed";
+    public static String getToSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=60&status=payed";
 
     /**
      * 待收货
