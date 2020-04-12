@@ -194,8 +194,10 @@ public class RequestBllForApp {
         String orderInfo;
         if(testMode == 1){
             orderInfo = "{\"code\":80005,\"message\":\"商品还未开始抢购\",\"status\":400,\"data\":\"ORDER_GOODS_ONSTART\"}";
+            System.out.println(orderInfo);
         }else if(testMode == 2){
             orderInfo = "{\"code\":80001,\"message\":\"库存不足\",\"status\":400,\"data\":\"ORDER_STOCK_INSUFFICIENT\"}";
+            System.out.println(orderInfo);
         }else {
             orderInfo = doPost(commitOrderUrlForApp, commitPostEntity, auth);
         }
@@ -220,8 +222,9 @@ public class RequestBllForApp {
                     if(commitOrderError != null){
                         //80005 未开始抢，循环抢，不用重新查询库存信息
                         int count = 0;
-                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005){
+                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<20){
                             commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            count++;
                             System.out.println(count);
                         }
                         //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存

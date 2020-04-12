@@ -47,11 +47,56 @@ public class ShoppingForAppBll {
         if(toBuyGoodAndAddressInfos == null || toBuyGoodAndAddressInfos.isEmpty()){
             return;
         }
+        /**
+         * 每日上新
+         * new goods every day
+         */
         String newGoodsInfo = RequestBllForApp.doGet(getNewGoodListUrlForApp,auth);
         //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" newGoodsInfo:"+newGoodsInfo);
+        ShoppingForAppDTO.GoodsListDTO newGoodsList = null;
+        boolean goodsInNew = false;
+        try {
+            newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+            /*if(newGoodsList != null && newGoodsList.getData() != null && newGoodsList.getData().getRows() != null){
+                if(!newGoodsList.getData().getRows().isEmpty()){
+                    //2-预售 1-现货 0-不区分
+                    toBuyGoodAndAddressInfos.forEach(goodInfo -> {
+                        if(goodInfo.getToBuySellType() == 2){
+                            newGoodsList.getData().setRows(finalGoodsList1.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (!data.getName().contains("现货") || data.getName().contains("发货"))).collect(Collectors.toList()));
+                        }else if(goodInfo.getToBuySellType() == 1){
+                            finalGoodsList1.getData().setRows(finalGoodsList1.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (data.getName().contains("现货") || !data.getName().contains("发货"))).collect(Collectors.toList()));
+                        }
+                        newGoodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
+                            if(goodInfo.getShotGoodName() != null && !goodInfo.getShotGoodName().isEmpty()) {
+                                boolean nameMatch = item.getName().toLowerCase().contains(goodInfo.getShotGoodName().toLowerCase());
+                                if (goodInfo.getQuantifierNum() != null && !goodInfo.getQuantifierNum().isEmpty()) {
+                                    nameMatch = nameMatch && quantifiers.stream().anyMatch(qItem -> item.getName().contains(goodInfo.getQuantifierNum() + qItem));
+                                }
+                            }
+                        });
+                    });
+
+                }
+            }*/
+        }catch (Exception ex){
+            System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
+        }
+        /**
+         * 商城
+         * goods in mall
+         */
         String goodsInfo = RequestBllForApp.doGet(getGoodListUrlForApp, auth);
+        ShoppingForAppDTO.GoodsListDTO goodsList = null ;
+        try {
+            goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+        }catch (Exception ex){
+            System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
+        }
+
         //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" goodsInfo:"+goodsInfo);
         List<Future<Boolean>> taskList = new ArrayList<>();
+        ShoppingForAppDTO.GoodsListDTO finalGoodsList1 = goodsList;
+        ShoppingForAppDTO.GoodsListDTO finalNewGoodsList = newGoodsList;
         toBuyGoodAndAddressInfos.forEach(goodInfo -> {
             if(goodInfo != null && goodInfo.getAddressDetailInfo() != null ){
                 String shotShopName = goodInfo.getShotGoodName();
@@ -65,34 +110,23 @@ public class ShoppingForAppBll {
                     goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
                 }*/
                 goodInfo.setToBuyGoodInfoList(realToBuyGoodList);
-                ShoppingForAppDTO.GoodsListDTO goodsList = null ;
-                try {
-                    goodsList = JSONObject.parseObject(goodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
-                }catch (Exception ex){
-                    System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
-                }
-                ShoppingForAppDTO.GoodsListDTO newGoodsList = null;
-                try {
-                    newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
-                }catch (Exception ex){
-                    System.out.println(TimeUtil.getCurrentTimeString() + ex.getMessage());
-                }
-                if(goodsList != null && goodsList.getData() != null && goodsList.getData().getRows() != null){
-                    if(newGoodsList != null && newGoodsList.getData() != null && newGoodsList.getData().getRows() != null){
-                        ShoppingForAppDTO.GoodsListDTO finalGoodsList = goodsList;
-                        newGoodsList.getData().getRows().removeIf(newGood -> finalGoodsList.getData().getRows().stream().anyMatch(existGood -> existGood.getGoodsId().equalsIgnoreCase(newGood.getGoodsId())));
-                        if(!newGoodsList.getData().getRows().isEmpty()){
-                            goodsList.getData().getRows().addAll(newGoodsList.getData().getRows());
+
+                if(finalGoodsList1 != null && finalGoodsList1.getData() != null && finalGoodsList1.getData().getRows() != null){
+                    if(finalNewGoodsList != null && finalNewGoodsList.getData() != null && finalNewGoodsList.getData().getRows() != null){
+                        ShoppingForAppDTO.GoodsListDTO finalGoodsList = finalGoodsList1;
+                        finalNewGoodsList.getData().getRows().removeIf(newGood -> finalGoodsList.getData().getRows().stream().anyMatch(existGood -> existGood.getGoodsId().equalsIgnoreCase(newGood.getGoodsId())));
+                        if(!finalNewGoodsList.getData().getRows().isEmpty()){
+                            finalGoodsList1.getData().getRows().addAll(finalNewGoodsList.getData().getRows());
                         }
                     }
                     //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" combined goodsList" + goodsList.toString());
                     //2-预售 1-现货 0-不区分
                     if(goodInfo.getToBuySellType() == 2){
-                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (!data.getName().contains("现货") || data.getName().contains("发货"))).collect(Collectors.toList()));
+                        finalGoodsList1.getData().setRows(finalGoodsList1.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (!data.getName().contains("现货") || data.getName().contains("发货"))).collect(Collectors.toList()));
                     }else if(goodInfo.getToBuySellType() == 1){
-                        goodsList.getData().setRows(goodsList.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (data.getName().contains("现货") || !data.getName().contains("发货"))).collect(Collectors.toList()));
+                        finalGoodsList1.getData().setRows(finalGoodsList1.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (data.getName().contains("现货") || !data.getName().contains("发货"))).collect(Collectors.toList()));
                     }
-                    goodsList.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
+                    finalGoodsList1.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
                             boolean nameMatch = item.getName().toLowerCase().contains(shotShopName.toLowerCase());
                             if(goodInfo.getQuantifierNum() != null && !goodInfo.getQuantifierNum().isEmpty()){
@@ -331,7 +365,7 @@ public class ShoppingForAppBll {
                 List<String> alreadyBuyLocalNos = alreadyBuyGoodInfo.stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.toList());
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderId() != null && !commitOrder.getData().getOrderId().isEmpty()).count() >= item.getReadyToBuyGoodNum());
                 if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
-                    String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId));
+                    String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId));
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                     if(messageResult != null && !messageResult.isEmpty()){
                         System.out.println(TimeUtil.getCurrentTimeString() + "toBuyGoodAndAddressInfos: "+toBuyGoodAndAddressInfos.toString());
