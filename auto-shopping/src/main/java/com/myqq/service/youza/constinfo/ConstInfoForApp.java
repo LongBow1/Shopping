@@ -25,69 +25,69 @@ public class ConstInfoForApp {
      * 收件人信息(参数为会员编号：e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735 )
      * get
      */
-    public static String getAddressInfoUrlForApp = "http://www.baiqiujie.cn/backend/member/{0}/address?pageIndex=1&pageSize=100";
+    public static String getAddressInfoUrlForApp = "http://www.bqjapp.cn/backend/member/{0}/address?pageIndex=1&pageSize=100";
     /**
      *
      * 获取商品列表信息--前20个
      * get
      */
-    public static final String getGoodListUrlForApp = "http://www.baiqiujie.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=50";
+    public static final String getGoodListUrlForApp = "http://www.bqjapp.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=50";
     /**
      * 每日上新商品(新商品开始抢购到到商城有几秒钟延迟)
      */
-    public static String getNewGoodListUrlForApp = "http://backend.baiqiujie.cn/backend/goods?homeType=1&sortType=AES";
+    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/goods?homeType=1&sortType=AES";
     /**
      * 查询商品概要信息(getGoodListUrlForApp返回goodsId)
      * get
      */
-    public static String getGoodDataUrlForApp = "http://www.baiqiujie.cn/backend/goods/{0}";
+    public static String getGoodDataUrlForApp = "http://www.bqjapp.cn/backend/goods/{0}";
     /**
      * 查询商品库存信息(返回mainGoodsId--对应请求goodsId，返回goodsId--下单用)
      * get
      */
-    public static String getGoodDataDetailUrlForApp = "http://www.baiqiujie.cn/backend/goods/{0}/specs";
+    public static String getGoodDataDetailUrlForApp = "http://www.bqjapp.cn/backend/goods/{0}/specs";
 
     /**
      * 提交订单(地址+商品信息--getGoodDataDetailUrlForApp中返回goodsId)
      * post
      */
-    public static final String commitOrderUrlForApp = "http://www.baiqiujie.cn/backend/order";
+    public static final String commitOrderUrlForApp = "http://www.bqjapp.cn/backend/order";
     /**
      * 待支付
      * get
      */
-    public static String getToPayGoodDetailUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=pending";
+    public static String getToPayGoodDetailUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=40&status=pending";
     /**
      * 待发货
      * get
      */
-    public static String getToSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=60&status=payed";
+    public static String getToSendGoodUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=60&status=payed";
 
     /**
      * 待收货
      * get
      */
-    public static String getSendGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=posted_out";
+    public static String getSendGoodUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=40&status=posted_out";
     /**
      * 已完成订单
      * get
      */
-    public static String getCompletedGoodUrlForApp = "http://www.baiqiujie.cn/backend/order?pageIndex=1&pageSize=40&status=received";
+    public static String getCompletedGoodUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=40&status=received";
 
     /**
      * 取消订单(参数为orderId--下单commitOrderUrlForApp返回)
      * patch
      */
-    public static String cancelOrderUrlForApp = "http://www.baiqiujie.cn/backend/order/{0}/cancel?reason=redo";
+    public static String cancelOrderUrlForApp = "http://www.bqjapp.cn/backend/order/{0}/cancel?reason=redo";
 
     /**
      * 添加地址(会员编号， 请求参数url编码:receiveName,receivePhone,province,city,area,address)
      * post
      */
-    public static String addAddressForApp = "http://www.baiqiujie.cn/backend/member/{0}/address?receiveName={1}&receivePhone={2}&province={3}&city={4}&area={5}&address={6}&def=true";
+    public static String addAddressForApp = "http://www.bqjapp.cn/backend/member/{0}/address?receiveName={1}&receivePhone={2}&province={3}&city={4}&area={5}&address={6}&def=true";
 
     /**
      * 登录地址，获取auth信息
      */
-    public static String loginUrlForApp = "http://backend.baiqiujie.cn/backend/shm/longin?username={0}&password={1}&type=member";
+    public static String loginUrlForApp = "http://backend.bqjapp.cn/backend/shm/longin?username={0}&password={1}&type=member";
 }
