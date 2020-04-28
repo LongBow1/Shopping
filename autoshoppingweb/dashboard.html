@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <title>DashBoard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <link href="css/table.css" type="text/css" rel="stylesheet" />
+    
+</head>
+<script>
+    $(function(){
+        //39.105.64.90
+        var memberId = $("#memberidinput").val().trim();
+        var requestUrlPrefix = "http://39.105.64.90:80/orderApp/";
+        var sessionid = $("#authinput").val();
+        var nowDateStr = dateFormat("YYYY-mm-dd", new Date());
+        nowDateStr='2020-04-28'
+        checkSession();
+
+        $('#statusradiotopay').click(function () {
+            var postInfo = {
+                "auth": $("#authinput").val().trim(),
+                "memberId": $("#memberidinput").val().trim()
+            }
+            $.post(requestUrlPrefix + "getToPayOrderList", postInfo, function (result) {
+
+                if (result != null) {
+                    var intendOrders = JSON.parse(result);
+                    $("#goodlisttable").empty();
+                    $("#goodlisttable").append("<tr><th>#</th><th>收件人</th><th>商品描述</th><th>数量</th><th>状态</th></tr>");
+                    if (intendOrders != null && intendOrders.length > 0) {
+                        intendOrders.sort(function (a, b) {
+                            if (a.receipt == b.receipt) {
+                                return b.orderDateStr.localeCompare(a.orderDateStr);
+                            } else {
+                                return a.receipt.localeCompare(b.receipt);
+                            }
+                        });
+                        $.each(intendOrders, function (i, e) {
+                            if(e.orderDateStr > nowDateStr){
+                                $("#goodlisttable").append("<tr><td>"+ ++i+"</td>"+"<td>" + e.receipt + "</td>" + "<td>" + e.descV2 + "</td>" + "<td>" + e.count + "</td>" + "<td bgcolor='green'>" + "已支付" + "</td></tr>");
+                            }
+                            
+                        })
+                    } 
+                } 
+            })
+        });
+        $('#statusradiotosend').click(function () {
+            var postInfo = {
+                "auth": $("#authinput").val().trim(),
+                "memberId": $("#memberidinput").val().trim()
+            }
+            $.post(requestUrlPrefix + "getToSendOrderList", postInfo, function (result) {
+
+                if (result != null) {
+                    var intendOrders = JSON.parse(result);
+                    $("#goodlisttable").empty();
+                    $("#goodlisttable").append("<tr><th>#</th><th>收件人</th><th>商品描述</th><th>数量</th><th>状态</th></tr>");
+                    if (intendOrders != null && intendOrders.length > 0) {
+                        intendOrders.sort(function (a, b) {
+                            if (a.receipt == b.receipt) {
+                                return b.orderDateStr.localeCompare(a.orderDateStr);
+                            } else {
+                                return a.receipt.localeCompare(b.receipt);
+                            }
+                        });
+                        $.each(intendOrders, function (i, e) {
+                            if(e.orderDateStr > nowDateStr){
+                                $("#goodlisttable").append("<tr><td>"+ ++i+"</td>"+"<td>" + e.receipt + "</td>" + "<td>" + e.descV2 + "</td>" + "<td>" + e.count + "</td>" + "<td bgcolor='green'>" + "已支付" + "</td></tr>");
+                            }
+                            
+                        })
+                    } 
+                } 
+            })
+        });
+
+        function checkSession() {
+            var username = $("#username").val().trim();
+            var password = $("#password").val().trim();
+            if (username == null || password == null || username.length == 0 || password.length == 0) {
+                alert("请输入用户名和密码!");
+                return false;
+            }
+            var postInfo = {
+                "username": username,
+                "password": password
+            }
+            $.post(requestUrlPrefix + "getAuth", postInfo, function (result) {
+                if (result != null) {
+                    var authInfo = JSON.parse(result);
+                    if (authInfo != null && authInfo.data != null) {
+                        $("#authinput").val("bearer " + authInfo.data.jwt.access_token);
+                        $("#memberidinput").val(authInfo.data.user.id);
+
+                        sessionid = $("#authinput").val();
+                        if (sessionid == null || sessionid.trim().length == 0) {
+                            alert("凭证不能为空!");
+                            return false;
+                        }   
+                        $('#statusradiotosend').click();                     
+                        return true;
+                    }
+                }
+            });
+        }
+
+        function dateFormat(fmt, date) {
+            let ret;
+            const opt = {
+                "Y+": date.getFullYear().toString(),        // 年
+                "m+": (date.getMonth() + 1).toString(),     // 月
+                "d+": date.getDate().toString(),            // 日
+                "H+": date.getHours().toString(),           // 时
+                "M+": date.getMinutes().toString(),         // 分
+                "S+": date.getSeconds().toString()          // 秒
+                // 有其他格式化字符需求可以继续添加，必须转化成字符串
+            };
+            for (let k in opt) {
+                ret = new RegExp("(" + k + ")").exec(fmt);
+                if (ret) {
+                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+                };
+            };
+            return fmt;
+        }
+        function pySegSort(arr, empty) {
+            if (!String.prototype.localeCompare)
+                return null;
+
+            var letters = "*abcdefghjklmnopqrstwxyz".split('');
+            var zh = "阿八嚓哒妸发旮哈讥咔垃痳拏噢妑七呥扨它穵夕丫帀".split('');
+
+            var segs = [];
+            var curr;
+            $.each(letters, function (i) {
+                curr = { letter: this, data: [] };
+                $.each(arr, function () {
+                    if ((!zh[i - 1] || zh[i - 1].localeCompare(this) <= 0) && this.localeCompare(zh[i]) == -1) {
+                        curr.data.push(this);
+                    }
+                });
+                if (empty || curr.data.length) {
+                    segs.push(curr);
+                    curr.data.sort(function (a, b) {
+                        return a.localeCompare(b);
+                    });
+                }
+            });
+            return segs;
+        }
+    })
+
+    
+    
+</script>
+<h2>当日待支付/待发货统计</h2>
+<div class="am-header-nav">
+    <label for="authinput" title="凭证" style="color: red; size: 10px">凭证: </label>
+    <input id="username" title="用户名" type="text" value="15887850706" style="color: black;width:100px">
+    <input id="password" title="密码" type="password" value="123456" style="color: black;width:100px">
+    <!-- KDTSESSIONID=YZ593591929204215808YZiLHRuC4Q -->
+    <input id="authinput" title="这个位置填凭证,必填的" type="hidden" value="" style="color: black;width:100px">
+    <input id="memberidinput" title="这个位置填凭证,必填的" type="hidden" value="033151a0-fa57-5351-b9be-4777a4d8ad0d"
+        style="color: black;width:100px">
+</div>
+<div id="statusradiodiv">
+    <input type="hidden" name="statusradio" type="radio" id="statusradio" title="不限" value="0" ></input>
+    <input name="statusradio" type="radio" id="statusradiotosend" title="待发货" value="1" checked="checked">待发货</input>
+    <input name="statusradio" type="radio" id="statusradiotopay" title="待支付" value="2">待支付</input>
+</div>
+<table class="bordered" id="goodlisttable">   
+    <tr>
+        <th>#</th>
+        <th>收件人</th>
+        <th>商品描述</th>
+        <th>数量</th>
+        <th>状态</th>
+    </tr>
+
+    <!-- <div id="topayorderlistdiv">
+        <tr>
+            <td>1</td>
+            <td>赵慧玲</td>
+            <td>释压护颈枕，5月22日-5月25日左右发货</td>
+            <td>2</td>
+            <td bgcolor="red">待支付</td>
+        </tr> 
+    </div>
+    
+
+    <div id="tosendorderlistdiv">
+        <tr>
+            <td>2</td>
+            <td>罗兰</td>
+            <td>巴莉奥香水，5月5日-5月8日左右发货春日目击证人（黄）;价格:49.00;下单时间:2020-04-28 21:20:03</td>
+            <td>2</td>
+            <td>已支付</td>
+        </tr> 
+    </div> -->
+
+</table>
+
+<br><br>
+
+<!-- <h2>Zebra stripes, footer</h2>
+<table class="zebra">
+<thead>
+<tr>
+<th>#</th>
+<th>IMDB Top 10 Movies</th>
+<th>Year</th>
+ 
+</tr>
+</thead>
+<tfoot>
+<tr>
+<td> </td>
+<td></td>
+<td></td>
+</tr>
+</tfoot>
+<tr>
+ 
+<td>1</td>
+<td>The Shawshank Redemption</td>
+<td>1994</td>
+</tr>
+<tr>
+<td>2</td>
+<td>The Godfather</td>
+<td>1972</td>
+ 
+</tr>
+</table> -->
+
+</html>

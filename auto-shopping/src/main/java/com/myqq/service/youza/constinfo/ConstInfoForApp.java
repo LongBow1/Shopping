@@ -28,7 +28,7 @@ public class ConstInfoForApp {
     public static String getAddressInfoUrlForApp = "http://www.bqjapp.cn/backend/member/{0}/address?pageIndex=1&pageSize=100";
     /**
      *
-     * 获取商品列表信息--前20个
+     * 获取商品列表信息--前50个
      * get
      */
     public static final String getGoodListUrlForApp = "http://www.bqjapp.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=50";
@@ -56,12 +56,12 @@ public class ConstInfoForApp {
      * 待支付
      * get
      */
-    public static String getToPayGoodDetailUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=40&status=pending";
+    public static String getToPayGoodDetailUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=100&status=pending";
     /**
      * 待发货
      * get
      */
-    public static String getToSendGoodUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=60&status=payed";
+    public static String getToSendGoodUrlForApp = "http://www.bqjapp.cn/backend/order?pageIndex=1&pageSize=100&status=payed";
 
     /**
      * 待收货

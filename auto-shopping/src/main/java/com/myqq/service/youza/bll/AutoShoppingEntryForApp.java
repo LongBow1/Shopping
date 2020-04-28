@@ -314,7 +314,12 @@ public class AutoShoppingEntryForApp {
                         tmpData.setOrderNo(toPayItem.getOrderId());
                         StringBuilder attr = new StringBuilder();
                         attr.append("收件人:").append(toPayItem.getReceiverName()).append(";名称:").append(toPayItem.getGoodsList().get(0).getGoodsName()).append(toPayItem.getGoodsList().get(0).getSpecTitle()).append(";价格:").append(toPayItem.getPrice()).append(";下单时间:").append(dateTimeFormatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(toPayItem.getCreateTime()), ZoneId.systemDefault())));
+                        tmpData.setOrderDateStr(dateTimeFormatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(toPayItem.getCreateTime()), ZoneId.systemDefault())));
                         tmpData.setDesc(attr.toString());
+                        tmpData.setStatus(toPayItem.getStatus());
+                        tmpData.setGoodName(toPayItem.getGoodsList().get(0).getGoodsName());
+                        tmpData.setCount(Integer.valueOf(toPayItem.getGoodsList().get(0).getCount()));
+                        tmpData.setDescV2(attr.substring(toPayItem.getReceiverName().length()+8));
                         toPayOrderDTOS.add(tmpData);
                     });
                 }
