@@ -18,7 +18,7 @@
         var requestUrlPrefix = "http://39.105.64.90:80/orderApp/";
         var sessionid = $("#authinput").val();
         var nowDateStr = dateFormat("YYYY-mm-dd", new Date());
-        nowDateStr='2020-04-28'
+        //nowDateStr='2020-04-28'
         checkSession();
 
         $('#statusradiotopay').click(function () {
@@ -69,7 +69,14 @@
                                 return a.receipt.localeCompare(b.receipt);
                             }
                         });
+                        var orderArr = [];
                         $.each(intendOrders, function (i, e) {
+                            if(e.orderDateStr > nowDateStr){
+                                orderArr.push(e);
+                            }
+                            
+                        })                        
+                        $.each(orderArr, function (i, e) {
                             if(e.orderDateStr > nowDateStr){
                                 $("#goodlisttable").append("<tr><td>"+ ++i+"</td>"+"<td>" + e.receipt + "</td>" + "<td>" + e.descV2 + "</td>" + "<td>" + e.count + "</td>" + "<td bgcolor='green'>" + "已支付" + "</td></tr>");
                             }
