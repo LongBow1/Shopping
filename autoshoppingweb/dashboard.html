@@ -42,7 +42,7 @@
                         });
                         $.each(intendOrders, function (i, e) {
                             if(e.orderDateStr > nowDateStr){
-                                $("#goodlisttable").append("<tr><td>"+ ++i+"</td>"+"<td>" + e.receipt + "</td>" + "<td>" + e.descV2 + "</td>" + "<td>" + e.count + "</td>" + "<td bgcolor='green'>" + "已支付" + "</td></tr>");
+                                $("#goodlisttable").append("<tr><td>"+ ++i+"</td>"+"<td>" + e.receipt + "</td>" + "<td>" + e.descV2 + "</td>" + "<td>" + e.count + "</td>" + "<td bgcolor='red'>" + "待支付" + "</td></tr>");
                             }
                             
                         })
