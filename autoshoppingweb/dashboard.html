@@ -29,6 +29,7 @@
             $.post(requestUrlPrefix + "getToPayOrderList", postInfo, function (result) {
 
                 if (result != null) {
+                    nowDateStr = dateFormat("YYYY-mm-dd", new Date());
                     var intendOrders = JSON.parse(result);
                     $("#goodlisttable").empty();
                     $("#goodlisttable").append("<tr><th>#</th><th>收件人</th><th>商品描述</th><th>数量</th><th>状态</th></tr>");
@@ -58,6 +59,7 @@
             $.post(requestUrlPrefix + "getToSendOrderList", postInfo, function (result) {
 
                 if (result != null) {
+                    nowDateStr = dateFormat("YYYY-mm-dd", new Date());
                     var intendOrders = JSON.parse(result);
                     $("#goodlisttable").empty();
                     $("#goodlisttable").append("<tr><th>#</th><th>收件人</th><th>商品描述</th><th>数量</th><th>状态</th></tr>");
