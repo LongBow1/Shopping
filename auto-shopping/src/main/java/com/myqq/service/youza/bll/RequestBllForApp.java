@@ -32,7 +32,7 @@ import static com.myqq.service.youza.constinfo.ConstInfoForApp.userAgentForApp;
 public class RequestBllForApp {
 
     static Pattern pattern = Pattern.compile("\\s*|\\t|\\r|\\n");
-    static RequestConfig appRequestConfig = RequestConfig.custom().setConnectTimeout(6000).setConnectionRequestTimeout(3000).setSocketTimeout(3000).build();
+    static RequestConfig appRequestConfig = RequestConfig.custom().setConnectTimeout(6000).setConnectionRequestTimeout(3000).setSocketTimeout(5000).build();
 
     public static String replaceBlank(String str){
         String res = "";
@@ -220,9 +220,9 @@ public class RequestBllForApp {
                     ShoppingForAppDTO.CommitOrderErrorDTO commitOrderError = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderErrorDTO.class);
                     System.out.println(TimeUtil.getCurrentTimeString() + " commitOrderError: " + commitOrderError.toString());
                     if(commitOrderError != null){
-                        //80005 未开始抢，循环抢，不用重新查询库存信息
+                        //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
                         int count = 0;
-                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<20){
+                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
                             commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             count++;
                             System.out.println(count);
