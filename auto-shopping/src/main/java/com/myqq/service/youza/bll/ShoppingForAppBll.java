@@ -242,6 +242,9 @@ public class ShoppingForAppBll {
 
     private static boolean isSkuItemMatch(ToBuyGoodInfoAppDTO.KV item, String keyword, boolean strictEqual) {
         if(strictEqual){
+            if(item.getV().contains("-")){
+                return item.getV().contains(keyword);
+            }
             return keyword.equalsIgnoreCase(item.getV());
         }
         return isSkuItemMatch(item.getV(),keyword);
