@@ -37,6 +37,10 @@ public class ConstInfoForApp {
      */
     public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/goods?homeType=1&sortType=AES";
     /**
+     * 新品预告
+     */
+    public static String getPresaleGoodListUrlForApp = "http://backend.bqjapp.cn/backend/goods/PreSale?pageIndex=1&pageSize=20";
+    /**
      * 查询商品概要信息(getGoodListUrlForApp返回goodsId)
      * get
      */
