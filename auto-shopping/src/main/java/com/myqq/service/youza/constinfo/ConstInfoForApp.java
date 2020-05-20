@@ -8,7 +8,7 @@ public class ConstInfoForApp {
     public static String qqOpenId="oTX2GvzcTrl7Xi1pE4fwQBEnQPkI";
     public static String zzOpenId = "oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM";
 
-    public static String userAgentForApp = "Mozilla/5.0 (Linux; Android 10; YAL-AL10 Build/HUAWEIYAL-AL10; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.186 Mobile Safari/537.36 Html5Plus/1.0";
+    public static String userAgentForApp = "okhttp-okgo/jeasonlzy";
 
     public static String qqAuth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1Nzg4MjE2MzksInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiYzNjNGQzNGUtOWUxMy00NmY2LWJjYTUtMThjODQ5YjgyZjYwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.fFe58cXab-LlISjFJ9WGkzbApWJEX-xVQdxq0LxfWuO2DEoQRufcNaSv8uAPiThbxka1bn58fLSTOf9c3NalD76IobgWjwEqwo63Ml4pyMOBmO8YYOyC57TSc-wF6L6KicjaVA8wCbpTKlMigsJAMIuHvQS2xqe2qKrh5zOwbsSBZb5qJvb2yQeJvES44PbCD5r07OR7SWHdLkS0mNXvLpovlF61fullUfsAR532q64av0rwk5t1fjsYSahHQ7-EyyiuWtt5EJDlU_2zumYBjt7FuCeDioQCrXHK1tZLmFXkziBB75fuo9xRVhwSwBhl0aoP192mm_BpXIMbnG8FmQ";
     public static String qqMemberId = "e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735";
@@ -94,4 +94,31 @@ public class ConstInfoForApp {
      * 登录地址，获取auth信息
      */
     public static String loginUrlForApp = "http://backend.bqjapp.cn/backend/shm/longin?username={0}&password={1}&type=member";
+    /**
+     * get
+     * 促销活动
+     * http://backend.bqjapp.cn/backend/goods/activity/4f0aebf5-2c4a-7436-c0f3-d1bd6f26f7a3
+     */
+    public static String promotionUrlForApp = "http://backend.bqjapp.cn/backend/goods/activity/{0}}";
+    /**
+     * post
+     * 添加购物车 memberId
+     * http://backend.bqjapp.cn/backend/shoppingCart/033151a0-fa57-5351-b9be-4777a4d8ad0d
+     * para: goodsId=9633b1a1-97e0-4169-b953-4b8a99009e50&total=1&price=49.0&mainGoodsId=4f0aebf5-2c4a-7436-c0f3-d1bd6f26f7a3
+     */
+    public static String shoppingCarUrlForApp = "http://backend.bqjapp.cn/backend/shoppingCart/{0}";
+    /**
+     * post
+     * 购物车提交 memberId
+     * http://backend.bqjapp.cn/backend/order/fullActivity/033151a0-fa57-5351-b9be-4777a4d8ad0d
+     * para:{"list":[{"amount":"1","goodsId":"d30eed95-cc98-44c1-8946-ad30e7368df6","price":"49.0"},{"amount":"1","goodsId":"9633b1a1-97e0-4169-b953-4b8a99009e50","price":"49.0"}]}
+     */
+    public static String shoppingCarCommit = "http://backend.bqjapp.cn/backend/order/fullActivity/{0}";
+    /**
+     * post
+     * 购物车下单
+     *
+     * {"area":"岳池县","city":"广安","discountGoodsList":[{"goodsList":[{"count":"1","goodId":"9633b1a1-97e0-4169-b953-4b8a99009e50","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"粉色","spec2":";S","spec3":""},{"count":"1","goodId":"9633b1a1-97e0-4169-b953-4b8a99009e50","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"粉色","spec2":";S","spec3":""}]}],"goodsList":[{"count":"1","goodId":"d30eed95-cc98-44c1-8946-ad30e7368df6","image":"http://img.bqjapp.cn/M00/3A/6E/wKgLKV7CTcuAXXs8AABRFDpMXIU176.jpg","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"黑色","spec2":";M","spec3":""},{"count":"1","goodId":"9633b1a1-97e0-4169-b953-4b8a99009e50","image":"http://img.bqjapp.cn/M00/3A/6E/wKgLKV7CTcuAXXs8AABRFDpMXIU176.jpg","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"粉色","spec2":";S","spec3":""}],"houseNumber":"乔家镇卫生院","postFee":"0","price":"98.0","province":"四川","receiverName":"张利玲","receiverPhone":"18080291969","remark":"","street":""}
+     */
+    public static String shoppingCarUrlOrder = "http://backend.bqjapp.cn/backend/order";
 }

@@ -32,7 +32,7 @@ import static com.myqq.service.youza.constinfo.ConstInfoForApp.userAgentForApp;
 public class RequestBllForApp {
 
     static Pattern pattern = Pattern.compile("\\s*|\\t|\\r|\\n");
-    static RequestConfig appRequestConfig = RequestConfig.custom().setConnectTimeout(6000).setConnectionRequestTimeout(3000).setSocketTimeout(5000).build();
+    static RequestConfig appRequestConfig = RequestConfig.custom().setConnectTimeout(8000).setConnectionRequestTimeout(3000).setSocketTimeout(8000).build();
 
     public static String replaceBlank(String str){
         String res = "";
