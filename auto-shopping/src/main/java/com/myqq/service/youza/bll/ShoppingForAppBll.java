@@ -58,6 +58,9 @@ public class ShoppingForAppBll {
         BooleanHolder goodsInNew = new BooleanHolder(true);
         try {
             newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
+            if(newGoodsList.getData().getRows() == null && newGoodsList.getData().getToday() != null){
+                newGoodsList.getData().setRows(newGoodsList.getData().getToday());
+            }
             BooleanHolder finalGoodsInNew = goodsInNew;
             ShoppingForAppDTO.GoodsListDTO finalNewGoodsList1 = newGoodsList;
             toBuyGoodAndAddressInfos.stream().forEach(item -> {
@@ -113,19 +116,24 @@ public class ShoppingForAppBll {
                             finalGoodsList1.getData().getRows().addAll(finalNewGoodsList.getData().getRows());
                         }
                     }
-                    //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" combined goodsList" + goodsList.toString());
+                    System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" combined goodsList :" + finalGoodsList1.getData().getRows().size());
                     //2-预售 1-现货 0-不区分
+                    /*System.out.println(TimeUtil.getCurrentTimeString() + " ToBuySellType :" + goodInfo.getToBuySellType());
                     if(goodInfo.getToBuySellType() == 2){
                         finalGoodsList1.getData().setRows(finalGoodsList1.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (!data.getName().contains("现货") || data.getName().contains("发货"))).collect(Collectors.toList()));
                     }else if(goodInfo.getToBuySellType() == 1){
                         finalGoodsList1.getData().setRows(finalGoodsList1.getData().getRows().stream().filter(data -> data.getInventoryAmount() >= 0 && (data.getName().contains("现货") || !data.getName().contains("发货"))).collect(Collectors.toList()));
                     }
+                    System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" combined goodsList :" + finalGoodsList1.getData().getRows().size());*/
                     finalGoodsList1.getData().getRows().stream().filter(item -> item.getInventoryAmount() >= 0).forEach(item -> {
                         if(shotShopName != null && !shotShopName.isEmpty()){
-                            boolean nameMatch = item.getName().toLowerCase().contains(shotShopName.toLowerCase());
+                            //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" shotShopName :"+ shotShopName + " ; item name:" + item.getName());
+                            //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" ToBuySellType :"+ goodInfo.getToBuySellType());
+                            boolean nameMatch = item.getName().toLowerCase().contains(shotShopName.toLowerCase()) && (goodInfo.getToBuySellType() == 1 ? (item.getName().contains("现货") || !item.getName().contains("发货")) : true);
                             if(goodInfo.getQuantifierNum() != null && !goodInfo.getQuantifierNum().isEmpty()){
                                 nameMatch = nameMatch && quantifiers.stream().anyMatch(qItem -> item.getName().contains(goodInfo.getQuantifierNum()+qItem));
                             }
+                            //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" nameMatch :"+ nameMatch);
                             if(nameMatch){
                                 System.out.println(TimeUtil.getCurrentTimeString() +" shotShopName:" + shotShopName + " "+ item.toString());
                                 ShoppingForAppDTO.GoodDataStockDetailDTO toBuyGoodInfo = realToBuyGoodList.stream().filter(good -> good.getMainGoodsId().equalsIgnoreCase(item.getGoodsId())).findFirst().orElse(null);
@@ -205,6 +213,7 @@ public class ShoppingForAppBll {
                             isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("颜色")), keyword, false));
                         }
                         if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("尺码")) && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
+                            //尺寸、尺码
                             isMatchSku = isMatchSku && skuSizeKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("尺码")), keyword, true));
                         }
                         if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("款式")) && skuStyleKeyWords != null && !skuStyleKeyWords.isEmpty()){

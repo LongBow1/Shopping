@@ -22,20 +22,29 @@ public class ConstInfoForApp {
     public static String zzjjMemberId = "033151a0-fa57-5351-b9be-4777a4d8ad0d";
 
     /**
+     * http://www.bqjapp.cn/backend/member/{0}/address?pageIndex=1&pageSize=100
      * 收件人信息(参数为会员编号：e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735 )
      * get
+     * 改版：
+     * http://backend.bqjapp.cn/backend/member/033151a0-fa57-5351-b9be-4777a4d8ad0d/address?keyWord=&pageIndex=1&pageSize=100
      */
-    public static String getAddressInfoUrlForApp = "http://www.bqjapp.cn/backend/member/{0}/address?pageIndex=1&pageSize=100";
+    public static String getAddressInfoUrlForApp = "http://backend.bqjapp.cn/backend/member/{0}/address?keyWord=&pageIndex=1&pageSize=100";
     /**
      *
+     * http://www.bqjapp.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=50
      * 获取商品列表信息--前50个
      * get
+     * 改版：
+     * http://backend.bqjapp.cn/backend/goods?pageIndex=1&pageSize=50&homeType=4&sortType=DESC&otherType=&goodCategory=
      */
-    public static final String getGoodListUrlForApp = "http://www.bqjapp.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=50";
+    public static final String getGoodListUrlForApp = "http://backend.bqjapp.cn/backend/goods?pageIndex=1&pageSize=50&homeType=4&sortType=DESC&otherType=&goodCategory=";
     /**
+     * http://backend.bqjapp.cn/backend/goods?homeType=1&sortType=AES
      * 每日上新商品(新商品开始抢购到到商城有几秒钟延迟)
+     * 改版：
+     * http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=40
      */
-    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/goods?homeType=1&sortType=AES";
+    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=40";
     /**
      * 新品预告
      */
@@ -47,15 +56,22 @@ public class ConstInfoForApp {
     public static String getGoodDataUrlForApp = "http://www.bqjapp.cn/backend/goods/{0}";
     /**
      * 查询商品库存信息(返回mainGoodsId--对应请求goodsId，返回goodsId--下单用)
+     * http://www.bqjapp.cn/backend/goods/0724f182-1631-cca0-8c62-5dd83d1bd439/specs
      * get
+     *
+     * 改版：
+     * http://backend.bqjapp.cn/backend/optimized/goods/0724f182-1631-cca0-8c62-5dd83d1bd439/specs
      */
-    public static String getGoodDataDetailUrlForApp = "http://www.bqjapp.cn/backend/goods/{0}/specs";
+    public static String getGoodDataDetailUrlForApp = "http://backend.bqjapp.cn/backend/optimized/goods/{0}/specs";
 
     /**
+     * http://www.bqjapp.cn/backend/order
      * 提交订单(地址+商品信息--getGoodDataDetailUrlForApp中返回goodsId)
      * post
+     * 改版：
+     * http://backend.bqjapp.cn/backend/order
      */
-    public static final String commitOrderUrlForApp = "http://www.bqjapp.cn/backend/order";
+    public static final String commitOrderUrlForApp = "http://backend.bqjapp.cn/backend/order";
     /**
      * 待支付
      * get

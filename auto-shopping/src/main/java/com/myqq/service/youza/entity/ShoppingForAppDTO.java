@@ -33,6 +33,15 @@ public class ShoppingForAppDTO {
         List<GoodsListDataRowDTO> rows;
         Boolean hasNextPage;
         Integer total;
+        List<GoodsListDataRowDTO>  today;
+
+        public List<GoodsListDataRowDTO> getToday() {
+            return today;
+        }
+
+        public void setToday(List<GoodsListDataRowDTO> today) {
+            this.today = today;
+        }
 
         public List<GoodsListDataRowDTO> getRows() {
             return rows;
@@ -64,6 +73,7 @@ public class ShoppingForAppDTO {
                     "rows=" + rows +
                     ", hasNextPage=" + hasNextPage +
                     ", total=" + total +
+                    ", today=" + today +
                     '}';
         }
     }
