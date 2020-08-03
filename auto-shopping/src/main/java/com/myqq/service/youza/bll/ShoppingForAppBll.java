@@ -6,6 +6,7 @@ import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.CustomThreadFactory;
 import com.myqq.service.youza.util.TimeUtil;
 import org.omg.CORBA.BooleanHolder;
+import org.springframework.util.StringUtils;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -64,7 +65,7 @@ public class ShoppingForAppBll {
             BooleanHolder finalGoodsInNew = goodsInNew;
             ShoppingForAppDTO.GoodsListDTO finalNewGoodsList1 = newGoodsList;
             toBuyGoodAndAddressInfos.stream().forEach(item -> {
-                if(finalNewGoodsList1.getData().getRows().stream().noneMatch(good -> good.getName().contains(item.getShotGoodName()))){
+                if(finalNewGoodsList1.getData().getRows().stream().noneMatch(good -> good.getName().contains(item.getShotGoodName()) && (StringUtils.isEmpty(item.getShotGoodNameExtra()) || good.getName().contains(item.getShotGoodNameExtra().trim())))){
                     finalGoodsInNew.value = false;
                 }
             });
@@ -97,6 +98,7 @@ public class ShoppingForAppBll {
         toBuyGoodAndAddressInfos.forEach(goodInfo -> {
             if(goodInfo != null && goodInfo.getAddressDetailInfo() != null ){
                 String shotShopName = goodInfo.getShotGoodName();
+                String shotShopNameExtra = goodInfo.getShotGoodNameExtra();
                 List<String> skuColorKeyWords = goodInfo.getGoodColorKeyWords();
                 List<String> skuSizeKeyWords = goodInfo.getGoodSizeKeyWords();
                 List<String> skuStyleKeyWords = goodInfo.getGoodStyleKeyWords();
@@ -130,6 +132,9 @@ public class ShoppingForAppBll {
                             //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" shotShopName :"+ shotShopName + " ; item name:" + item.getName());
                             //System.out.println(AutoShoppingEntryForApp.dateTimeFormatter.format(LocalDateTime.now()) +" ToBuySellType :"+ goodInfo.getToBuySellType());
                             boolean nameMatch = item.getName().toLowerCase().contains(shotShopName.toLowerCase()) && (goodInfo.getToBuySellType() == 1 ? (item.getName().contains("现货") || !item.getName().contains("发货")) : true);
+                            if(!StringUtils.isEmpty(shotShopNameExtra)){
+                                nameMatch = nameMatch && item.getName().toLowerCase().contains(shotShopNameExtra.toLowerCase());
+                            }
                             if(goodInfo.getQuantifierNum() != null && !goodInfo.getQuantifierNum().isEmpty()){
                                 nameMatch = nameMatch && quantifiers.stream().anyMatch(qItem -> item.getName().contains(goodInfo.getQuantifierNum()+qItem));
                             }

@@ -349,12 +349,14 @@ public class AutoShoppingEntryForApp {
                 tmpToBuy.setLocalNo(UUID.randomUUID().toString());
                 tmpToBuy.setKdtSession(memberId);
                 tmpToBuy.setShotGoodName(intendOrderInfo.getGoodShotName());
+                tmpToBuy.setShotGoodNameExtra(intendOrderInfo.getGoodShotNameExtra());
 
                 tmpToBuy.setToBuyNum(intendOrderInfo.getGoodNum());
                 tmpToBuy.setNeedPresale(intendOrderInfo.isNeedPresale());
                 tmpToBuy.setToBuySellType(intendOrderInfo.getToBuySellType());
                 StringBuilder descSB = new StringBuilder("名称:");
                 descSB.append(intendOrderInfo.getGoodShotName());
+                descSB.append(intendOrderInfo.getGoodShotNameExtra());
                 if(mapAddressInfos.get(memberId) != null){
                     ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo = mapAddressInfos.get(memberId).stream().filter(address -> address.getAddressId().equalsIgnoreCase(item)).findFirst().orElse(null);
                     if(addressDetailInfo != null){

@@ -1,11 +1,14 @@
 package com.myqq.service.youza.entity;
 
 
+import jdk.nashorn.internal.objects.annotations.Getter;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class IntendOrderDTO implements Serializable {
     private String goodShotName;
+    private String goodShotNameExtra;
     private String goodColorList;
     private String goodSizeList;
     private String goodStyleList;
@@ -14,6 +17,14 @@ public class IntendOrderDTO implements Serializable {
     private String receptNameList;
     private boolean needPresale;
     private String quantifierNum;
+
+    public String getGoodShotNameExtra() {
+        return goodShotNameExtra;
+    }
+
+    public void setGoodShotNameExtra(String goodShotNameExtra) {
+        this.goodShotNameExtra = goodShotNameExtra;
+    }
 
     public String getQuantifierNum() {
         return quantifierNum;

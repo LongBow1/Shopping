@@ -99,6 +99,7 @@ public class ToBuyGoodInfoAppDTO {
         private String orderDate;
         private String receiptName;
         private String shotGoodName;
+        private String shotGoodNameExtra;
         /**
          * 名称中的量词
          */
@@ -126,6 +127,14 @@ public class ToBuyGoodInfoAppDTO {
          * 2-预售
          */
         private int toBuySellType;
+
+        public String getShotGoodNameExtra() {
+            return shotGoodNameExtra;
+        }
+
+        public void setShotGoodNameExtra(String shotGoodNameExtra) {
+            this.shotGoodNameExtra = shotGoodNameExtra;
+        }
 
         public String getQuantifierNum() {
             return quantifierNum;
@@ -277,6 +286,8 @@ public class ToBuyGoodInfoAppDTO {
                     "orderDate='" + orderDate + '\'' +
                     ", receiptName='" + receiptName + '\'' +
                     ", shotGoodName='" + shotGoodName + '\'' +
+                    ", shotGoodNameExtra='" + shotGoodNameExtra + '\'' +
+                    ", quantifierNum='" + quantifierNum + '\'' +
                     ", toBuyNum=" + toBuyNum +
                     ", desc='" + desc + '\'' +
                     ", goodColorKeyWords=" + goodColorKeyWords +
