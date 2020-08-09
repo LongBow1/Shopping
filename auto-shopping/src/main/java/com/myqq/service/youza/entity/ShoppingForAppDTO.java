@@ -90,6 +90,9 @@ public class ShoppingForAppDTO {
         int inventoryAmount;
 
         public String getName() {
+            if(name != null){
+                name = name.replaceAll("\\s*","");
+            }
             return name;
         }
 

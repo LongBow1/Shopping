@@ -129,6 +129,9 @@ public class ToBuyGoodInfoAppDTO {
         private int toBuySellType;
 
         public String getShotGoodNameExtra() {
+            if(shotGoodNameExtra != null){
+                shotGoodNameExtra = shotGoodNameExtra.replaceAll("\\s*","");
+            }
             return shotGoodNameExtra;
         }
 
@@ -169,6 +172,9 @@ public class ToBuyGoodInfoAppDTO {
         }
 
         public String getShotGoodName() {
+            if(shotGoodName != null){
+                shotGoodName = shotGoodName.replaceAll("\\s*","");
+            }
             return shotGoodName;
         }
 
@@ -316,6 +322,9 @@ public class ToBuyGoodInfoAppDTO {
         }
 
         public String getK() {
+            if(k != null){
+                return k.trim();
+            }
             return k;
         }
 
@@ -324,6 +333,9 @@ public class ToBuyGoodInfoAppDTO {
         }
 
         public String getV() {
+            if(v != null){
+                return v.trim();
+            }
             return v;
         }
 
