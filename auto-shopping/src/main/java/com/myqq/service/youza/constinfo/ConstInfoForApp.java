@@ -44,7 +44,7 @@ public class ConstInfoForApp {
      * 改版：
      * http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=40
      */
-    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=40";
+    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=39";
     /**
      * 新品预告
      */

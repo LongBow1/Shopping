@@ -15,9 +15,11 @@
 	//购物数量加减
 	$(function () {
 		//124.70.220.72
+		var localhostUrlPrefix = "http://localhost:8080/orderApp/";
+		var remotehostUrlPrefix = "http://124.70.220.72:80/orderApp/";
 		var auth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTg4Nzg1MDcwNiIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiIwMzMxNTFhMC1mYTU3LTUzNTEtYjliZS00Nzc3YTRkOGFkMGQiLCJleHAiOjE1NzcyNTIzODUsInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiMjc3ZGFhNTktMjFjZC00Mzk1LWI1YmItYzRiM2M3ODliMThhIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.B6zKrGu1Gz12eo4rxnx0TRvniGXar2_mTI71jk7G8RbqK_wOZv9M4i9cyjCh6ewg-N_wD4bdK4WBTWoHrmue-Kz-zELrm8Bur3CV-_IJNrlzd_gl99BkW74U6rPhJNzjFZQrLzf2_Vv76FRWxfFGrZU3sZOKkzF8PNlV6epdaBYrgaIam6xHShJutjhLi-mzqfIgnD-P_H6Ud_byoRIASFZR0wfKSL8dN0v1pDvq3oSCD8matox1Qy_A_Q7ZL3WUhO0BOrKgdZ98WYJWS3FC_m78pFJy62biYcG9lU5k9_JapAxy5-CSJpu-hzMFsxEPvAUdcpxwSHnDdxYJFe-9jg";
 		var memberId = $("#memberidinput").val().trim();
-		var requestUrlPrefix = "http://124.70.220.72:80/orderApp/";
+		var requestUrlPrefix = localhostUrlPrefix;
 		var sessionid = $("#authinput").val();
 		checkSession();
 		var timeClock;

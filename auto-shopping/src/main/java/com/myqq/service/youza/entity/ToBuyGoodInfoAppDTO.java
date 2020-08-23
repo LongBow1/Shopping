@@ -2,6 +2,7 @@ package com.myqq.service.youza.entity;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public class ToBuyGoodInfoAppDTO {
 

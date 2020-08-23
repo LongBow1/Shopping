@@ -356,7 +356,7 @@ public class AutoShoppingEntryForApp {
                 tmpToBuy.setToBuySellType(intendOrderInfo.getToBuySellType());
                 StringBuilder descSB = new StringBuilder("名称:");
                 descSB.append(intendOrderInfo.getGoodShotName());
-                descSB.append(intendOrderInfo.getGoodShotNameExtra());
+                descSB.append(Optional.ofNullable(intendOrderInfo.getGoodShotNameExtra()).orElse(""));
                 if(mapAddressInfos.get(memberId) != null){
                     ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo = mapAddressInfos.get(memberId).stream().filter(address -> address.getAddressId().equalsIgnoreCase(item)).findFirst().orElse(null);
                     if(addressDetailInfo != null){
