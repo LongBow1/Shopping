@@ -252,6 +252,11 @@ public class ShoppingForAppDTO {
          * 属性信息--组合生成
          */
         List<ToBuyGoodInfoAppDTO.KV> specList;
+        /**
+         * 优惠编号
+         */
+        List<String> promotionIdList;
+        String promotionIdStr;
 
         public String getName() {
             return name;
@@ -349,7 +354,6 @@ public class ShoppingForAppDTO {
             this.specList = specList;
         }
 
-
         @Override
         public String toString() {
             return "GoodDataStockDetailDTO{" +
@@ -365,8 +369,27 @@ public class ShoppingForAppDTO {
                     ", orderNo='" + orderNo + '\'' +
                     ", toBuyNum=" + toBuyNum +
                     ", specList=" + specList +
+                    ", promotionIdList=" + promotionIdList +
+                    ", promotionIdStr='" + promotionIdStr + '\'' +
                     '}';
         }
+
+        public String getPromotionIdStr() {
+            return promotionIdStr;
+        }
+
+        public void setPromotionIdStr(String promotionIdStr) {
+            this.promotionIdStr = promotionIdStr;
+        }
+
+        public List<String> getPromotionIdList() {
+            return promotionIdList;
+        }
+
+        public void setPromotionIdList(List<String> promotionIdList) {
+            this.promotionIdList = promotionIdList;
+        }
+
     }
     public static class GoodDataSpecDetailDTO{
         /**

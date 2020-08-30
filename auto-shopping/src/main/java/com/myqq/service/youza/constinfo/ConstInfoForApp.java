@@ -44,7 +44,7 @@ public class ConstInfoForApp {
      * 改版：
      * http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=40
      */
-    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=39";
+    public static String getNewGoodListUrlForApp = "http://backend.bqjapp.cn/backend/optimized/home/goods?pageIndex=1&pageSize=20";
     /**
      * 新品预告
      */
@@ -110,12 +110,14 @@ public class ConstInfoForApp {
      * 登录地址，获取auth信息
      */
     public static String loginUrlForApp = "http://backend.bqjapp.cn/backend/shm/longin?username={0}&password={1}&type=member";
+
+    //region  shopping car for activity
     /**
      * get
      * 促销活动
      * http://backend.bqjapp.cn/backend/goods/activity/4f0aebf5-2c4a-7436-c0f3-d1bd6f26f7a3
      */
-    public static String promotionUrlForApp = "http://backend.bqjapp.cn/backend/goods/activity/{0}}";
+    public static String promotionUrlForApp = "http://backend.bqjapp.cn/backend/goods/activity/{0}";
     /**
      * post
      * 添加购物车 memberId
@@ -137,4 +139,6 @@ public class ConstInfoForApp {
      * {"area":"岳池县","city":"广安","discountGoodsList":[{"goodsList":[{"count":"1","goodId":"9633b1a1-97e0-4169-b953-4b8a99009e50","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"粉色","spec2":";S","spec3":""},{"count":"1","goodId":"9633b1a1-97e0-4169-b953-4b8a99009e50","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"粉色","spec2":";S","spec3":""}]}],"goodsList":[{"count":"1","goodId":"d30eed95-cc98-44c1-8946-ad30e7368df6","image":"http://img.bqjapp.cn/M00/3A/6E/wKgLKV7CTcuAXXs8AABRFDpMXIU176.jpg","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"黑色","spec2":";M","spec3":""},{"count":"1","goodId":"9633b1a1-97e0-4169-b953-4b8a99009e50","image":"http://img.bqjapp.cn/M00/3A/6E/wKgLKV7CTcuAXXs8AABRFDpMXIU176.jpg","name":"DH9808#V领短袖，6月8日-6月11日左右发货","spec1":"粉色","spec2":";S","spec3":""}],"houseNumber":"乔家镇卫生院","postFee":"0","price":"98.0","province":"四川","receiverName":"张利玲","receiverPhone":"18080291969","remark":"","street":""}
      */
     public static String shoppingCarUrlOrder = "http://backend.bqjapp.cn/backend/order";
+
+    //endregion
 }

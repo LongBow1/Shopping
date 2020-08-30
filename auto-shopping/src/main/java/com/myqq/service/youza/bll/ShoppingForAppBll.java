@@ -1,23 +1,24 @@
 package com.myqq.service.youza.bll;
 
 import com.alibaba.fastjson.JSONObject;
+import com.myqq.service.youza.entity.PromotionDTO;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.CustomThreadFactory;
 import com.myqq.service.youza.util.TimeUtil;
+import org.apache.http.entity.StringEntity;
 import org.omg.CORBA.BooleanHolder;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.myqq.service.youza.bll.RequestBllForApp.doPost;
 import static com.myqq.service.youza.constinfo.ConstInfoForApp.*;
 
 /**
@@ -30,13 +31,17 @@ public class ShoppingForAppBll {
      */
     public static ThreadPoolExecutor executorServiceForGoodDetail = new ThreadPoolExecutor (5, 20, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("GoodDetail")) {
     };
-    public static ThreadPoolExecutor executorServiceForCommitOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CommitOrder")) {
+    public static ThreadPoolExecutor executorServiceForCommitOrder = new ThreadPoolExecutor (6, 20, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CommitOrder")) {
     };
 
     public static ThreadPoolExecutor executorServiceForCancelOrder = new ThreadPoolExecutor (3, 10, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new CustomThreadFactory("CancelOrder")) {
     };
 
     public static List<String> quantifiers = new ArrayList<>(Arrays.asList("匹","张","尾","条","个","网","棵","只","支","颗","群","砣","座","贯","扎","捆","刀","打","手","队","单","双","对","口","头","脚","枝","件","贴","名","位","本","页","丝","两","斤","升","盘","碗","碟","叠","笼","盆","盒","杯","钟","锅","簋","篮","盘","桶","罐","瓶","壶","盏","箩","箱","袋","分","夜","代","丸","泡","粒","颗","幢","堆","包","提"));
+    /**
+     * 商品mainId，优惠信息编号
+     */
+    public static Map<String,List<String>> mainGoodIdPromotionIdsMap = new HashMap<>(100);
 
     /**
      * 匹配意向单信息
@@ -237,6 +242,16 @@ public class ShoppingForAppBll {
                         tmpToBuy.setGoodsId(goodDetail.getGoodsId());
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                         realToBuyGoodList.add(tmpToBuy);
+                        if(mainGoodIdPromotionIdsMap.containsKey(tmpToBuy.getMainGoodsId())){
+                            tmpToBuy.setPromotionIdList(mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId()));
+                            tmpToBuy.setPromotionIdStr(CollectionUtils.isEmpty(mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId())) ? "" : String.join(",",mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId())));
+                        }else {
+                            updateMainGoodIdAndPromotionInfo(tmpToBuy.getMainGoodsId(), auth);
+                            if(mainGoodIdPromotionIdsMap.containsKey(tmpToBuy.getMainGoodsId())){
+                                tmpToBuy.setPromotionIdList(mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId()));
+                                tmpToBuy.setPromotionIdStr(CollectionUtils.isEmpty(mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId())) ? "" : String.join(",",mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId())));
+                            }
+                        }
                         //finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
                         //finalToBuyGoodInfo.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                     }
@@ -251,6 +266,31 @@ public class ShoppingForAppBll {
             System.out.println(TimeUtil.getCurrentTimeString() + "getToBuyGoodSkuInfoDetail operationInfo: "+ operationInfo.toString());
         }
     }
+
+    /**
+     * 根据商品主id更新对应优惠信息
+     * @param mainGoodsId
+     * @param auth
+     */
+    private static void updateMainGoodIdAndPromotionInfo(String mainGoodsId, String auth) {
+        PromotionDTO promotionDTO = null;
+        try {
+            String goodDataInfo = RequestBllForApp.doGet(MessageFormat.format(promotionUrlForApp, mainGoodsId), auth);
+            if(!StringUtils.isEmpty(goodDataInfo)){
+                promotionDTO = JSONObject.parseObject(goodDataInfo, PromotionDTO.class);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        if(promotionDTO != null && promotionDTO.getCode() == 0){
+            if(!CollectionUtils.isEmpty(promotionDTO.getData())){
+                mainGoodIdPromotionIdsMap.put(mainGoodsId, promotionDTO.getData().stream().map(PromotionDTO.Activity::getId).collect(Collectors.toList()));
+            }else {
+                mainGoodIdPromotionIdsMap.put(mainGoodsId, null);
+            }
+        }
+    }
+
     private static boolean isSkuItemListMatch(Stream<ToBuyGoodInfoAppDTO.KV> propList, String keyword, boolean strictEqual) {
         return propList.allMatch(item -> isSkuItemMatch(item,keyword,strictEqual));
     }
@@ -319,11 +359,11 @@ public class ShoppingForAppBll {
 
     /**
      * 下单
-     *
-     * @param toBuyGoodAndAddressInfos
+     *  @param toBuyGoodAndAddressInfos
      * @param auth
+     * @param memberId
      */
-    public static void commitToBuyOrder(List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> toBuyGoodAndAddressInfos, String auth) {
+    public static void commitToBuyOrder(List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> toBuyGoodAndAddressInfos, String auth, String memberId) {
         StringBuilder operationInfo = new StringBuilder("");
         if(toBuyGoodAndAddressInfos != null){
             List<Future<String>> commitOrderFutures = new ArrayList<>();
@@ -334,6 +374,13 @@ public class ShoppingForAppBll {
                         boolean canCommitOrder = buyGood != null && buyGood.getGoodsId() != null && !buyGood.getGoodsId().isEmpty() && Optional.ofNullable(buyGood.getToBuyNum()).orElse(0) > 0 && (buyGood.getOrderNo() == null || buyGood.getOrderNo().isEmpty());
                         if(canCommitOrder){
                             commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), buyGood.getToBuyNum()), auth, 0)));
+                        }
+                    });
+                    //有多个优惠同时走购物车下单
+                    Map<String, List<ShoppingForAppDTO.GoodDataStockDetailDTO>> promotionGroup = toBuy.getToBuyGoodInfoList().stream().collect(Collectors.groupingBy(ShoppingForAppDTO.GoodDataStockDetailDTO::getPromotionIdStr));
+                    promotionGroup.entrySet().forEach(entry -> {
+                        if(!StringUtils.isEmpty(entry.getKey()) && entry.getValue().size() > 1){
+                            commitOrderForShoppingCar(entry.getValue(), toBuy.getAddressDetailInfo(), auth, memberId);
                         }
                     });
                 }
@@ -358,6 +405,87 @@ public class ShoppingForAppBll {
         if(!operationInfo.toString().isEmpty()){
             System.out.println(TimeUtil.getCurrentTimeString() + "commitToBuyOrder operationInfo: "+ operationInfo.toString());
         }
+    }
+
+    /**
+     * 购物车下单
+     *  @param preToBuyGoodList
+     * @param addressDetailInfo
+     * @param auth
+     * @param memberId
+     */
+    private static String commitOrderForShoppingCar(List<ShoppingForAppDTO.GoodDataStockDetailDTO> preToBuyGoodList, ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo, String auth, String memberId) {
+        StringEntity commitPostEntity = RequestBllForApp.getPromotionPostEntity(preToBuyGoodList, addressDetailInfo);
+        //String addShoppingCarInfo = doPost(MessageFormat.format(shoppingCarUrlForApp,memberId), commitPostEntity, auth);
+        String operationInfo = "";
+        String orderInfo = "";
+        try {
+            orderInfo = doPost(commitOrderUrlForApp, commitPostEntity, auth);
+        }catch (Exception ex){
+            operationInfo = ex.getMessage();
+            try {
+                ShoppingForAppDTO.CommitOrderErrorDTO commitOrderError = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                System.out.println(TimeUtil.getCurrentTimeString() + " commitOrderError: " + commitOrderError.toString());
+                if(commitOrderError != null){
+                    //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
+                    int count = 0;
+                    while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        count++;
+                        System.out.println(count);
+                    }
+                    //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
+                    while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        count++;
+                        System.out.println(count);
+                    }
+                }
+            }catch (Exception ex1){
+                ex1.printStackTrace();
+            }
+
+            if(!operationInfo.isEmpty()){
+                System.out.println(TimeUtil.getCurrentTimeString() +" commitOrderForShoppingCarV2 operationInfo: "+ operationInfo);
+            }
+        }
+        return orderInfo;
+    }
+
+    private static String commitOrderForShoppingCarV2(StringEntity commitPostEntity, String auth) {
+        String operationInfo = "";
+        String orderInfo = "";
+        try {
+            orderInfo = doPost(commitOrderUrlForApp, commitPostEntity, auth);
+        }catch (Exception ex){
+            operationInfo = ex.getMessage();
+            try {
+                ShoppingForAppDTO.CommitOrderErrorDTO commitOrderError = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                System.out.println(TimeUtil.getCurrentTimeString() + " commitOrderError: " + commitOrderError.toString());
+                if(commitOrderError != null){
+                    //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
+                    int count = 0;
+                    while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        count++;
+                        System.out.println(count);
+                    }
+                    //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
+                    while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        count++;
+                        System.out.println(count);
+                    }
+                }
+            }catch (Exception ex1){
+                ex1.printStackTrace();
+            }
+
+            if(!operationInfo.isEmpty()){
+                System.out.println(TimeUtil.getCurrentTimeString() +" commitOrderForShoppingCarV2 operationInfo: "+ operationInfo);
+            }
+        }
+        return orderInfo;
     }
 
     /**

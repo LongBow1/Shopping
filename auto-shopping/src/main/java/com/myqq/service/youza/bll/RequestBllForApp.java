@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,6 +146,7 @@ public class RequestBllForApp {
         }
         return res;
     }
+
 
     public static StringEntity getCommitPostEntity(ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo, int toBuyNum) {
         String operationInfo = "";
@@ -278,5 +280,43 @@ public class RequestBllForApp {
             System.out.println(TimeUtil.getCurrentTimeString() +" commitToBuyOrder operationInfo: "+ operationInfo);
         }
         return orderInfo;
+    }
+
+
+
+    public static StringEntity getPromotionPostEntity(List<ShoppingForAppDTO.GoodDataStockDetailDTO> buyGoods, ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo) {
+        String operationInfo = "";
+        StringEntity entity = null;
+        try {
+            String postDataFormat = "{\n" +
+                    "    \"province\": \"%s\",\n" +
+                    "    \"city\": \"%s\",\n" +
+                    "    \"area\": \"%s\",\n" +
+                    //"    \"street\": \"%s\",\n" +
+                    "    \"houseNumber\": \"%s\",\n" +
+                    "    \"zipCode\": \"\",\n" +
+                    "    \"receiverName\": \"%s\",\n" +
+                    "    \"receiverPhone\": \"%s\",\n" +
+                    "    \"postFee\": 0,\n" +
+                    "    \"remark\": \"\",\n" +
+                    "    \"goodsList\": [\n %s" +
+                    "    ]\n" +
+                    "}";
+            String postFormat = "{\"city\":\"%s\",\"goodsList\":[%s],\"houseNumber\":\"%s\",\"province\":\"%s\",\"receiverName\":\"%s\",\"receiverPhone\":\"%s\"}";
+            StringBuilder goodDetailListBuilder = new StringBuilder();
+            buyGoods.forEach(good -> {
+                goodDetailListBuilder.append("{\"goodId\":").append("\""+good.getGoodsId()+"\"").append(",").append("\"count\":").append(good.getToBuyNum()).append("},");
+            });
+            String goodDetailStr = goodDetailListBuilder.toString().substring(0,goodDetailListBuilder.toString().length()-1);
+            /*StringBuilder commitOrderContentSB = new StringBuilder(String.format(postDataFormat, addressDetailInfo.getProvince(), addressDetailInfo.getCity(), addressDetailInfo.getArea(),  replaceBlank(addressDetailInfo.getAddress()), addressDetailInfo.getReceiveName(), addressDetailInfo.getReceivePhone(), goodDetailStr));*/
+            StringBuilder commitOrderContentSB = new StringBuilder(String.format(postFormat, addressDetailInfo.getCity(), goodDetailStr,  replaceBlank(addressDetailInfo.getAddress()),addressDetailInfo.getProvince(), addressDetailInfo.getReceiveName(), addressDetailInfo.getReceivePhone()));
+            entity = new StringEntity(commitOrderContentSB.toString(),"utf-8");
+        }catch (Exception ex){
+            operationInfo += ex.getMessage();
+        }
+        if(!operationInfo.isEmpty()){
+            System.out.println(TimeUtil.getCurrentTimeString() + "getCommitPostEntity operationInfo: "+operationInfo);
+        }
+        return entity;
     }
 }

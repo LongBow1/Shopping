@@ -458,7 +458,7 @@ public class AutoShoppingEntryForApp {
                     loopCountMark = loopCountMark % countLevel;
                 }
                 ShoppingForAppBll.buildToBuyGoodInfo(mapToBuyGoodAndAddressInfos.get(memberId), auth);
-                ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(memberId), auth);
+                ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(memberId), auth, memberId);
                 ShoppingForAppBll.removeAlreadyBuyAndToPayGood(mapToBuyGoodAndAddressInfos.get(memberId), mapAlreadyBuyGoodAndAddressInfos.get(memberId), mapIntendToBuyGoodInfos.get(memberId));
             }catch (Exception ex){
                 ex.printStackTrace();
