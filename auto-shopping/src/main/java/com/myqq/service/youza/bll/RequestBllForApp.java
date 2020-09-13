@@ -147,6 +147,32 @@ public class RequestBllForApp {
         return res;
     }
 
+    public static String doPostForShoppingCar(String postUrl, StringEntity stringEntity, String auth){
+        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+        HttpPost httpPost = new HttpPost(postUrl);
+        httpPost.addHeader("Content-type", contentTypeJson);
+        httpPost.addHeader("User-Agent",userAgentForApp);
+        httpPost.addHeader("Authorization", auth);
+
+        String res = null;
+
+        try {
+            if(stringEntity == null){
+                stringEntity = new StringEntity("");
+            }
+            httpPost.setEntity(stringEntity);
+            HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
+            res = EntityUtils.toString(httpResponse.getEntity());
+            System.out.println(TimeUtil.getCurrentTimeString() +" shoppingCar commitOrder entity:"+ EntityUtils.toString(stringEntity) +" result:"+res);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
     public static StringEntity getCommitPostEntity(ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, ShoppingForAppDTO.AddressDataRowDetailDTO addressDetailInfo, int toBuyNum) {
         String operationInfo = "";

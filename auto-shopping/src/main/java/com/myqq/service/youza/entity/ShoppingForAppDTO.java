@@ -199,6 +199,24 @@ public class ShoppingForAppDTO {
     public static class GoodDataDetailDTO{
         List<GoodDataSpecDetailDTO> specList;
         List<GoodDataStockDetailDTO> goodsList;
+        String activityList;
+
+        @Override
+        public String toString() {
+            return "GoodDataDetailDTO{" +
+                    "specList=" + specList +
+                    ", goodsList=" + goodsList +
+                    ", activityList='" + activityList + '\'' +
+                    '}';
+        }
+
+        public String getActivityList() {
+            return activityList;
+        }
+
+        public void setActivityList(String activityList) {
+            this.activityList = activityList;
+        }
 
         public List<GoodDataSpecDetailDTO> getSpecList() {
             return specList;
@@ -216,13 +234,6 @@ public class ShoppingForAppDTO {
             this.goodsList = goodsList;
         }
 
-        @Override
-        public String toString() {
-            return "GoodDataDetailDTO{" +
-                    "specList=" + specList +
-                    ", goodsList=" + goodsList +
-                    '}';
-        }
     }
     public static class GoodDataStockDetailDTO{
         /**
