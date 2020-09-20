@@ -237,12 +237,18 @@ public class ShoppingForAppBll {
                         }
                     }
                     //finalToBuyGoodInfo.setGoodsId(goodDetail.getGoodsId());
+                    //五分钟内再开抢
+                    boolean isTimeMatch = goodItem.getShiftedOn() - System.currentTimeMillis() < 300000;
                     if(isMatchSku){
                         ShoppingForAppDTO.GoodDataStockDetailDTO tmpToBuy = new ShoppingForAppDTO.GoodDataStockDetailDTO();
                         tmpToBuy.setMainGoodsId(goodItem.getGoodsId());
                         tmpToBuy.setName(goodItem.getName());
                         tmpToBuy.setGoodsId(goodDetail.getGoodsId());
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
+                        if(!isTimeMatch){
+                            System.out.println(goodItem.getName()+" 开抢时间："+ TimeUtil.getTimeString(goodItem.getShiftedOn())+" 还未到,暂不加入代下单列表");
+                            return;
+                        }
                         realToBuyGoodList.add(tmpToBuy);
                         if(mainGoodIdPromotionIdsMap.containsKey(tmpToBuy.getMainGoodsId())){
                             tmpToBuy.setPromotionIdList(mainGoodIdPromotionIdsMap.get(tmpToBuy.getMainGoodsId()));
