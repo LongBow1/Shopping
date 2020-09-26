@@ -1,11 +1,13 @@
 package com.myqq.service.youza.bll;
 
 import com.alibaba.fastjson.JSONObject;
+import com.myqq.service.util.FileOperation;
 import com.myqq.service.youza.entity.IntendOrderDTO;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.entity.ToPayOrderDTO;
 import com.myqq.service.youza.util.TimeUtil;
+import org.springframework.util.CollectionUtils;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -232,6 +234,8 @@ public class AutoShoppingEntryForApp {
         initMapInfoByAuth(memberId);
         mapIntendToBuyGoodInfos.get(memberId).removeIf(item -> localNos.contains(item.getLocalNo()));
         mapToBuyGoodAndAddressInfos.get(memberId).removeIf(item -> localNos.contains(item.getLocalNo()));
+        String readToBuyFile = "readToBuyFile"+memberId+".txt";
+        FileOperation.writeFile(JSONObject.toJSONString(mapIntendToBuyGoodInfos.get(memberId)), readToBuyFile);
         return true;
     }
 
@@ -421,6 +425,8 @@ public class AutoShoppingEntryForApp {
         String loopMark = mapOrderingSymbol.containsKey(memberId) ? mapOrderingSymbol.getOrDefault(memberId,"") : "";
         initMapInfoByAuth(memberId);
 
+        String readToBuyFile = "readToBuyFile"+memberId+".txt";
+
         String standToBuyLocalNos = mapToBuyGoodAndAddressInfos.get(memberId).stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.joining(","));
         StringBuilder resultStr = new StringBuilder(loopMark);
         if (mapIntendToBuyGoodInfos.get(memberId).size() > 0) {
@@ -443,6 +449,8 @@ public class AutoShoppingEntryForApp {
             System.out.println(TimeUtil.getCurrentTimeString() + resultStr.toString());
             return resultStr.toString();
         }
+
+        int readToBuyOldCount = 0, readToBuyNewCount = 0;
         //自旋下单流程
         for(;;){
             StringBuilder resultBuilder = new StringBuilder();
@@ -457,9 +465,12 @@ public class AutoShoppingEntryForApp {
                     loolCount ++;
                     loopCountMark = loopCountMark % countLevel;
                 }
+                readToBuyOldCount = mapToBuyGoodAndAddressInfos.containsKey(memberId) ? mapToBuyGoodAndAddressInfos.get(memberId).size() : 0;
                 ShoppingForAppBll.buildToBuyGoodInfo(mapToBuyGoodAndAddressInfos.get(memberId), auth);
                 ShoppingForAppBll.commitToBuyOrder(mapToBuyGoodAndAddressInfos.get(memberId), auth, memberId);
                 ShoppingForAppBll.removeAlreadyBuyAndToPayGood(mapToBuyGoodAndAddressInfos.get(memberId), mapAlreadyBuyGoodAndAddressInfos.get(memberId), mapIntendToBuyGoodInfos.get(memberId));
+                readToBuyNewCount = mapToBuyGoodAndAddressInfos.containsKey(memberId) ? mapToBuyGoodAndAddressInfos.get(memberId).size() : 0;
+                FileOperation.writeFile(JSONObject.toJSONString(mapIntendToBuyGoodInfos.get(memberId)), readToBuyFile);
             }catch (Exception ex){
                 ex.printStackTrace();
                 resultBuilder.append(ex.getMessage());
@@ -518,7 +529,26 @@ public class AutoShoppingEntryForApp {
         String loginResultStr = RequestBllForApp.doPost(MessageFormat.format(loginUrlForApp, userName, password), null, "");
         if(loginResultStr != null){
             authInfo = JSONObject.parseObject(loginResultStr, ToBuyGoodInfoAppDTO.AuthInfoDTO.class);
+            String memberId = authInfo.getData().getUser().getId();
+            String readToBuyFile = "readToBuyFile"+memberId+".txt";
+            String readToBuyJsonContent;
+            initMapInfoByAuth(memberId);
+            if(CollectionUtils.isEmpty(mapIntendToBuyGoodInfos.get(memberId)) && !(readToBuyJsonContent = FileOperation.readFile(readToBuyFile)).isEmpty()){
+                try {
+                    List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> toBuyInfos = JSONObject.parseArray(readToBuyJsonContent,ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO.class);
+                    if(!CollectionUtils.isEmpty(toBuyInfos)){
+                        toBuyInfos.forEach(item -> {
+                            if(item != null && item.getShotGoodName() != null){
+                                mapIntendToBuyGoodInfos.get(memberId).add(item);
+                            }
+                        });
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            }
         }
+
         return JSONObject.toJSONString(authInfo);
     }
 
