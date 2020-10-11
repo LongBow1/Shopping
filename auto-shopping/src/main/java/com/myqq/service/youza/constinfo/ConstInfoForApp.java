@@ -28,7 +28,7 @@ public class ConstInfoForApp {
      * 改版：
      * http://backend.bqjapp.cn/backend/member/033151a0-fa57-5351-b9be-4777a4d8ad0d/address?keyWord=&pageIndex=1&pageSize=100
      */
-    public static String getAddressInfoUrlForApp = "http://backend.bqjapp.cn/backend/member/{0}/address?keyWord=&pageIndex=1&pageSize=100";
+    public static String getAddressInfoUrlForApp = "http://backend.bqjapp.cn/backend/member/{0}/address?keyWord=&pageIndex={1}&pageSize={2}";
     /**
      *
      * http://www.bqjapp.cn/backend/goods?homeType=4&goodCategory=&otherType=&pageIndex=1&pageSize=50

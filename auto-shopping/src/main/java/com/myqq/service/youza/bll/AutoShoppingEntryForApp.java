@@ -59,11 +59,11 @@ public class AutoShoppingEntryForApp {
      */
     public static boolean testConnect(String auth, String memberId) {
         initMapInfoByAuth(memberId);
-        String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId), auth);
+        String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId,1,1), auth);
         try {
             if(addressInfo != null){
                 ShoppingForAppDTO.AddressDataDTO addressData = JSONObject.parseObject(addressInfo,ShoppingForAppDTO.AddressDataDTO.class);
-                return addressData != null && addressData.getMessage().equals("成功");
+                return addressData != null && addressData.getCode().equals(0);
             }
         }catch (Exception ex){
             System.out.println(TimeUtil.getCurrentTimeString()+ex.getMessage());
@@ -105,11 +105,21 @@ public class AutoShoppingEntryForApp {
      */
     public static String getAddressInfo(String auth, String memberId, boolean useLocalAddress) {
         initMapInfoByAuth(memberId);
-        String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId), auth);
+        int pageIndex = 1;
+        int pageSize = 100;
+        String addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId, pageIndex, pageSize), auth);
         try {
             if(addressInfo != null){
                 ShoppingForAppDTO.AddressDataDTO addressData = JSONObject.parseObject(addressInfo,ShoppingForAppDTO.AddressDataDTO.class);
-                if(addressData != null && addressData.getMessage().equals("成功") && addressData.getData() != null){
+                if(addressData != null && addressData.getCode().equals(0) && addressData.getData() != null){
+                    int pageCount = addressData.getData().getTotal() / pageSize + (addressData.getData().getTotal()%pageSize == 0 ? 0 : 1);
+                    for(pageIndex=2;pageIndex<=pageCount;pageIndex++){
+                        addressInfo = RequestBllForApp.doGet(MessageFormat.format(getAddressInfoUrlForApp, memberId, pageIndex, pageSize), auth);
+                        ShoppingForAppDTO.AddressDataDTO tmpAddressData = JSONObject.parseObject(addressInfo,ShoppingForAppDTO.AddressDataDTO.class);
+                        if(tmpAddressData != null && tmpAddressData.getCode().equals(0) && tmpAddressData.getData() != null && !CollectionUtils.isEmpty(tmpAddressData.getData().getRows())){
+                            addressData.getData().getRows().addAll(tmpAddressData.getData().getRows());
+                        }
+                    }
                     List<ShoppingForAppDTO.AddressDataRowDetailDTO> addressDetailInfoDTOS = mapAddressInfos.get(memberId);
                     if(addressDetailInfoDTOS == null){
                         addressDetailInfoDTOS = new ArrayList<>();

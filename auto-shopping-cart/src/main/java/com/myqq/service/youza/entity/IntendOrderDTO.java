@@ -16,6 +16,15 @@ public class IntendOrderDTO implements Serializable {
     private String quantifierNum;
 
     private boolean mergeOrder;
+    private String goodOtherAttrList;
+
+    public String getGoodOtherAttrList() {
+        return goodOtherAttrList;
+    }
+
+    public void setGoodOtherAttrList(String goodOtherAttrList) {
+        this.goodOtherAttrList = goodOtherAttrList;
+    }
 
     public boolean isMergeOrder() {
         return mergeOrder;

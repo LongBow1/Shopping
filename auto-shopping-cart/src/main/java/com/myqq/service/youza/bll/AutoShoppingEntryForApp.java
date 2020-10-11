@@ -357,11 +357,9 @@ public class AutoShoppingEntryForApp {
                 tmpToBuy.setKdtSession(memberId);
                 tmpToBuy.setShotGoodName(intendOrderInfo.getGoodShotName());
                 tmpToBuy.setShotGoodNameExtra(intendOrderInfo.getGoodShotNameExtra());
-
                 tmpToBuy.setToBuyNum(intendOrderInfo.getGoodNum());
                 tmpToBuy.setNeedPresale(intendOrderInfo.isNeedPresale());
                 tmpToBuy.setToBuySellType(intendOrderInfo.getToBuySellType()) ;
-
                 tmpToBuy.setMergeOrder(intendOrderInfo.isMergeOrder());
 
                 StringBuilder descSB = new StringBuilder("名称:");
@@ -377,25 +375,11 @@ public class AutoShoppingEntryForApp {
 
                     }
                 }
-
                 descSB.append(" 数量:").append(intendOrderInfo.getGoodNum());
-                if(intendOrderInfo.getGoodColorList() != null && !intendOrderInfo.getGoodColorList().isEmpty()){
-                    tmpToBuy.setGoodColorKeyWords(Arrays.asList(intendOrderInfo.getGoodColorList().split("\\,")));
-                    descSB.append(" 颜色:").append(intendOrderInfo.getGoodColorList());
-                }
                 if(intendOrderInfo.getGoodSizeList() != null && !intendOrderInfo.getGoodSizeList().isEmpty()){
                     tmpToBuy.setGoodSizeKeyWords(Arrays.asList(intendOrderInfo.getGoodSizeList().split("\\,")));
                     descSB.append(" 尺码:").append(intendOrderInfo.getGoodSizeList());
                 }
-                if(intendOrderInfo.getGoodStyleList() != null && !intendOrderInfo.getGoodStyleList().isEmpty()){
-                    tmpToBuy.setGoodStyleKeyWords(Arrays.asList(intendOrderInfo.getGoodStyleList().split("\\,")));
-                    descSB.append(" 款式:").append(intendOrderInfo.getGoodStyleList());
-                }
-                if(intendOrderInfo.getGoodSpecList() != null && !intendOrderInfo.getGoodSpecList().isEmpty()){
-                    tmpToBuy.setGoodSpecKeyWords(Arrays.asList(intendOrderInfo.getGoodSpecList().split("\\,")));
-                    descSB.append(" 规格:").append(intendOrderInfo.getGoodSpecList());
-                }
-                //descSB.append(" 预售:").append(intendOrderInfo.isNeedPresale() ? "是":"否").append(" 时间:").append(tmpToBuy.getOrderDate());
                 String preSellDesc = "不限";
                 if(intendOrderInfo.getToBuySellType() == 1){
                     preSellDesc = "现货";
@@ -406,7 +390,7 @@ public class AutoShoppingEntryForApp {
                     tmpToBuy.setQuantifierNum(intendOrderInfo.getQuantifierNum());
                     descSB.append(" 计量:").append(intendOrderInfo.getQuantifierNum());
                 }
-                descSB.append(" 预售:").append(preSellDesc).append(" 时间:").append(tmpToBuy.getOrderDate());
+                descSB.append(" 预售:").append(preSellDesc).append(" 合并下单:").append(tmpToBuy.isMergeOrder() ? "是":"否").append(" 时间:").append(tmpToBuy.getOrderDate());
                 tmpToBuy.setDesc(descSB.toString());
             });
         }
