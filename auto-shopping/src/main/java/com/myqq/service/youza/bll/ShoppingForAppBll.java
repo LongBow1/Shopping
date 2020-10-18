@@ -221,8 +221,8 @@ public class ShoppingForAppBll {
                 goodDataDetail.getGoodsList().stream().filter(item -> Optional.ofNullable(item.getInventory()).orElse(0) > 0).forEach(goodDetail -> {
                     boolean isMatchSku = true;
                     if(hasAttrInfo){
-                        if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("颜色")) && skuColorKeyWords != null && !skuColorKeyWords.isEmpty()){
-                            isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("颜色")), keyword, false));
+                        if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("颜色") || propItem.getK().contains("规格")) && skuColorKeyWords != null && !skuColorKeyWords.isEmpty()){
+                            isMatchSku = isMatchSku && skuColorKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("颜色") || propItem.getK().contains("规格")), keyword, false));
                         }
                         //尺码可能没有标签
                         if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("尺码") || propItem.getK().trim().isEmpty()) && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
