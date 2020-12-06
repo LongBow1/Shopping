@@ -359,7 +359,7 @@ $(function () {
                 })
             }
         }
-        $("#commitorderlistlabel").html(labelName + labelName1 + labelName2);
+        $("#commitorderlistlabel").html(labelName + labelName1 + labelName2+" <input class='mergereadytobuyorderlist' type='checkbox' id='mergereadytobuyorderlistinput'>合并选择订单</inpur>");
     }
 
     function refreshToPayOrderInfo() {

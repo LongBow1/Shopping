@@ -233,7 +233,7 @@ public class RequestBllForApp {
         if(orderInfo != null){
             try {
                 ShoppingForAppDTO.CommitOrderDTO commitOrderInfo = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderDTO.class);
-                if(commitOrderInfo != null && commitOrderInfo.getData() != null){
+                if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
                     if(commitOrderInfo.getData() != null){
                         buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
                     }

@@ -361,7 +361,6 @@ public class AutoShoppingEntryForApp {
             receiptNames.forEach(item -> {
                 ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO tmpToBuy = new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO();
                 mapIntendToBuyGoodInfos.get(memberId).add(tmpToBuy);
-                //intendToBuyGoods.add(tmpToBuy);
                 tmpToBuy.setOrderDate(dateTimeFormatter.format(LocalDateTime.now()));
                 tmpToBuy.setLocalNo(UUID.randomUUID().toString());
                 tmpToBuy.setKdtSession(memberId);
@@ -405,18 +404,17 @@ public class AutoShoppingEntryForApp {
                     tmpToBuy.setGoodSpecKeyWords(Arrays.asList(intendOrderInfo.getGoodSpecList().split("\\,")));
                     descSB.append(" 规格:").append(intendOrderInfo.getGoodSpecList());
                 }
-                //descSB.append(" 预售:").append(intendOrderInfo.isNeedPresale() ? "是":"否").append(" 时间:").append(tmpToBuy.getOrderDate());
+                if(intendOrderInfo.getQuantifierNum() != null && !intendOrderInfo.getQuantifierNum().isEmpty()){
+                    tmpToBuy.setQuantifierNum(intendOrderInfo.getQuantifierNum());
+                    descSB.append(" 计量:").append(intendOrderInfo.getQuantifierNum());
+                }
                 String preSellDesc = "不限";
                 if(intendOrderInfo.getToBuySellType() == 1){
                     preSellDesc = "现货";
                 }else if(intendOrderInfo.getToBuySellType() == 2){
                     preSellDesc = "预售";
                 }
-                if(intendOrderInfo.getQuantifierNum() != null && !intendOrderInfo.getQuantifierNum().isEmpty()){
-                    tmpToBuy.setQuantifierNum(intendOrderInfo.getQuantifierNum());
-                    descSB.append(" 计量:").append(intendOrderInfo.getQuantifierNum());
-                }
-                descSB.append(" 预售:").append(preSellDesc).append(" 时间:").append(tmpToBuy.getOrderDate());
+                descSB.append(" 预售:").append(preSellDesc).append(" 下单时间:").append(tmpToBuy.getOrderDate());
                 tmpToBuy.setDesc(descSB.toString());
             });
         }
