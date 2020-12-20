@@ -202,6 +202,32 @@
 				}
 			})
 		});
+		
+		$('#toreceiveorderlist').click(function () {
+			var postInfo = {
+				"auth": $("#authinput").val().trim(),
+				"memberId": $("#memberidinput").val().trim()
+			}
+			$.post(requestUrlPrefix + "getSendedOrderList", postInfo, function (result) {
+
+				if (result != null) {
+					var intendOrders = JSON.parse(result);
+					$("#toreceiveorderlistdiv").empty();
+					if (intendOrders != null && intendOrders.length > 0) {
+						$.each(intendOrders, function (i, e) {
+
+							$("#toreceiveorderlistdiv").append("<div style='height:60px;'><img src='" + e.imgUrl + "'  style='height:50px;float:left' /><input class='toreceiveorderlist' type='checkbox' id='" + e.orderNo + "' data-id='" + e.orderNo + "'>" + e.desc + "</input></div>");
+							$("#toreceiveorderlistlabel").html("待发货订单:" + (i + 1) + "个");
+						})
+					} else {
+						$("#toreceiveorderlistlabel").html("待发货订单");
+					}
+				} else {
+					$("#toreceiveorderlistlabel").html("待发货订单");
+				}
+			})
+		});
+
 
 		$('#stopcommitorder').click(function () {
 			//window.clearInterval(timeClock);
@@ -595,6 +621,7 @@
 			<li id="commitorder">自动下单</li>
 			<li id="topayorderlist">待支付订单</li>
 			<li id="tosendorderlist">待发货订单</li>
+			<li id="toreceiveorderlist">待收货订单</li>
 			<li id="clearallinfo">清空记录</li>
 			<li id="stopcommitorder">停止抢单</li>
 			<!-- <li><a>部落奶盐</a></li>
@@ -641,6 +668,14 @@
 				<li style="padding: unset">
 					<label id="tosendorderlistlabel">待发货订单</label>
 					<div class="shop-list-mid" id="tosendorderlistdiv"
+						style="height: 240px;width: 100%; overflow-y: auto">
+					</div>
+				</li>
+			</ul>
+			<ul class="list-pro">
+				<li style="padding: unset">
+					<label id="toreceiveorderlistlabel">待收货订单</label>
+					<div class="shop-list-mid" id="toreceiveorderlistdiv"
 						style="height: 240px;width: 100%; overflow-y: auto">
 					</div>
 				</li>
