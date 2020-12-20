@@ -2,6 +2,7 @@ package com.myqq.service.youza.bll;
 
 import com.alibaba.fastjson.JSONObject;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
+import com.myqq.service.youza.entity.ShoppingForWeChatAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.TimeUtil;
 import org.apache.http.HttpResponse;
@@ -274,6 +275,63 @@ public class RequestBllForApp {
         return orderInfo;
     }
 
+    public static String commitOrderDetail(String commitUrl, ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
+        String operationInfo = "";
+        String orderInfo;
+        if(testMode == 1){
+            orderInfo = "{\"code\":80005,\"message\":\"商品还未开始抢购\",\"status\":400,\"data\":\"ORDER_GOODS_ONSTART\"}";
+            System.out.println(orderInfo);
+        }else if(testMode == 2){
+            orderInfo = "{\"code\":80001,\"message\":\"库存不足\",\"status\":400,\"data\":\"ORDER_STOCK_INSUFFICIENT\"}";
+            System.out.println(orderInfo);
+        }else {
+            orderInfo = doPost(commitUrl, commitPostEntity, auth);
+        }
+
+        if(orderInfo != null){
+            try {
+                ShoppingForAppDTO.CommitOrderDTO commitOrderInfo = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderDTO.class);
+                if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
+                    if(commitOrderInfo.getData() != null){
+                        buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
+                    }
+                    if(toBuy.getCommitOrderInfoList() == null){
+                        toBuy.setCommitOrderInfoList(new ArrayList<>());
+                    }
+                    toBuy.getCommitOrderInfoList().add(commitOrderInfo);
+                }
+            }catch (Exception ex){
+                //ex.printStackTrace();
+                try {
+                    ShoppingForAppDTO.CommitOrderErrorDTO commitOrderError = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                    System.out.println(TimeUtil.getCurrentTimeString() + " commitOrderError: " + commitOrderError.toString());
+                    if(commitOrderError != null){
+                        //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
+                        int count = 0;
+                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            count++;
+                            System.out.println(count);
+                        }
+                        //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
+                        while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            count++;
+                            System.out.println(count);
+                        }
+                    }
+                }catch (Exception ex1){
+                    ex1.printStackTrace();
+                }
+                operationInfo = ex.getMessage();
+            }
+        }
+        if(!operationInfo.isEmpty()){
+            System.out.println(TimeUtil.getCurrentTimeString() +" commitToBuyOrder operationInfo: "+ operationInfo);
+        }
+        return orderInfo;
+    }
+
     public static String commitOrderDetailV2(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
         String operationInfo = "";
         String orderInfo;
@@ -349,4 +407,29 @@ public class RequestBllForApp {
         }
         return entity;
     }
+
+    /**
+     * 马哥精选post取消订单
+     *
+     * @param orderID
+     * @param reason
+     * @return
+     */
+    public static StringEntity getCancelOrderForMagePostEntity(String orderID, String reason) {
+        String operationInfo = "";
+        StringEntity entity = null;
+        try {
+            String postFormat = "{\"orderId\":\"%s\"," +
+                    "\"reason\":\"%s\"}";
+            StringBuilder commitOrderContentSB = new StringBuilder(String.format(postFormat, orderID, reason));
+            entity = new StringEntity(commitOrderContentSB.toString(),"utf-8");
+        }catch (Exception ex){
+            operationInfo += ex.getMessage();
+        }
+        if(!operationInfo.isEmpty()){
+            System.out.println(TimeUtil.getCurrentTimeString() + "getCommitPostEntity for promotion operationInfo: "+operationInfo);
+        }
+        return entity;
+    }
+
 }
