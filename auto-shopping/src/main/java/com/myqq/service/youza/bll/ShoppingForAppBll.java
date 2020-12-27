@@ -511,7 +511,7 @@ public class ShoppingForAppBll {
                 List<String> alreadyBuyLocalNos = alreadyBuyGoodInfo.stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.toList());
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderId() != null && !commitOrder.getData().getOrderId().isEmpty()).count() > 0 /*item.getReadyToBuyGoodNum()*/);
                 if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
-                    String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId));
+                    String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId, zzjjOpenId));
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                     if(messageResult != null && !messageResult.isEmpty()){
                         System.out.println(TimeUtil.getCurrentTimeString() + "toBuyGoodAndAddressInfos: "+toBuyGoodAndAddressInfos.toString());

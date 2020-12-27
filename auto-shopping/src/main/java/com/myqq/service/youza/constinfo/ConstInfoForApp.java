@@ -7,6 +7,7 @@ package com.myqq.service.youza.constinfo;
 public class ConstInfoForApp {
     public static String qqOpenId="oTX2GvzcTrl7Xi1pE4fwQBEnQPkI";
     public static String zzOpenId = "oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM";
+    public static String zzjjOpenId = "oTX2Gv2S1QIa1qnZgh4rRyf6RKXs";
 
     public static String userAgentForApp = "okhttp-okgo/jeasonlzy";
 

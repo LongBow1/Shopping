@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
+import static com.myqq.service.youza.constinfo.ConstInfoForApp.qqOpenId;
+import static com.myqq.service.youza.constinfo.ConstInfoForApp.zzjjOpenId;
+
 @Controller
 @EnableAutoConfiguration
 public class WeChatController {
@@ -27,7 +30,7 @@ public class WeChatController {
     @ResponseBody
     @RequestMapping("/sendMsg")
     public String sendMessage(@RequestParam("msg")String message){
-        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", Arrays.asList("oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM"));
+        return WeChatBll.sendMessage("{\"touser\":\"oTX2Gv6HCMPkUkwJM0Cu6MpeHGTM\",\"msgtype\":\"text\",\"text\":{\"content\":\"" + message + "\"}}", Arrays.asList(qqOpenId,zzjjOpenId));
     }
 
 
