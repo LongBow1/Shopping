@@ -39,9 +39,9 @@ public class ConstInfoForWeChatApp {
     public static final String getGoodListUrlForApp = "https://mage.bqjapp.cn/mage/goods?homeType=4&sortType=DESC&otherType=&pageIndex=1&pageSize=50&goodCategory=";
     /**
      * 首页商品
-     * 50个
+     * 20个
      */
-    public static String getNewGoodListUrlForApp = "https://mage.bqjapp.cn/mage/mgyx/home/goods/complex?pageIndex=1&pageSize=50&sortType=DESC";
+    public static String getNewGoodListUrlForApp = "https://mage.bqjapp.cn/mage/mgyx/home/goods/complex?pageIndex=1&pageSize=20&sortType=DESC";
     /**
      * 新品预告
      */
