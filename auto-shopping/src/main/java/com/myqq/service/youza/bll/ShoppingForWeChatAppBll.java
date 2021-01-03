@@ -62,7 +62,7 @@ public class ShoppingForWeChatAppBll {
         BooleanHolder goodsInNew = new BooleanHolder(true);
         try {
             newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForWeChatAppDTO.GoodsListDTO.class);
-            if(newGoodsList.getData().getRows() == null && newGoodsList.getData().getToday() != null){
+            if(CollectionUtils.isEmpty(newGoodsList.getData().getRows()) && !CollectionUtils.isEmpty(newGoodsList.getData().getToday())){
                 newGoodsList.getData().setRows(newGoodsList.getData().getToday());
             }
             BooleanHolder finalGoodsInNew = goodsInNew;

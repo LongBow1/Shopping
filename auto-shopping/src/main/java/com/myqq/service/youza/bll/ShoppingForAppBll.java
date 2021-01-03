@@ -7,6 +7,7 @@ import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.CustomThreadFactory;
 import com.myqq.service.youza.util.TimeUtil;
 import org.apache.http.entity.StringEntity;
+import org.apache.logging.log4j.util.StringBuilders;
 import org.omg.CORBA.BooleanHolder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -65,7 +66,7 @@ public class ShoppingForAppBll {
         BooleanHolder goodsInNew = new BooleanHolder(true);
         try {
             newGoodsList = JSONObject.parseObject(newGoodsInfo, ShoppingForAppDTO.GoodsListDTO.class);
-            if(newGoodsList.getData().getRows() == null && newGoodsList.getData().getToday() != null){
+            if(CollectionUtils.isEmpty(newGoodsList.getData().getRows()) && !CollectionUtils.isEmpty(newGoodsList.getData().getToday())){
                 newGoodsList.getData().setRows(newGoodsList.getData().getToday());
             }
             BooleanHolder finalGoodsInNew = goodsInNew;
@@ -305,7 +306,7 @@ public class ShoppingForAppBll {
             if(item.getV().contains("-")){
                 return item.getV().contains(keyword);
             }
-            return keyword.equalsIgnoreCase(item.getV());
+            return keyword.equalsIgnoreCase(item.getV())  || new StringBuilder(keyword).append("码").toString().equalsIgnoreCase(item.getV());
         }
         return isSkuItemMatch(item.getV(),keyword);
     }
