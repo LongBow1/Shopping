@@ -29,8 +29,8 @@ public class RequestBllForAppTest {
         System.out.println(result2);*/
 
         List<Future<String>> commitOrderFutures = new ArrayList<>();
-        commitOrderFutures.add(testExecutorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 1)));
-        commitOrderFutures.add(testExecutorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 2)));
+        /*commitOrderFutures.add(testExecutorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 1)));
+        commitOrderFutures.add(testExecutorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, commitPostEntity, auth, 2)));*/
 
         commitOrderFutures.forEach(task -> {
             try {

@@ -43,6 +43,8 @@ public class AutoShoppingEntryForWeChatApp {
      */
     public static ConcurrentHashMap<String,Boolean> mapStartShoppingSymbol = new ConcurrentHashMap<>(2);
     public static ConcurrentHashMap<String,String> mapOrderingSymbol = new ConcurrentHashMap<>(2);
+
+    public static ConcurrentHashMap<String,Integer> mapOrderedCounter = new ConcurrentHashMap<>(2);
     /**
      * 收件人信息
      */
@@ -272,6 +274,7 @@ public class AutoShoppingEntryForWeChatApp {
     public static boolean clearStandToBuyOrderInfo(String memberId) {
         initMapInfoByAuth(memberId);
         mapToBuyGoodAndAddressInfos.get(memberId).clear();
+        mapOrderedCounter.put(memberId,0);
         return true;
     }
 

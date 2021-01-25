@@ -44,6 +44,8 @@ public class AutoShoppingEntryForApp {
      */
     public static ConcurrentHashMap<String,Boolean> mapStartShoppingSymbol = new ConcurrentHashMap<>(2);
     public static ConcurrentHashMap<String,String> mapOrderingSymbol = new ConcurrentHashMap<>(2);
+
+    public static ConcurrentHashMap<String,Integer> mapOrderedCounter = new ConcurrentHashMap<>(2);
     /**
      * 收件人信息
      */
@@ -94,6 +96,10 @@ public class AutoShoppingEntryForApp {
         if(mapAddressInfos.get(memberId) == null){
             mapAddressInfos.putIfAbsent(memberId, new ArrayList<>());
         }
+        if(mapOrderedCounter.get(memberId) == null){
+            mapOrderedCounter.put(memberId,0);
+        }
+
     }
 
     /**
@@ -272,6 +278,7 @@ public class AutoShoppingEntryForApp {
    public static boolean clearStandToBuyOrderInfo(String memberId) {
         initMapInfoByAuth(memberId);
         mapToBuyGoodAndAddressInfos.get(memberId).clear();
+        mapOrderedCounter.put(memberId,0);
         return true;
     }
 
@@ -432,6 +439,7 @@ public class AutoShoppingEntryForApp {
      * @return
      */
     public static String startAutoShopping(String auth, String memberId, String localNos) {
+        mapOrderedCounter.put(memberId,50);
         //监视是否下单中
         int loopCountMark = 0;
         int loolCount = 0;
@@ -467,6 +475,7 @@ public class AutoShoppingEntryForApp {
         int readToBuyOldCount = 0, readToBuyNewCount = 0;
         //自旋下单流程
         for(;;){
+            System.out.println(TimeUtil.getCurrentTimeString() +" 下单剩余限制个数："+ mapOrderedCounter.get(memberId));
             StringBuilder resultBuilder = new StringBuilder();
             mapStartShoppingSymbol.put(memberId, true);
             //System.out.println(resultBuilder.toString());

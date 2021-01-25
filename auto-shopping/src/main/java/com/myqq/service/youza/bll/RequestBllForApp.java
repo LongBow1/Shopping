@@ -218,7 +218,7 @@ public class RequestBllForApp {
      * @param testMode 1= 模拟80005,2- 模拟80001
      * @return
      */
-    public static String commitOrderDetail(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
+    public static String commitOrderDetail(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode, String memberId) {
         String operationInfo = "";
         String orderInfo;
         if(testMode == 1){
@@ -237,6 +237,7 @@ public class RequestBllForApp {
                 if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
                     if(commitOrderInfo.getData() != null){
                         buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
+                        AutoShoppingEntryForApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForApp.mapOrderedCounter.get(memberId)-1);
                     }
                     if(toBuy.getCommitOrderInfoList() == null){
                         toBuy.setCommitOrderInfoList(new ArrayList<>());
@@ -252,13 +253,13 @@ public class RequestBllForApp {
                         //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
                         int count = 0;
                         while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
-                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode, memberId), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             count++;
                             System.out.println(count);
                         }
                         //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
                         while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
-                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode, memberId), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             count++;
                             System.out.println(count);
                         }
@@ -275,7 +276,7 @@ public class RequestBllForApp {
         return orderInfo;
     }
 
-    public static String commitOrderDetail(String commitUrl, ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
+    public static String commitOrderDetail(String commitUrl, ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode, String memberId) {
         String operationInfo = "";
         String orderInfo;
         if(testMode == 1){
@@ -294,6 +295,7 @@ public class RequestBllForApp {
                 if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
                     if(commitOrderInfo.getData() != null){
                         buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
+                        AutoShoppingEntryForWeChatApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForApp.mapOrderedCounter.get(memberId)-1);
                     }
                     if(toBuy.getCommitOrderInfoList() == null){
                         toBuy.setCommitOrderInfoList(new ArrayList<>());
@@ -309,13 +311,13 @@ public class RequestBllForApp {
                         //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
                         int count = 0;
                         while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
-                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode, memberId), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             count++;
                             System.out.println(count);
                         }
                         //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
                         while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
-                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode), ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                            commitOrderError = JSONObject.parseObject(commitOrderDetailV2(toBuy, buyGood, commitPostEntity, auth,testMode, memberId), ShoppingForAppDTO.CommitOrderErrorDTO.class);
                             count++;
                             System.out.println(count);
                         }
@@ -332,7 +334,7 @@ public class RequestBllForApp {
         return orderInfo;
     }
 
-    public static String commitOrderDetailV2(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode) {
+    public static String commitOrderDetailV2(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO toBuy, ShoppingForAppDTO.GoodDataStockDetailDTO buyGood, StringEntity commitPostEntity, String auth, int testMode, String memberId) {
         String operationInfo = "";
         String orderInfo;
         if(testMode == 1){
@@ -349,6 +351,7 @@ public class RequestBllForApp {
                 if(commitOrderInfo != null && commitOrderInfo.getData() != null){
                     if(commitOrderInfo.getData() != null){
                         buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
+                        AutoShoppingEntryForApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForApp.mapOrderedCounter.get(memberId)-1);
                     }
                     if(toBuy.getCommitOrderInfoList() == null){
                         toBuy.setCommitOrderInfoList(new ArrayList<>());

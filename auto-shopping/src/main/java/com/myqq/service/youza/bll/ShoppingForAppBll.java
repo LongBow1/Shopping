@@ -1,12 +1,14 @@
 package com.myqq.service.youza.bll;
 
 import com.alibaba.fastjson.JSONObject;
+import com.myqq.service.util.FileOperation;
 import com.myqq.service.youza.entity.PromotionDTO;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
 import com.myqq.service.youza.util.CustomThreadFactory;
 import com.myqq.service.youza.util.TimeUtil;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.util.StringBuilders;
 import org.omg.CORBA.BooleanHolder;
 import org.springframework.util.CollectionUtils;
@@ -246,6 +248,11 @@ public class ShoppingForAppBll {
                         tmpToBuy.setName(goodItem.getName());
                         tmpToBuy.setGoodsId(goodDetail.getGoodsId());
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
+                        //save stock info
+                        if(!Optional.ofNullable(FileOperation.stockInfoMap.get(goodItem.getGoodsId())).orElse(false)){
+                            FileOperation.writeFileByAppend(goodDataInfo,stockInfoFileName);
+                            FileOperation.stockInfoMap.putIfAbsent(goodItem.getGoodsId(), true);
+                        }
                         if(!isTimeMatch){
                             System.out.println(goodItem.getName()+" 开抢时间："+ TimeUtil.getTimeString(goodItem.getShiftedOn())+" 还未到,暂不加入代下单列表");
                             return;
@@ -371,6 +378,10 @@ public class ShoppingForAppBll {
      */
     public static void commitToBuyOrder(List<ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO> toBuyGoodAndAddressInfos, String auth, String memberId) {
         StringBuilder operationInfo = new StringBuilder("");
+        if(AutoShoppingEntryForApp.mapOrderedCounter.get(memberId) <= 0){
+            System.out.println(TimeUtil.getCurrentTimeString() +": stop commit order for counter limit 0!");
+            return;
+        }
         if(toBuyGoodAndAddressInfos != null){
             List<Future<String>> commitOrderFutures = new ArrayList<>();
             toBuyGoodAndAddressInfos.forEach(toBuy -> {
@@ -379,7 +390,7 @@ public class ShoppingForAppBll {
                         //已下单排除
                         boolean canCommitOrder = buyGood != null && buyGood.getGoodsId() != null && !buyGood.getGoodsId().isEmpty() && Optional.ofNullable(buyGood.getToBuyNum()).orElse(0) > 0 && (buyGood.getOrderNo() == null || buyGood.getOrderNo().isEmpty());
                         if(canCommitOrder){
-                            commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), buyGood.getToBuyNum()), auth, 0)));
+                            commitOrderFutures.add(executorServiceForCommitOrder.submit(() -> RequestBllForApp.commitOrderDetail(toBuy, buyGood, RequestBllForApp.getCommitPostEntity(buyGood, toBuy.getAddressDetailInfo(), buyGood.getToBuyNum()), auth, 0, memberId)));
                         }
                     });
                     //有多个优惠同时走购物车下单
@@ -428,6 +439,18 @@ public class ShoppingForAppBll {
         String orderInfo = "";
         try {
             orderInfo = doPostForShoppingCar(commitOrderUrlForApp, commitPostEntity, auth);
+            if(orderInfo != null){
+                try {
+                    ShoppingForAppDTO.CommitOrderDTO commitOrderInfo = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderDTO.class);
+                    if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
+                        if(commitOrderInfo.getData() != null){
+                            AutoShoppingEntryForApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForApp.mapOrderedCounter.get(memberId)-1);
+                        }
+                    }
+                }catch (Exception ex){
+
+                }
+            }
         }catch (Exception ex){
             operationInfo = ex.getMessage();
             try {
@@ -437,13 +460,13 @@ public class ShoppingForAppBll {
                     //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
                     int count = 0;
                     while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
-                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth, memberId),ShoppingForAppDTO.CommitOrderErrorDTO.class);
                         count++;
                         System.out.println(count);
                     }
                     //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
                     while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
-                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth, memberId),ShoppingForAppDTO.CommitOrderErrorDTO.class);
                         count++;
                         System.out.println(count);
                     }
@@ -459,11 +482,23 @@ public class ShoppingForAppBll {
         return orderInfo;
     }
 
-    private static String commitOrderForShoppingCarV2(StringEntity commitPostEntity, String auth) {
+    private static String commitOrderForShoppingCarV2(StringEntity commitPostEntity, String auth, String memberId) {
         String operationInfo = "";
         String orderInfo = "";
         try {
             orderInfo = doPostForShoppingCar(commitOrderUrlForApp, commitPostEntity, auth);
+            if(orderInfo != null){
+                try {
+                    ShoppingForAppDTO.CommitOrderDTO commitOrderInfo = JSONObject.parseObject(orderInfo, ShoppingForAppDTO.CommitOrderDTO.class);
+                    if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
+                        if(commitOrderInfo.getData() != null){
+                            AutoShoppingEntryForApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForApp.mapOrderedCounter.get(memberId)-1);
+                        }
+                    }
+                }catch (Exception ex){
+
+                }
+            }
         }catch (Exception ex){
             operationInfo = ex.getMessage();
             try {
@@ -473,13 +508,13 @@ public class ShoppingForAppBll {
                     //80005 未开始抢，这个时候不用重新查询库存信息。 多抢几次再查询
                     int count = 0;
                     while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80005 && count<6){
-                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth, memberId),ShoppingForAppDTO.CommitOrderErrorDTO.class);
                         count++;
                         System.out.println(count);
                     }
                     //80001提交下单后提示库存不足，重复提交多次，不用重新查询库存
                     while (Optional.ofNullable(commitOrderError.getCode()).orElse(0) == 80001 && count<10){
-                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth),ShoppingForAppDTO.CommitOrderErrorDTO.class);
+                        commitOrderError = JSONObject.parseObject(commitOrderForShoppingCarV2(commitPostEntity, auth, memberId),ShoppingForAppDTO.CommitOrderErrorDTO.class);
                         count++;
                         System.out.println(count);
                     }
