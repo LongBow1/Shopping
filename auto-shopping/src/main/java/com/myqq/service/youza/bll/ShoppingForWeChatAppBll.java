@@ -1,6 +1,8 @@
 package com.myqq.service.youza.bll;
 
 import com.alibaba.fastjson.JSONObject;
+import com.myqq.service.util.FileOperation;
+import com.myqq.service.youza.constinfo.ConstInfoForApp;
 import com.myqq.service.youza.entity.ShoppingForAppDTO;
 import com.myqq.service.youza.entity.ShoppingForWeChatAppDTO;
 import com.myqq.service.youza.entity.ToBuyGoodInfoAppDTO;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.myqq.service.youza.bll.RequestBllForApp.doPostForShoppingCar;
+import static com.myqq.service.youza.constinfo.ConstInfoForApp.stockInfoFileName;
 import static com.myqq.service.youza.constinfo.ConstInfoForWeChatApp.*;
 import static com.myqq.service.youza.constinfo.ConstInfoForWeChatApp.zzOpenId;
 
@@ -226,11 +229,16 @@ public class ShoppingForWeChatAppBll {
                     //五分钟内再开抢
                     boolean isTimeMatch = goodItem.getShiftedOnStamp() - System.currentTimeMillis() < 300000;
                     if(isMatchSku){
+                        System.out.println(TimeUtil.getCurrentTimeString() + " attrsku match: "+goodItem.getGoodsId()+", shopName:"+ goodItem.getName());
                         ShoppingForAppDTO.GoodDataStockDetailDTO tmpToBuy = new ShoppingForAppDTO.GoodDataStockDetailDTO();
                         tmpToBuy.setMainGoodsId(goodItem.getGoodsId());
                         tmpToBuy.setName(goodItem.getName());
                         tmpToBuy.setGoodsId(goodDetail.getGoodsId());
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
+                        if(!Optional.ofNullable(FileOperation.stockInfoMap.get(goodItem.getGoodsId())).orElse(false)){
+                            FileOperation.writeFileByAppend(TimeUtil.getCurrentTimeString() + ": "+goodItem.getGoodsId()+": "+goodDataInfo, ConstInfoForApp.mageStockInfoFileName);
+                            FileOperation.stockInfoMap.putIfAbsent(goodItem.getGoodsId(), true);
+                        }
                         if(!isTimeMatch){
                             System.out.println(goodItem.getName()+" 开抢时间："+ goodItem.getShiftedOn()+" 还未到,暂不加入代下单列表");
                             return;

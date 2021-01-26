@@ -243,6 +243,7 @@ public class ShoppingForAppBll {
                     //五分钟内再开抢
                     boolean isTimeMatch = goodItem.getShiftedOn() - System.currentTimeMillis() < 300000;
                     if(isMatchSku){
+                        System.out.println(TimeUtil.getCurrentTimeString() + " attrsku match: "+goodItem.getGoodsId()+", shopName:"+ goodItem.getName());
                         ShoppingForAppDTO.GoodDataStockDetailDTO tmpToBuy = new ShoppingForAppDTO.GoodDataStockDetailDTO();
                         tmpToBuy.setMainGoodsId(goodItem.getGoodsId());
                         tmpToBuy.setName(goodItem.getName());
@@ -250,7 +251,7 @@ public class ShoppingForAppBll {
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                         //save stock info
                         if(!Optional.ofNullable(FileOperation.stockInfoMap.get(goodItem.getGoodsId())).orElse(false)){
-                            FileOperation.writeFileByAppend(goodDataInfo,stockInfoFileName);
+                            FileOperation.writeFileByAppend(TimeUtil.getCurrentTimeString() + ": "+goodItem.getGoodsId()+": "+goodDataInfo,stockInfoFileName);
                             FileOperation.stockInfoMap.putIfAbsent(goodItem.getGoodsId(), true);
                         }
                         if(!isTimeMatch){

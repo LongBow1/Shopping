@@ -12,6 +12,7 @@ public class ConstInfoForApp {
     public static String userAgentForApp = "okhttp-okgo/jeasonlzy";
 
     public static String stockInfoFileName = "bqjAppStockInfo.txt";
+    public static String mageStockInfoFileName = "mageAppStockInfo.txt";
 
     public static String qqAuth = "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxNTAwMDU2MzQ1OSIsInNjb3BlIjpbInNlcnZpY2UiXSwiaWQiOiJlN2UyYjhjZC01YmJiLWQ4OTAtMWQ2Yy1mNTM5MWZkM2U3MzUiLCJleHAiOjE1Nzg4MjE2MzksInR5cGUiOiJtZW1iZXIiLCJhdXRob3JpdGllcyI6WyIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiXSwianRpIjoiYzNjNGQzNGUtOWUxMy00NmY2LWJjYTUtMThjODQ5YjgyZjYwIiwiY2xpZW50X2lkIjoiaW5uZXIifQ.fFe58cXab-LlISjFJ9WGkzbApWJEX-xVQdxq0LxfWuO2DEoQRufcNaSv8uAPiThbxka1bn58fLSTOf9c3NalD76IobgWjwEqwo63Ml4pyMOBmO8YYOyC57TSc-wF6L6KicjaVA8wCbpTKlMigsJAMIuHvQS2xqe2qKrh5zOwbsSBZb5qJvb2yQeJvES44PbCD5r07OR7SWHdLkS0mNXvLpovlF61fullUfsAR532q64av0rwk5t1fjsYSahHQ7-EyyiuWtt5EJDlU_2zumYBjt7FuCeDioQCrXHK1tZLmFXkziBB75fuo9xRVhwSwBhl0aoP192mm_BpXIMbnG8FmQ";
     public static String qqMemberId = "e7e2b8cd-5bbb-d890-1d6c-f5391fd3e735";
