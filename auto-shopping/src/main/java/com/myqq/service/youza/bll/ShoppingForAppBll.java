@@ -251,7 +251,7 @@ public class ShoppingForAppBll {
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                         //save stock info
                         if(!Optional.ofNullable(FileOperation.stockInfoMap.get(goodItem.getGoodsId())).orElse(false)){
-                            FileOperation.writeFileByAppend(TimeUtil.getCurrentTimeString() + ": "+goodItem.getGoodsId()+": "+goodDataInfo,stockInfoFileName);
+                            FileOperation.writeFileByAppend(TimeUtil.getCurrentTimeString() + ": goodsId: "+goodItem.getGoodsId()+", shopName:"+ goodItem.getName() +": goodDataInfo: "+goodDataInfo,stockInfoFileName);
                             FileOperation.stockInfoMap.putIfAbsent(goodItem.getGoodsId(), true);
                         }
                         if(!isTimeMatch){

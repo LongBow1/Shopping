@@ -236,7 +236,7 @@ public class ShoppingForWeChatAppBll {
                         tmpToBuy.setGoodsId(goodDetail.getGoodsId());
                         tmpToBuy.setToBuyNum(goodDetail.getInventory() > toBuyNum ? toBuyNum : goodDetail.getInventory());
                         if(!Optional.ofNullable(FileOperation.stockInfoMap.get(goodItem.getGoodsId())).orElse(false)){
-                            FileOperation.writeFileByAppend(TimeUtil.getCurrentTimeString() + ": "+goodItem.getGoodsId()+": "+goodDataInfo, ConstInfoForApp.mageStockInfoFileName);
+                            FileOperation.writeFileByAppend(TimeUtil.getCurrentTimeString() + ": goodsId: "+goodItem.getGoodsId()+", shopName:"+ goodItem.getName()+": goodDataInfo: "+goodDataInfo, ConstInfoForApp.mageStockInfoFileName);
                             FileOperation.stockInfoMap.putIfAbsent(goodItem.getGoodsId(), true);
                         }
                         if(!isTimeMatch){
