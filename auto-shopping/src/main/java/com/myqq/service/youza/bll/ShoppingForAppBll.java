@@ -230,7 +230,7 @@ public class ShoppingForAppBll {
                         //尺码可能没有标签
                         if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("尺码") || propItem.getK().trim().isEmpty()) && skuSizeKeyWords != null && !skuSizeKeyWords.isEmpty()){
                             //尺寸、尺码
-                            isMatchSku = isMatchSku && skuSizeKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("尺码") || propItem.getK().trim().isEmpty()), keyword, true));
+                            isMatchSku = isMatchSku && skuSizeKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("尺码") || propItem.getK().trim().isEmpty()), keyword, true) || isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("尺码") || propItem.getK().trim().isEmpty()), keyword+"码", true));
                         }
                         if(goodDetail.getSpecList().stream().anyMatch(propItem -> propItem.getK().contains("款式")) && skuStyleKeyWords != null && !skuStyleKeyWords.isEmpty()){
                             isMatchSku = isMatchSku && skuStyleKeyWords.stream().anyMatch(keyword -> isSkuItemListMatch(goodDetail.getSpecList().stream().filter(propItem -> propItem.getK().contains("款式")), keyword, false));
@@ -548,7 +548,7 @@ public class ShoppingForAppBll {
                 List<String> alreadyBuyLocalNos = alreadyBuyGoodInfo.stream().map(ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO::getLocalNo).collect(Collectors.toList());
                 toBuyGoodAndAddressInfos.removeIf(item -> item.getCommitOrderInfoList() != null && !item.getCommitOrderInfoList().isEmpty() && item.getToBuyGoodInfoList() != null && !item.getToBuyGoodInfoList().isEmpty() && item.getCommitOrderInfoList().stream().filter(commitOrder -> commitOrder.getData() != null && commitOrder.getData().getOrderId() != null && !commitOrder.getData().getOrderId().isEmpty()).count() > 0 /*item.getReadyToBuyGoodNum()*/);
                 if(alreadyBuyLocalNos != null && !alreadyBuyLocalNos.isEmpty()){
-                    String messageResult = WeChatBll.sendMessage("order success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId, zzjjOpenId));
+                    String messageResult = WeChatBll.sendMessage("order bqj success:" + intendToBuyGoods.stream().filter(intend -> alreadyBuyLocalNos.contains(intend.getLocalNo())).findFirst().orElse(new ToBuyGoodInfoAppDTO.ToBuyGoodAndAddressInfoDTO()).getDesc(), Arrays.asList(qqOpenId, zzOpenId, zzjjOpenId));
                     intendToBuyGoods.removeIf(item -> alreadyBuyLocalNos.contains(item.getLocalNo()));
                     if(messageResult != null && !messageResult.isEmpty()){
                         System.out.println(TimeUtil.getCurrentTimeString() + "toBuyGoodAndAddressInfos: "+toBuyGoodAndAddressInfos.toString());
