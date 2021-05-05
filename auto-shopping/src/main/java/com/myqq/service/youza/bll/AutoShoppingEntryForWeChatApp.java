@@ -459,6 +459,7 @@ public class AutoShoppingEntryForWeChatApp {
      * @return
      */
     public static String startAutoShopping(String auth, String memberId, String localNos) {
+        mapOrderedCounter.put(memberId,50);
         //监视是否下单中
         int loopCountMark = 0;
         int loolCount = 0;

@@ -63,6 +63,11 @@ public class OrderForAppController {
         return JSONObject.toJSONString(AutoShoppingEntryForApp.deleteIntendOrders(memberId, localNos));
     }
 
+    @RequestMapping("/mergeIntendOrderList")
+    public String mergeIntendOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId, @RequestParam("localNos")String localNos){
+        return JSONObject.toJSONString(AutoShoppingEntryForApp.mergeIntendOrders(memberId, localNos));
+    }
+
     @RequestMapping("/getAlreadyBuyOrderList")
     public String getAlreadyBuyOrderList(@RequestParam("auth")String auth, @RequestParam("memberId")String memberId){
         return JSONObject.toJSONString(AutoShoppingEntryForApp.mapAlreadyBuyGoodAndAddressInfos.get(memberId));

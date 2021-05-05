@@ -295,7 +295,7 @@ public class RequestBllForApp {
                 if(commitOrderInfo != null && commitOrderInfo.getData() != null && commitOrderInfo.getData().getOrderId() != null){
                     if(commitOrderInfo.getData() != null){
                         buyGood.setOrderNo(commitOrderInfo.getData().getOrderId());
-                        AutoShoppingEntryForWeChatApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForApp.mapOrderedCounter.get(memberId)-1);
+                        AutoShoppingEntryForWeChatApp.mapOrderedCounter.put(memberId,AutoShoppingEntryForWeChatApp.mapOrderedCounter.get(memberId)-1);
                     }
                     if(toBuy.getCommitOrderInfoList() == null){
                         toBuy.setCommitOrderInfoList(new ArrayList<>());

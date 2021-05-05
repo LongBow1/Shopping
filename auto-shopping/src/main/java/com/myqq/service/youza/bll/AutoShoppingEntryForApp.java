@@ -643,4 +643,10 @@ public class AutoShoppingEntryForApp {
         }
         return "delete address count: "+toRemoveAddress.size();
     }
+
+    public static String mergeIntendOrders(String memberId, String localNos) {
+        String result = "";
+
+        return result;
+    }
 }

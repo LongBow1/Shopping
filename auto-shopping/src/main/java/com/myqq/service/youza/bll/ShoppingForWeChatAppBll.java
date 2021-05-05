@@ -280,15 +280,20 @@ public class ShoppingForWeChatAppBll {
 
     private static boolean isSkuItemMatch(ToBuyGoodInfoAppDTO.KV item, String keyword, boolean strictEqual) {
         if(strictEqual){
-            if(item.getV().contains("-")){
+            //size compare
+            String sizeStr = item.getV().trim().toLowerCase().replaceAll( "[^0-9^a-z^A-Z]", "");
+            if(sizeStr.startsWith(keyword.toLowerCase())){
+                return true;
+            }
+            if(!item.getV().contains("斤") && item.getV().contains("-")){
                 return item.getV().contains(keyword);
             }
-            return keyword.equalsIgnoreCase(item.getV());
+            return keyword.equalsIgnoreCase(item.getV()) || new StringBuilder(keyword).append("码").toString().equalsIgnoreCase(item.getV());
         }
         return isSkuItemMatch(item.getV(),keyword);
     }
     private static boolean isSkuItemMatch(String skuItem, String keyword) {
-        if (skuItem.contains(keyword)) {
+        if (skuItem.contains(keyword) || keyword.contains(skuItem)) {
             return true;
         }
         if (keyword != null && keyword.contains("+")) {
